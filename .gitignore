@@ -147,3 +147,14 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+# JetBrains IDEs (IntelliJ IDEA, WebStorm)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+cmake-build-*/
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
