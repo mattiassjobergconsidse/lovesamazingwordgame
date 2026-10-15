@@ -1,8 +1,37 @@
 import { useEffect, useRef } from "react";
 import { routeToHash, useRoute, type Route } from "../../router";
 import type { MessageKey } from "../../i18n";
+import { SetEditorScreen } from "../sets/SetEditorScreen";
+import { SetsScreen } from "../sets/SetsScreen";
+import { TrainGate } from "../train/TrainGate";
+import { TrainScreen } from "../train/TrainScreen";
 import { ScreenPlaceholder } from "./ScreenPlaceholder";
 
+/** Chooses the screen for a route; unfinished screens show a placeholder. */
+function renderScreen(route: Route) {
+  switch (route.name) {
+    case "sets":
+      return <SetsScreen />;
+    case "setEditor":
+      return <SetEditorScreen key={route.id} id={route.id} />;
+    case "train":
+      return (
+        <TrainGate title={titleFor(route)}>
+          <TrainScreen />
+        </TrainGate>
+      );
+    case "trainMode":
+      return (
+        <TrainGate title={titleFor(route)} mode={route.mode}>
+          <ScreenPlaceholder title={titleFor(route)} />
+        </TrainGate>
+      );
+    case "home":
+    case "stats":
+    case "settings":
+      return <ScreenPlaceholder title={titleFor(route)} />;
+  }
+}
 function titleFor(route: Route): MessageKey {
   switch (route.name) {
     case "home":
@@ -39,7 +68,7 @@ export function RouteOutlet() {
 
   return (
     <main id="main" ref={mainRef} tabIndex={-1} className="app-main">
-      <ScreenPlaceholder title={titleFor(route)} />
+      {renderScreen(route)}
     </main>
   );
 }

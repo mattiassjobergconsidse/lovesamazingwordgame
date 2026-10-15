@@ -1,4 +1,4 @@
-import type { Settings } from "../src/types";
+import type { Settings, WordPair, WordProgress, WordSet } from "../src/types";
 
 /**
  * Builds a complete settings record for tests.
@@ -29,4 +29,50 @@ export function deleteAppDatabase(): Promise<void> {
       reject(request.error ?? new Error("deleteDatabase failed"));
     };
   });
+}
+let counter = 0;
+function nextId(prefix: string): string {
+  counter += 1;
+  return `${prefix}-${String(counter)}`;
+}
+/** Builds a word set with unique defaults; override what the test cares about. */
+export function makeSet(overrides: Partial<WordSet> = {}): WordSet {
+  return {
+    id: nextId("set"),
+    name: `Set ${String(counter)}`,
+    langA: "Svenska",
+    langB: "English",
+    createdAt: 1000,
+    updatedAt: 1000,
+    ...overrides,
+  };
+}
+/** Builds a word pair with unique defaults; override what the test cares about. */
+export function makePair(overrides: Partial<WordPair> = {}): WordPair {
+  const id = nextId("pair");
+  return {
+    id,
+    setId: "set-1",
+    a: `ord ${id}`,
+    b: `word ${id}`,
+    createdAt: 1000,
+    updatedAt: 1000,
+    ...overrides,
+  };
+}
+/** Builds a progress record for a pair. */
+export function makeProgress(
+  overrides: Partial<WordProgress> = {},
+): WordProgress {
+  return {
+    pairId: "pair-1",
+    setId: "set-1",
+    box: 1,
+    dueAt: 0,
+    correct: 0,
+    wrong: 0,
+    lastSeenAt: null,
+    streak: 0,
+    ...overrides,
+  };
 }

@@ -1,0 +1,107 @@
+/* Shared building blocks: forms, dialog, toast. Mobile first; colours only from theme tokens. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.field-label {
+  font-weight: 600;
+}
+.text-input {
+  min-block-size: var(--tap-size);
+  padding-inline: var(--space-2);
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.text-input[aria-invalid="true"] {
+  border-color: var(--color-wrong);
+}
+.field-error {
+  margin: 0;
+  color: var(--color-wrong);
+}
+.button:disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.button-secondary {
+  color: var(--color-text);
+  background: var(--color-bg);
+  border-color: var(--color-border);
+}
+.button-danger {
+  color: var(--color-bg);
+  background: var(--color-wrong);
+  border-color: var(--color-wrong);
+}
+.dialog {
+  inline-size: min(32rem, calc(100vw - 2 * var(--space-3)));
+  padding: var(--space-3);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.dialog-title {
+  margin-block-start: 0;
+}
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+.dialog-close {
+  margin-block-start: var(--space-3);
+}
+.toast-region {
+  position: fixed;
+  inset-inline: var(--space-3);
+  inset-block-end: var(--space-3);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  pointer-events: auto;
+}
+.toast-action {
+  min-block-size: var(--tap-size);
+  padding-inline: var(--space-3);
+  font: inherit;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}

@@ -72,6 +72,21 @@ Object.defineProperty(window, "matchMedia", {
   }),
 });
 
+// jsdom has no modal <dialog> support. Emulate the parts the app relies on: open state, close event, Esc is not needed.
+if (typeof HTMLDialogElement.prototype.showModal !== "function") {
+  HTMLDialogElement.prototype.showModal = function showModal(
+    this: HTMLDialogElement,
+  ) {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement) {
+    if (this.hasAttribute("open")) {
+      this.removeAttribute("open");
+      this.dispatchEvent(new Event("close"));
+    }
+  };
+}
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();

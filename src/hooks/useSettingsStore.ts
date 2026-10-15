@@ -1,24 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createDefaultSettings } from "../core/settings";
-import {
-  isIndexedDbAvailable,
-  openAppDb,
-  type WordGameDatabase,
-} from "../storage/db";
-import {
-  readPreferenceMirror,
-  writePreferenceMirror,
-} from "../storage/preferenceMirror";
+import { isIndexedDbAvailable } from "../storage/db";
+import { writePreferenceMirror } from "../storage/preferenceMirror";
 import { loadSettings, saveSettings } from "../storage/settingsRepo";
 import type { Settings } from "../types";
-import type { SettingsStore, StorageErrorKind } from "./settingsContext";
-
-function createInitialSettings(): Settings {
-  return {
-    ...createDefaultSettings(navigator.languages),
-    ...readPreferenceMirror(),
-  };
-}
+import { useDatabase } from "./useDatabase";
+import { createInitialSettings } from "./initialSettings";
+import type { SettingsStore } from "./settingsContext";
 
 /**
  * Owns the settings state: starts from defaults plus the localStorage mirror
@@ -26,89 +13,79 @@ function createInitialSettings(): Settings {
  * and writes every change through to both.
  *
  * @returns The settings store to hand to a `SettingsContext` provider.
+ * @throws If used outside a `DatabaseProvider`.
  */
 export function useSettingsStore(): SettingsStore {
+  const { db, reportStorageError } = useDatabase();
   const [settings, setSettings] = useState<Settings>(createInitialSettings);
-  const [storageError, setStorageError] = useState<StorageErrorKind | null>(
-    () => (isIndexedDbAvailable() ? null : "unavailable"),
-  );
+  // Without IndexedDB there is nothing to wait for.
+  const [ready, setReady] = useState(() => !isIndexedDbAvailable());
   const settingsRef = useRef(settings);
-  const dbRef = useRef<Promise<WordGameDatabase> | null>(null);
+  // Changes made before the stored settings are loaded; they win over the stored values.
+  const pendingRef = useRef<Partial<Settings>>({});
+  const loadedRef = useRef(false);
 
   useEffect(() => {
-    if (!isIndexedDbAvailable()) {
+    if (db === null) {
       return;
     }
     const abort = new AbortController();
-    const dbPromise = openAppDb({
-      onBlocked: () => {
-        setStorageError("blocked");
-      },
-      onBlocking: () => {
-        void dbPromise.then((db) => {
-          db.close();
-        });
-      },
-      onTerminated: () => {
-        setStorageError("failed");
-      },
-    });
-    dbRef.current = dbPromise;
-
     void (async () => {
       try {
-        const db = await dbPromise;
         const stored = await loadSettings(db);
         if (abort.signal.aborted) {
           return;
         }
-        if (stored === null) {
-          await saveSettings(db, settingsRef.current);
-          return;
+        const hasPending = Object.keys(pendingRef.current).length > 0;
+        const next =
+          stored === null
+            ? settingsRef.current
+            : { ...stored, ...pendingRef.current };
+        if (stored === null || hasPending) {
+          await saveSettings(db, next);
         }
-        settingsRef.current = stored;
-        setSettings(stored);
-        writePreferenceMirror(stored);
+        settingsRef.current = next;
+        setSettings(next);
+        writePreferenceMirror(next);
+        pendingRef.current = {};
+        loadedRef.current = true;
+        setReady(true);
       } catch (error) {
         console.error("Failed to load settings", error);
         if (!abort.signal.aborted) {
-          setStorageError("failed");
+          reportStorageError("failed");
         }
       }
     })();
-
     return () => {
       abort.abort();
-      dbRef.current = null;
-      // A failed open is already reported above; only release a successful connection.
-      void dbPromise.then(
-        (db) => {
-          db.close();
-        },
-        () => undefined,
-      );
     };
-  }, []);
+  }, [db, reportStorageError]);
 
-  const updateSettings = useCallback((patch: Partial<Settings>) => {
-    const next = { ...settingsRef.current, ...patch };
-    settingsRef.current = next;
-    setSettings(next);
-    writePreferenceMirror(next);
+  const updateSettings = useCallback(
+    (patch: Partial<Settings>) => {
+      const next = { ...settingsRef.current, ...patch };
+      settingsRef.current = next;
+      setSettings(next);
+      writePreferenceMirror(next);
 
-    const dbPromise = dbRef.current;
-    if (dbPromise === null) {
-      return;
-    }
-    void (async () => {
-      try {
-        await saveSettings(await dbPromise, next);
-      } catch (error) {
-        console.error("Failed to save settings", error);
-        setStorageError("failed");
+      if (!loadedRef.current) {
+        pendingRef.current = { ...pendingRef.current, ...patch };
       }
-    })();
-  }, []);
+      if (db === null) {
+        return;
+      }
+      void (async () => {
+        try {
+          await saveSettings(db, next);
+        } catch (error) {
+          console.error("Failed to save settings", error);
+          reportStorageError("failed");
+        }
+      })();
+    },
+    [db, reportStorageError],
+  );
 
-  return { settings, storageError, updateSettings };
+  return { settings, ready, updateSettings };
 }
