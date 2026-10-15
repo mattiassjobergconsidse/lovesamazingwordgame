@@ -1,10 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="sv">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>lovesamazingwordgame</title>
+    <title>Love's Amazing Word Game</title>
+    <script>
+      // Applies theme and language before first paint (FR-THEME-1). Keys must match src/storage/preferenceMirror.ts.
+      (function () {
+        var root = document.documentElement;
+        var theme = "system";
+        var lang = "sv";
+        try {
+          var storedTheme = localStorage.getItem("lovesamazingwordgame.theme");
+          var storedLang = localStorage.getItem(
+            "lovesamazingwordgame.uiLanguage",
+          );
+          if (["light", "dark", "system"].indexOf(storedTheme) !== -1) {
+            theme = storedTheme;
+          }
+          var browserLang = (navigator.language || "")
+            .toLowerCase()
+            .split("-")[0];
+          lang = browserLang === "en" ? "en" : "sv";
+          if (storedLang === "sv" || storedLang === "en") {
+            lang = storedLang;
+          }
+        } catch (error) {
+          // Storage can be blocked; the app falls back to system theme and applies real settings after startup.
+        }
+        var dark =
+          theme === "dark" ||
+          (theme === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        root.dataset.theme = dark ? "dark" : "light";
+        root.lang = lang;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
