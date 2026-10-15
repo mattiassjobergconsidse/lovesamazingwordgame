@@ -182,3 +182,61 @@
   background: var(--color-wrong);
   border-color: var(--color-wrong);
 }
+.match-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.match-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.match-column h2 {
+  margin: 0;
+}
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.match-item {
+  inline-size: 100%;
+  justify-content: flex-start;
+  text-align: start;
+  overflow-wrap: anywhere;
+  transition: background-color 200ms ease;
+}
+.match-item[data-state="selected"] {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.match-item[data-state="matched"] {
+  color: var(--color-on-primary);
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+}
+.match-item[data-state="wrong"] {
+  color: var(--color-on-primary);
+  background: var(--color-wrong);
+  border-color: var(--color-wrong);
+  animation: match-shake 300ms ease;
+}
+@keyframes match-shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .match-item,
+  .match-item[data-state="wrong"] {
+    transition: none;
+    animation: none;
+  }
+}

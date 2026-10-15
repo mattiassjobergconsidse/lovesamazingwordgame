@@ -119,6 +119,10 @@ export const sv: Record<MessageKey, string> = {
   "train.quiz.correct": "Rätt!",
   "train.quiz.wrong": "Inte riktigt. Rätt svar: {answer}",
   "train.quiz.next": "Nästa",
+  "train.matching.hint":
+    "Tryck på ett ord och sedan på dess par. Du kan också skriva siffran och sedan bokstaven.",
+  "train.matching.matched": "Par!",
+  "train.matching.noMatch": "Inget par, försök igen",
   "train.writing.iWasRight": "Jag hade rätt",
   "train.result.title": "Övningen är klar",
   "train.result.score": "{correct} av {total} rätt",

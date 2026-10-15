@@ -117,6 +117,10 @@ export const en = {
   "train.quiz.correct": "Correct!",
   "train.quiz.wrong": "Not quite. Correct answer: {answer}",
   "train.quiz.next": "Next",
+  "train.matching.hint":
+    "Tap a word, then its match. You can also type the number and then the letter.",
+  "train.matching.matched": "Match!",
+  "train.matching.noMatch": "Not a match, try again",
   "train.writing.iWasRight": "I was right",
   "train.result.title": "Session complete",
   "train.result.score": "{correct} of {total} correct",

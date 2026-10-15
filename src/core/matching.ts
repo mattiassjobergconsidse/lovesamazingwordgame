@@ -95,4 +95,23 @@ export function attemptMatch(
     record(right.pairId, "wrong");
   }
   return { isMatch, results: next };
+} /**
+ * The round that starts at `position` in the session queue.
+ *
+ * @param pairs All session words in queue order.
+ * @param position Index of the first unanswered word; always a round start while playing.
+ * @returns The pairs of that round, or an empty list when `position` is past the end.
+ */
+export function roundAt(
+  pairs: readonly WordPair[],
+  position: number,
+): WordPair[] {
+  let start = 0;
+  for (const round of buildMatchingRounds(pairs)) {
+    if (position < start + round.length) {
+      return round;
+    }
+    start += round.length;
+  }
+  return [];
 }

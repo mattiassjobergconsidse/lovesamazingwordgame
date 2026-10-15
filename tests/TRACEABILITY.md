@@ -39,10 +39,10 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-QZ-1     | P4 done    | `src/core/quiz.test.ts`, `tests/quiz.test.tsx`                                                                                                                     |
 | FR-QZ-2     | P4 done    | `tests/quiz.test.tsx`                                                                                                                                              |
 | FR-QZ-3     | P4 done    | `src/core/quiz.test.ts`, `tests/quiz.test.tsx`                                                                                                                     |
-| FR-MT-1     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
-| FR-MT-2     | P2 core    | `src/core/matching.test.ts` (match evaluation only)                                                                                                                |
-| FR-MT-3     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
-| FR-MT-4     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
+| FR-MT-1     | P4 done    | `src/core/matching.test.ts`, `src/core/sessionRound.test.ts`, `tests/matching.test.tsx`                                                                            |
+| FR-MT-2     | P4 done    | `src/core/matching.test.ts`, `tests/matching.test.tsx`                                                                                                             |
+| FR-MT-3     | P4 done    | `src/core/matching.test.ts`, `src/core/sessionRound.test.ts`, `tests/matching.test.tsx`                                                                            |
+| FR-MT-4     | P4 done    | `src/core/matching.test.ts`, `src/core/sessionRound.test.ts`, `tests/matching.test.tsx`                                                                            |
 | FR-FC-1     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
 | FR-FC-2     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
 | FR-FC-3     | P4 done    | `tests/training.test.tsx`                                                                                                                                          |

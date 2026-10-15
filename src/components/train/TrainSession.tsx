@@ -7,8 +7,10 @@ import { useI18n, type MessageKey } from "../../i18n";
 import { navigate, type TrainMode } from "../../router";
 import type { WordSet } from "../../types";
 import "../common/common.css";
+import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
+import { MatchingBoard } from "./MatchingBoard";
 import { QuizCard } from "./QuizCard";
 import { SessionResult } from "./SessionResult";
 import { WritingCard } from "./WritingCard";
@@ -71,6 +73,7 @@ function ActiveSession({
     start,
     practiseMistakes,
     answer,
+    answerRound,
   } = useTrainingSession(set.id);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
@@ -159,15 +162,28 @@ function ActiveSession({
         )}
       </div>
       <div key={view.session.position} data-mode={mode}>
-        {renderCard({
-          card,
-          set,
-          direction: view.direction,
-          terms,
-          pool,
-          rng,
-          onAnswer: answer,
-        })}
+        {mode === "matching" ? (
+          // A matching screen covers a whole round, so it answers several words at once.
+          <MatchingBoard
+            set={set}
+            pairs={roundAt(
+              view.session.queue.map((queued) => queued.pair),
+              view.session.position,
+            )}
+            rng={rng}
+            onComplete={answerRound}
+          />
+        ) : (
+          renderCard({
+            card,
+            set,
+            direction: view.direction,
+            terms,
+            pool,
+            rng,
+            onAnswer: answer,
+          })
+        )}
       </div>
     </div>
   );
