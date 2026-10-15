@@ -474,7 +474,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
 
 - [x] **P0 Foundations**: folder structure, `types.ts`, hash router, app shell, i18n (sv/en), light/dark/system theme (`FR-THEME-*`), language/encoding conventions (`FR-LANG-*`), test tooling and `tests/TRACEABILITY.md`, error boundary, `storage/db.ts`.
 - [x] **P1 Sets**: `FR-SET-*`, `FR-ACT-*`, example set, set list/editor screens, tests.
-- [ ] **P2 Core engine**: `shuffle`, `direction`, `checkAnswer`, `spacedRepetition`, `session`, `quiz`, `matching` with unit tests (no UI).
+- [x] **P2 Core engine**: `shuffle`, `direction`, `checkAnswer`, `spacedRepetition`, `session`, `quiz`, `matching` with unit tests (no UI).
 - [ ] **P3 Training shell**: `FR-TRN-*`, mode picker, session end screen, progress persistence.
 - [ ] **P4 Modes**: Flashcards -> Writing -> Quiz -> Matching (one PR each).
 - [ ] **P5 Stats + import/export**: `FR-ST-*`, `FR-IO-*`.

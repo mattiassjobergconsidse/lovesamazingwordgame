@@ -25,5 +25,21 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-SET-9    | P1 done    | `src/core/filterPairs.test.ts`, `tests/editor.test.tsx`                                                                                                            |
 | FR-ACT-1    | P1 done    | `src/core/trainingEligibility.test.ts`, `tests/editor.test.tsx`                                                                                                    |
 | FR-ACT-2    | P1 done    | `tests/sets.test.tsx`, `tests/editor.test.tsx`                                                                                                                     |
+| FR-TRN-2    | P2 core    | `src/core/session.test.ts`, `src/core/shuffle.test.ts` (UI comes in P3)                                                                                            |
+| FR-TRN-3    | P2 core    | `src/core/direction.test.ts`                                                                                                                                       |
+| FR-TRN-4    | P2 core    | `src/core/spacedRepetition.test.ts`, `src/core/session.test.ts` (persistence comes in P3)                                                                          |
+| FR-TRN-5    | P2 core    | `src/core/session.test.ts` (end screen comes in P3)                                                                                                                |
+| FR-TRN-7    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
+| FR-TRN-8    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
+| FR-TRN-9    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
+| FR-WR-2     | P2 core    | `src/core/checkAnswer.test.ts`                                                                                                                                     |
+| FR-WR-3     | P2 core    | `src/core/checkAnswer.test.ts` (diff only)                                                                                                                         |
+| FR-WR-4     | P2 core    | `src/core/checkAnswer.test.ts` (hint text only)                                                                                                                    |
+| FR-QZ-1     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
+| FR-QZ-3     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
+| FR-MT-1     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
+| FR-MT-2     | P2 core    | `src/core/matching.test.ts` (match evaluation only)                                                                                                                |
+| FR-MT-3     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
+| FR-MT-4     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
 
 Requirements not listed here have not been implemented yet.
