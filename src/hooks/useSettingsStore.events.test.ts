@@ -1,13 +1,16 @@
-import { act, renderHook } from "@testing-library/react";
+import { act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DbEventHandlers, WordGameDatabase } from "../storage/db";
 import { openAppDb } from "../storage/db";
-import { useSettingsStore } from "./useSettingsStore";
+import { renderSettingsStore } from "../../tests/renderWithDatabase";
 
 // The database boundary is mocked so lifecycle events can be triggered on demand.
 vi.mock("../storage/db", () => ({
   isIndexedDbAvailable: () => true,
   openAppDb: vi.fn(),
+}));
+vi.mock("../storage/exampleSeed", () => ({
+  seedFirstVisit: vi.fn(() => Promise.resolve(false)),
 }));
 vi.mock("../storage/settingsRepo", () => ({
   loadSettings: vi.fn(() => Promise.resolve(null)),
@@ -33,7 +36,7 @@ afterEach(() => {
 
 describe("useSettingsStore database events", () => {
   it("FR-BP-4: reports a blocked upgrade", async () => {
-    const { result } = renderHook(() => useSettingsStore());
+    const { result } = renderSettingsStore();
 
     await act(async () => {
       await Promise.resolve();
@@ -44,7 +47,7 @@ describe("useSettingsStore database events", () => {
   });
 
   it("FR-BP-4: reports a terminated connection", async () => {
-    const { result } = renderHook(() => useSettingsStore());
+    const { result } = renderSettingsStore();
 
     await act(async () => {
       await Promise.resolve();
@@ -55,7 +58,7 @@ describe("useSettingsStore database events", () => {
   });
 
   it("FR-BP-4: closes the connection when another tab needs an upgrade", async () => {
-    renderHook(() => useSettingsStore());
+    renderSettingsStore();
 
     await act(async () => {
       await Promise.resolve();
@@ -67,7 +70,7 @@ describe("useSettingsStore database events", () => {
   });
 
   it("FR-BP-4: releases the connection on unmount", async () => {
-    const { unmount } = renderHook(() => useSettingsStore());
+    const { unmount } = renderSettingsStore();
     await act(async () => {
       await Promise.resolve();
     });
@@ -82,7 +85,7 @@ describe("useSettingsStore database events", () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     vi.mocked(openAppDb).mockRejectedValue(new Error("open failed"));
 
-    const { result, unmount } = renderHook(() => useSettingsStore());
+    const { result, unmount } = renderSettingsStore();
     await act(async () => {
       await Promise.resolve();
     });
@@ -94,7 +97,7 @@ describe("useSettingsStore database events", () => {
   });
 
   it("ignores a load result that arrives after unmount", async () => {
-    const { unmount } = renderHook(() => useSettingsStore());
+    const { unmount } = renderSettingsStore();
     unmount();
 
     await act(async () => {

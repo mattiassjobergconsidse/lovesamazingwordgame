@@ -1,10 +1,14 @@
 import type { MouseEvent } from "react";
 import { AppErrorBoundary } from "./components/common/AppErrorBoundary";
+import { DatabaseProvider } from "./components/common/DatabaseProvider";
+import { LibraryProvider } from "./components/common/LibraryProvider";
 import { SettingsProvider } from "./components/common/SettingsProvider";
+import { ToastProvider } from "./components/common/ToastProvider";
 import { ActiveSetBar } from "./components/shell/ActiveSetBar";
 import { AppHeader } from "./components/shell/AppHeader";
 import { RouteOutlet } from "./components/shell/RouteOutlet";
 import { StorageBanner } from "./components/shell/StorageBanner";
+import { useDatabase } from "./hooks/useDatabase";
 import { useDocumentPreferences } from "./hooks/useDocumentPreferences";
 import { useSettings } from "./hooks/useSettings";
 import { I18nProvider, useI18n } from "./i18n";
@@ -18,7 +22,7 @@ function focusMain(event: MouseEvent<HTMLAnchorElement>): void {
 
 function Shell() {
   const { t } = useI18n();
-  const { storageError } = useSettings();
+  const { storageError } = useDatabase();
 
   return (
     <>
@@ -41,7 +45,9 @@ function LocalizedShell() {
 
   return (
     <I18nProvider language={settings.uiLanguage}>
-      <Shell />
+      <ToastProvider>
+        <Shell />
+      </ToastProvider>
     </I18nProvider>
   );
 }
@@ -49,8 +55,12 @@ function LocalizedShell() {
 /** Application root: settings, translations, shell and error handling. */
 export function App() {
   return (
-    <SettingsProvider>
-      <LocalizedShell />
-    </SettingsProvider>
+    <DatabaseProvider>
+      <SettingsProvider>
+        <LibraryProvider>
+          <LocalizedShell />
+        </LibraryProvider>
+      </SettingsProvider>
+    </DatabaseProvider>
   );
 }

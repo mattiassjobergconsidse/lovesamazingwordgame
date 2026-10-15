@@ -10,6 +10,7 @@ import {
 } from "../src/storage/preferenceMirror";
 import { loadSettings, saveSettings } from "../src/storage/settingsRepo";
 import { deleteAppDatabase, makeSettings } from "./factories";
+import { seedDatabase } from "./seed";
 
 beforeEach(() => {
   window.location.hash = "";
@@ -84,16 +85,15 @@ describe("app shell", () => {
     expect(window.location.hash).toBe("");
   });
 
-  it("FR-ACT-2: offers to choose a set while none is active", () => {
+  it("FR-ACT-2: offers to choose a set while none is active", async () => {
+    await seedDatabase({});
     render(<App />);
-
     expect(
       screen.getByRole("region", { name: "Active set" }),
     ).toHaveTextContent("No set selected");
-    expect(screen.getByRole("link", { name: "Choose set" })).toHaveAttribute(
-      "href",
-      "#/sets",
-    );
+    expect(
+      screen.getByRole("button", { name: "Choose set" }),
+    ).toBeInTheDocument();
   });
 });
 

@@ -1,0 +1,136 @@
+/* Sets list and set editor. Mobile first; colours only from theme tokens. */
+.sets-screen,
+.editor-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.set-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+.set-form h2 {
+  margin: 0;
+}
+.set-list,
+.picker-list,
+.pair-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.set-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.set-item-name {
+  margin: 0;
+  font-size: 1.125rem;
+}
+.set-item-meta {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.set-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.badge {
+  margin-inline-start: var(--space-2);
+  padding: 0 var(--space-2);
+  font-size: 0.875rem;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius);
+}
+.picker-option {
+  display: flex;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+.picker-option[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  border-width: 2px;
+}
+.picker-meta {
+  color: var(--color-text-muted);
+}
+.empty-state {
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.pair-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 1fr auto;
+  gap: var(--space-2);
+  align-items: center;
+  margin-block-end: var(--space-2);
+}
+.pair-row .text-input {
+  min-inline-size: 0;
+}
+.pair-number {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.pair-warning,
+.pair-hint {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+.pair-warning {
+  color: var(--color-wrong);
+}
+.link-button {
+  padding: 0;
+  font: inherit;
+  color: var(--color-primary);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.bulk-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+.bulk-text {
+  padding-block: var(--space-2);
+  resize: vertical;
+}
+.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+.mode-note {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+@media (min-width: 40rem) {
+  .set-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

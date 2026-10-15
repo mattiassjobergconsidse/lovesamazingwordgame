@@ -1,5 +1,5 @@
 import { useI18n } from "../../i18n";
-import type { StorageErrorKind } from "../../hooks/settingsContext";
+import type { StorageErrorKind } from "../../hooks/databaseContext";
 
 /** Announces a storage problem with a translated message. */
 export function StorageBanner({ error }: { readonly error: StorageErrorKind }) {

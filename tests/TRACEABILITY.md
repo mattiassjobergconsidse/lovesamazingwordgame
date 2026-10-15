@@ -14,6 +14,16 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-BP-2     | P0 done    | `src/components/common/ErrorBoundary.test.tsx`                                                                                                                     |
 | FR-BP-4     | P0 done    | `src/storage/db.test.ts`, `src/hooks/useSettingsStore.test.ts`, `tests/app.test.tsx`                                                                               |
 | FR-BP-11    | P0 done    | `tests/app.test.tsx` (axe on the shell)                                                                                                                            |
-| FR-ACT-2    | P0 partial | `tests/app.test.tsx` (active set bar placeholder; persistence of `activeSetId` is stored in settings)                                                              |
+| FR-SET-1    | P1 done    | `src/core/setValidation.test.ts`, `src/storage/exampleSeed.test.ts`, `tests/sets.test.tsx`                                                                         |
+| FR-SET-2    | P1 done    | `tests/sets.test.tsx`                                                                                                                                              |
+| FR-SET-3    | P1 done    | `src/storage/libraryRepos.test.ts`, `src/hooks/useLibraryStore.test.tsx`, `tests/sets.test.tsx`                                                                    |
+| FR-SET-4    | P1 done    | `src/core/setValidation.test.ts`, `src/storage/libraryRepos.test.ts`, `tests/sets.test.tsx`                                                                        |
+| FR-SET-5    | P1 done    | `src/core/setSummary.test.ts`, `tests/sets.test.tsx`                                                                                                               |
+| FR-SET-6    | P1 done    | `src/core/pairText.test.ts`, `src/hooks/useLibraryStore.test.tsx`, `src/components/common/ToastProvider.test.tsx`, `tests/editor.test.tsx`                         |
+| FR-SET-7    | P1 done    | `src/core/pairText.test.ts`, `tests/editor.test.tsx`                                                                                                               |
+| FR-SET-8    | P1 done    | `src/core/bulkParse.test.ts`, `tests/editor.test.tsx`                                                                                                              |
+| FR-SET-9    | P1 done    | `src/core/filterPairs.test.ts`, `tests/editor.test.tsx`                                                                                                            |
+| FR-ACT-1    | P1 done    | `src/core/trainingEligibility.test.ts`, `tests/editor.test.tsx`                                                                                                    |
+| FR-ACT-2    | P1 done    | `tests/sets.test.tsx`, `tests/editor.test.tsx`                                                                                                                     |
 
 Requirements not listed here have not been implemented yet.

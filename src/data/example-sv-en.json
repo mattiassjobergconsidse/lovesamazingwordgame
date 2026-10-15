@@ -1,0 +1,27 @@
+{
+  "name": "Exempel: Vardagsord",
+  "langA": "Svenska",
+  "langB": "English",
+  "pairs": [
+    { "a": "hund", "b": "dog" },
+    { "a": "katt", "b": "cat" },
+    { "a": "häst", "b": "horse" },
+    { "a": "fisk", "b": "fish" },
+    { "a": "fågel", "b": "bird" },
+    { "a": "hus", "b": "house" },
+    { "a": "bil", "b": "car" },
+    { "a": "bok", "b": "book" },
+    { "a": "bord", "b": "table" },
+    { "a": "stol", "b": "chair" },
+    { "a": "fönster", "b": "window" },
+    { "a": "dörr", "b": "door" },
+    { "a": "vatten", "b": "water" },
+    { "a": "mjölk", "b": "milk" },
+    { "a": "bröd", "b": "bread" },
+    { "a": "äpple", "b": "apple" },
+    { "a": "stor", "b": "big", "altB": ["large"] },
+    { "a": "liten", "b": "small", "altB": ["little"] },
+    { "a": "glad", "b": "happy", "altB": ["glad"] },
+    { "a": "vän", "b": "friend" }
+  ]
+}
