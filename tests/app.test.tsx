@@ -166,6 +166,8 @@ describe("language", () => {
 describe("storage problems", () => {
   it("FR-BP-4: tells the user when storage is unavailable", () => {
     vi.stubGlobal("indexedDB", undefined);
+    localStorage.clear();
+    vi.spyOn(navigator, "language", "get").mockReturnValue("en");
 
     render(<App />);
 

@@ -40,13 +40,15 @@ describe("preference mirror", () => {
   });
 
   it("reports false when the write fails", () => {
-    vi.spyOn(localStorage, "setItem").mockImplementation(() => {
-      throw new DOMException("full", "QuotaExceededError");
-    });
+    const failing = {
+      setItem: vi.fn(() => {
+        throw new DOMException("full", "QuotaExceededError");
+      }),
+    } as unknown as Storage;
 
-    expect(writePreferenceMirror({ theme: "light", uiLanguage: "sv" })).toBe(
-      false,
-    );
+    expect(
+      writePreferenceMirror({ theme: "light", uiLanguage: "sv" }, failing),
+    ).toBe(false);
   });
 });
 
