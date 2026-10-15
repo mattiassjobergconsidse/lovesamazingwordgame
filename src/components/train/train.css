@@ -1,0 +1,65 @@
+/* Training session shell: start panel, running session, result. Mobile first; colours only from theme tokens. */
+.session,
+.session-start,
+.session-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.session-header h1 {
+  margin: 0;
+}
+.session-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.session-progress progress {
+  flex: 1;
+  accent-color: var(--color-primary);
+}
+.session-repeat {
+  padding-inline: var(--space-2);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.session-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+.session-card-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+.session-card-term {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.session-card-actions,
+.session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.session-result-score {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.session-review-list {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+}
