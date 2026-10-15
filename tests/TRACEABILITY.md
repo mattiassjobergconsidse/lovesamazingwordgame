@@ -41,5 +41,8 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-MT-2     | P2 core    | `src/core/matching.test.ts` (match evaluation only)                                                                                                                |
 | FR-MT-3     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
 | FR-MT-4     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
+| FR-FC-1     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
+| FR-FC-2     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
+| FR-FC-3     | P4 done    | `tests/training.test.tsx`                                                                                                                                          |
 
 Requirements not listed here have not been implemented yet.

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { routeToHash, useRoute, type Route } from "../../router";
 import type { MessageKey } from "../../i18n";
+import { AppErrorBoundary } from "../common/AppErrorBoundary";
 import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
 import { TrainGate } from "../train/TrainGate";
@@ -24,11 +25,9 @@ function renderScreen(route: Route) {
     case "trainMode":
       return (
         <TrainGate title={titleFor(route)} mode={route.mode}>
-          <TrainSession
-            key={route.mode}
-            title={titleFor(route)}
-            mode={route.mode}
-          />
+          <AppErrorBoundary key={route.mode}>
+            <TrainSession title={titleFor(route)} mode={route.mode} />
+          </AppErrorBoundary>
         </TrainGate>
       );
     case "home":

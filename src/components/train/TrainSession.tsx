@@ -8,6 +8,7 @@ import { navigate, type TrainMode } from "../../router";
 import type { WordSet } from "../../types";
 import "../common/common.css";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
+import { FlashCard } from "./FlashCard";
 import { SessionResult } from "./SessionResult";
 import "./train.css";
 
@@ -26,11 +27,20 @@ function defaultRenderCard(props: ModeCardProps): ReactNode {
   return <BasicCard {...props} />;
 }
 
+function renderFlashCard(props: ModeCardProps): ReactNode {
+  return <FlashCard {...props} />;
+}
+
+/** Modes without their own card yet fall back to the generic card. */
+function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
+  return mode === "flashcards" ? renderFlashCard : defaultRenderCard;
+}
+
 function ActiveSession({
   set,
   title,
   mode,
-  renderCard = defaultRenderCard,
+  renderCard = cardRendererFor(mode),
 }: ActiveSessionProps) {
   const { t, tp } = useI18n();
   const {

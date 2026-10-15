@@ -63,3 +63,46 @@
   margin: 0;
   padding-inline-start: var(--space-4);
 }
+.flashcard-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.flashcard {
+  display: grid;
+  min-block-size: 12rem;
+  cursor: pointer;
+  touch-action: pan-y;
+  transform-style: preserve-3d;
+  transition: transform 250ms ease;
+}
+.flashcard[data-flipped="true"] {
+  transform: perspective(60rem) rotateY(180deg);
+}
+.flashcard-face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  backface-visibility: hidden;
+}
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+.key-hint {
+  margin-inline-start: var(--space-2);
+  padding-inline: var(--space-1);
+  font-size: 0.75rem;
+  border: 1px solid currentcolor;
+  border-radius: var(--radius);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flashcard {
+    transition: none;
+  }
+}
