@@ -9,6 +9,7 @@ import type { WordSet } from "../../types";
 import "../common/common.css";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
+import { QuizCard } from "./QuizCard";
 import { SessionResult } from "./SessionResult";
 import { WritingCard } from "./WritingCard";
 import "./train.css";
@@ -32,6 +33,9 @@ function renderFlashCard(props: ModeCardProps): ReactNode {
   return <FlashCard {...props} />;
 }
 
+function renderQuizCard(props: ModeCardProps): ReactNode {
+  return <QuizCard {...props} />;
+}
 function renderWritingCard(props: ModeCardProps): ReactNode {
   return <WritingCard {...props} />;
 }
@@ -44,6 +48,7 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
     case "writing":
       return renderWritingCard;
     case "quiz":
+      return renderQuizCard;
     case "matching":
       return defaultRenderCard;
   }
@@ -61,6 +66,8 @@ function ActiveSession({
     plannedCount,
     extraPractice,
     card,
+    pool,
+    rng,
     start,
     practiseMistakes,
     answer,
@@ -157,6 +164,8 @@ function ActiveSession({
           set,
           direction: view.direction,
           terms,
+          pool,
+          rng,
           onAnswer: answer,
         })}
       </div>

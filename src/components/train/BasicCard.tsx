@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { CardTerms } from "../../core/direction";
 import type { SessionCard } from "../../core/session";
+import type { Rng } from "../../core/shuffle";
 import { useI18n } from "../../i18n";
-import type { Direction, WordSet } from "../../types";
+import type { Direction, WordPair, WordSet } from "../../types";
 
 /** What every training mode receives for the card it has to present. */
 export interface ModeCardProps {
@@ -10,6 +11,9 @@ export interface ModeCardProps {
   readonly set: WordSet;
   readonly direction: Direction;
   readonly terms: CardTerms;
+  /** All pairs of the set, for modes that need other words (Quiz distractors). */
+  readonly pool: readonly WordPair[];
+  readonly rng: Rng;
   /** Reports the result; the shell saves progress and advances. */
   readonly onAnswer: (result: "correct" | "wrong" | "assisted") => void;
 }

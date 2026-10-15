@@ -36,8 +36,9 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-WR-2     | P4 done    | `src/core/checkAnswer.test.ts`, `tests/writing.test.tsx`                                                                                                           |
 | FR-WR-3     | P4 done    | `src/core/checkAnswer.test.ts`, `tests/writing.test.tsx`                                                                                                           |
 | FR-WR-4     | P4 done    | `src/core/checkAnswer.test.ts`, `src/core/writingResult.test.ts`, `tests/writing.test.tsx`                                                                         |
-| FR-QZ-1     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
-| FR-QZ-3     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
+| FR-QZ-1     | P4 done    | `src/core/quiz.test.ts`, `tests/quiz.test.tsx`                                                                                                                     |
+| FR-QZ-2     | P4 done    | `tests/quiz.test.tsx`                                                                                                                                              |
+| FR-QZ-3     | P4 done    | `src/core/quiz.test.ts`, `tests/quiz.test.tsx`                                                                                                                     |
 | FR-MT-1     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
 | FR-MT-2     | P2 core    | `src/core/matching.test.ts` (match evaluation only)                                                                                                                |
 | FR-MT-3     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |

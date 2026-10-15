@@ -52,6 +52,10 @@ export interface TrainingSession {
   readonly extraPractice: boolean;
   /** The card to answer now, or `null` when not running. */
   readonly card: SessionCard | null;
+  /** All pairs of the set; modes such as Quiz draw distractors from them. */
+  readonly pool: readonly WordPair[];
+  /** The random source of this session, for modes that shuffle per card. */
+  readonly rng: Rng;
   /** Builds a session from the whole set in spaced-repetition order and starts it. */
   readonly start: () => void;
   /** Starts a new session with only the words answered wrongly (FR-TRN-5). */
@@ -162,6 +166,8 @@ export function useTrainingSession(
         : Math.min(sessionSize, setPairs.length),
     extraPractice: isExtraPractice(setPairs, progressByPair, openedAt),
     card: view.status === "running" ? currentCard(view.session) : null,
+    pool: setPairs,
+    rng,
     start,
     practiseMistakes,
     answer,

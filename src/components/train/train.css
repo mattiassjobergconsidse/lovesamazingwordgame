@@ -159,3 +159,26 @@
     animation: none;
   }
 }
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.quiz-option {
+  inline-size: 100%;
+  justify-content: flex-start;
+  text-align: start;
+}
+.quiz-option[data-state="correct"] {
+  color: var(--color-on-primary);
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+}
+.quiz-option[data-state="wrong"] {
+  color: var(--color-on-primary);
+  background: var(--color-wrong);
+  border-color: var(--color-wrong);
+}
