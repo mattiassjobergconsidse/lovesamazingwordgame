@@ -10,6 +10,7 @@ import "../common/common.css";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
 import { SessionResult } from "./SessionResult";
+import { WritingCard } from "./WritingCard";
 import "./train.css";
 
 interface TrainSessionProps {
@@ -31,9 +32,21 @@ function renderFlashCard(props: ModeCardProps): ReactNode {
   return <FlashCard {...props} />;
 }
 
+function renderWritingCard(props: ModeCardProps): ReactNode {
+  return <WritingCard {...props} />;
+}
+
 /** Modes without their own card yet fall back to the generic card. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
-  return mode === "flashcards" ? renderFlashCard : defaultRenderCard;
+  switch (mode) {
+    case "flashcards":
+      return renderFlashCard;
+    case "writing":
+      return renderWritingCard;
+    case "quiz":
+    case "matching":
+      return defaultRenderCard;
+  }
 }
 
 function ActiveSession({
@@ -59,7 +72,11 @@ function ActiveSession({
   useEffect(() => {
     // Keyboard and screen reader users land on the new phase's heading.
     if (previousStatus.current !== view.status) {
-      containerRef.current?.querySelector("h1")?.focus();
+      // A mode card may already have focused its own control (e.g. the Writing input).
+      const container = containerRef.current;
+      if (!container?.contains(document.activeElement)) {
+        container?.querySelector("h1")?.focus();
+      }
       previousStatus.current = view.status;
     }
   }, [view.status]);

@@ -32,9 +32,10 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-TRN-7    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
 | FR-TRN-8    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
 | FR-TRN-9    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
-| FR-WR-2     | P2 core    | `src/core/checkAnswer.test.ts`                                                                                                                                     |
-| FR-WR-3     | P2 core    | `src/core/checkAnswer.test.ts` (diff only)                                                                                                                         |
-| FR-WR-4     | P2 core    | `src/core/checkAnswer.test.ts` (hint text only)                                                                                                                    |
+| FR-WR-1     | P4 done    | `tests/writing.test.tsx`                                                                                                                                           |
+| FR-WR-2     | P4 done    | `src/core/checkAnswer.test.ts`, `tests/writing.test.tsx`                                                                                                           |
+| FR-WR-3     | P4 done    | `src/core/checkAnswer.test.ts`, `tests/writing.test.tsx`                                                                                                           |
+| FR-WR-4     | P4 done    | `src/core/checkAnswer.test.ts`, `src/core/writingResult.test.ts`, `tests/writing.test.tsx`                                                                         |
 | FR-QZ-1     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
 | FR-QZ-3     | P2 core    | `src/core/quiz.test.ts`                                                                                                                                            |
 | FR-MT-1     | P2 core    | `src/core/matching.test.ts`                                                                                                                                        |
