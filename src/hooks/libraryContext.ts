@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import type { BulkParsedPair } from "../core/bulkParse";
 import type { SetFieldErrors, SetFields } from "../core/setValidation";
-import type { WordPair, WordProgress, WordSet } from "../types";
+import type { AnswerResult, WordPair, WordProgress, WordSet } from "../types";
 
 /** Result of creating or editing a set: validation problems are data, not exceptions. */
 export type SetResult =
@@ -45,6 +45,15 @@ export interface Library {
   /** Removes a pair; returns what Undo needs, or `null` for an unknown id. */
   readonly removePair: (pairId: string) => RemovedPair | null;
   readonly restorePair: (removed: RemovedPair) => void;
+  /**
+   * Applies the first answer to a word to its progress and the daily activity,
+   * and writes both through right away (FR-TRN-4).
+   */
+  readonly recordAnswer: (
+    pair: WordPair,
+    result: AnswerResult,
+    now: number,
+  ) => void;
 }
 
 export const LibraryContext = createContext<Library | null>(null);

@@ -5,6 +5,7 @@ import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
 import { TrainGate } from "../train/TrainGate";
 import { TrainScreen } from "../train/TrainScreen";
+import { TrainSession } from "../train/TrainSession";
 import { ScreenPlaceholder } from "./ScreenPlaceholder";
 
 /** Chooses the screen for a route; unfinished screens show a placeholder. */
@@ -23,7 +24,11 @@ function renderScreen(route: Route) {
     case "trainMode":
       return (
         <TrainGate title={titleFor(route)} mode={route.mode}>
-          <ScreenPlaceholder title={titleFor(route)} />
+          <TrainSession
+            key={route.mode}
+            title={titleFor(route)}
+            mode={route.mode}
+          />
         </TrainGate>
       );
     case "home":

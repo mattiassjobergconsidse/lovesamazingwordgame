@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { BulkParsedPair } from "../core/bulkParse";
+import { localDateKey } from "../core/activity";
 import { parseTerms } from "../core/pairText";
 import {
   makeUniqueName,
@@ -7,12 +8,14 @@ import {
   validateSetFields,
   type SetFields,
 } from "../core/setValidation";
+import { applyResult, createProgress } from "../core/spacedRepetition";
 import { isIndexedDbAvailable, type WordGameDatabase } from "../storage/db";
 import {
   deletePairWithProgress,
   putPairs,
   restorePairWithProgress,
 } from "../storage/pairsRepo";
+import { saveAnswer } from "../storage/progressRepo";
 import {
   deleteSetCascade,
   loadLibrary,
@@ -20,7 +23,7 @@ import {
   putSetWithPairs,
   type LibrarySnapshot,
 } from "../storage/setsRepo";
-import type { WordPair, WordSet } from "../types";
+import type { AnswerResult, WordPair, WordSet } from "../types";
 import type {
   Library,
   PairInput,
@@ -339,6 +342,31 @@ export function useLibraryStore(): Library {
     [commit, persist],
   );
 
+  const recordAnswer = useCallback(
+    (pair: WordPair, result: AnswerResult, now: number) => {
+      const current = dataRef.current;
+      const previous =
+        current.progress.find((record) => record.pairId === pair.id) ??
+        createProgress(pair);
+      const updated = applyResult(previous, result, now);
+      const exists = current.progress.some(
+        (record) => record.pairId === pair.id,
+      );
+      commit({
+        ...current,
+        progress: exists
+          ? current.progress.map((record) =>
+              record.pairId === pair.id ? updated : record,
+            )
+          : [...current.progress, updated],
+      });
+      persist((database) =>
+        saveAnswer(database, updated, localDateKey(now), result),
+      );
+    },
+    [commit, persist],
+  );
+
   return useMemo(
     () => ({
       status,
@@ -354,6 +382,7 @@ export function useLibraryStore(): Library {
       updatePair,
       removePair,
       restorePair,
+      recordAnswer,
     }),
     [
       status,
@@ -367,6 +396,7 @@ export function useLibraryStore(): Library {
       updatePair,
       removePair,
       restorePair,
+      recordAnswer,
     ],
   );
 }

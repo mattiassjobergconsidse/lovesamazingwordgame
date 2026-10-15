@@ -25,10 +25,10 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-SET-9    | P1 done    | `src/core/filterPairs.test.ts`, `tests/editor.test.tsx`                                                                                                            |
 | FR-ACT-1    | P1 done    | `src/core/trainingEligibility.test.ts`, `tests/editor.test.tsx`                                                                                                    |
 | FR-ACT-2    | P1 done    | `tests/sets.test.tsx`, `tests/editor.test.tsx`                                                                                                                     |
-| FR-TRN-2    | P2 core    | `src/core/session.test.ts`, `src/core/shuffle.test.ts` (UI comes in P3)                                                                                            |
+| FR-TRN-2    | P2 core    | `src/core/session.test.ts`, `src/core/shuffle.test.ts` `tests/training.test.tsx`                                                                                   |
 | FR-TRN-3    | P2 core    | `src/core/direction.test.ts`                                                                                                                                       |
-| FR-TRN-4    | P2 core    | `src/core/spacedRepetition.test.ts`, `src/core/session.test.ts` (persistence comes in P3)                                                                          |
-| FR-TRN-5    | P2 core    | `src/core/session.test.ts` (end screen comes in P3)                                                                                                                |
+| FR-TRN-4    | P2 core    | `src/core/spacedRepetition.test.ts`, `src/core/session.test.ts` `src/storage/progressRepo.test.ts`, `tests/training.test.tsx`                                      |
+| FR-TRN-5    | P2 core    | `src/core/session.test.ts` `tests/training.test.tsx`                                                                                                               |
 | FR-TRN-7    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
 | FR-TRN-8    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
 | FR-TRN-9    | P2 core    | `src/core/session.test.ts`                                                                                                                                         |
