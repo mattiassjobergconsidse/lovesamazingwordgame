@@ -11,11 +11,12 @@ import {
   hintPrefix,
   type AnswerCheck,
 } from "../../core/checkAnswer";
-import { acceptedAnswers } from "../../core/direction";
+import { acceptedAnswers, speechCodesFor } from "../../core/direction";
 import { resolveWritingResult } from "../../core/writingResult";
 import { useSettings } from "../../hooks/useSettings";
 import { useI18n } from "../../i18n";
 import type { AnswerResult } from "../../types";
+import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
 /** How long a correct answer stays on screen before the next card (FR-WR-3). */
@@ -93,6 +94,12 @@ export function WritingCard({
         {t("train.card.promptLabel", { lang: promptLanguage })}
       </p>
       <p className="session-card-term">{terms.prompt}</p>
+      <SpeakButton
+        text={terms.prompt}
+        lang={speechCodesFor(set, direction).prompt}
+        autoPlay
+      />
+
       <label className="session-card-label" htmlFor="writing-answer">
         {t("train.writing.answerLabel", { lang: answerLanguage })}
       </label>

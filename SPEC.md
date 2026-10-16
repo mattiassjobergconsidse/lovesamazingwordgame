@@ -335,7 +335,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 
 1. **PWA / offline** (`NH-1`, done): web manifest, app icons, service worker that precaches the build so the app works offline and is installable.
    Ask before adding `vite-plugin-pwa`; a hand-written service worker is the default. AC: Lighthouse PWA installable; works in airplane mode after first load.
-2. **Pronunciation** (`NH-2`): speaker button on cards using the Web Speech API (`speechSynthesis`). Voice language is taken from a BCP-47 tag
+2. **Pronunciation** (`NH-2`, done): speaker button on cards using the Web Speech API (`speechSynthesis`). Voice language is taken from a BCP-47 tag
    stored on the set (`langACode`, `langBCode`, already in the schema; picked from a dropdown of available voices).
    Wrap in `storage/speech.ts`; hide the button if unsupported. Optional auto-play when a card shows.
 3. **Theme polish** (`NH-3`): light/dark selection itself is a must-have (`FR-THEME-*`); this item is extra polish only (smooth colour transitions, additional accent colour choices).

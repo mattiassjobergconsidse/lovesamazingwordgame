@@ -191,6 +191,41 @@ export function useLibraryStore(): Library {
     [commit, persist],
   );
 
+  const updateSpeechLanguages = useCallback(
+    (
+      id: string,
+      codes: {
+        readonly langACode: string | null;
+        readonly langBCode: string | null;
+      },
+    ) => {
+      const current = dataRef.current;
+      const existing = current.sets.find((set) => set.id === id);
+      if (existing === undefined) {
+        return;
+      }
+      // Keys are left out (not set to undefined) when a tag is removed.
+      const set: WordSet = {
+        id: existing.id,
+        name: existing.name,
+        langA: existing.langA,
+        langB: existing.langB,
+        ...(codes.langACode === null ? {} : { langACode: codes.langACode }),
+        ...(codes.langBCode === null ? {} : { langBCode: codes.langBCode }),
+        createdAt: existing.createdAt,
+        updatedAt: Date.now(),
+      };
+      commit({
+        ...current,
+        sets: current.sets.map((candidate) =>
+          candidate.id === id ? set : candidate,
+        ),
+      });
+      persist((database) => putSet(database, set));
+    },
+    [commit, persist],
+  );
+
   const duplicateSet = useCallback(
     (id: string, baseName: string): WordSet | null => {
       const current = dataRef.current;
@@ -407,6 +442,7 @@ export function useLibraryStore(): Library {
       activity: data.activity,
       createSet,
       updateSet,
+      updateSpeechLanguages,
       duplicateSet,
       deleteSet,
       addPair,
@@ -423,6 +459,7 @@ export function useLibraryStore(): Library {
       reload,
       createSet,
       updateSet,
+      updateSpeechLanguages,
       duplicateSet,
       deleteSet,
       addPair,

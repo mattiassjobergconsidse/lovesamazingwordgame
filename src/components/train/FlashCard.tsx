@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { acceptedAnswers } from "../../core/direction";
+import { acceptedAnswers, speechCodesFor } from "../../core/direction";
 import {
   flashcardActionForKey,
   gradeFromSwipe,
 } from "../../core/flashcardInput";
 import { useI18n } from "../../i18n";
+import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
 interface SwipeStart {
@@ -24,6 +25,7 @@ export function FlashCard({ set, direction, terms, onAnswer }: ModeCardProps) {
   const swipeStart = useRef<SwipeStart | null>(null);
   const promptLanguage = direction === "AtoB" ? set.langA : set.langB;
   const answerLanguage = direction === "AtoB" ? set.langB : set.langA;
+  const codes = speechCodesFor(set, direction);
 
   useEffect(() => {
     // Moves focus to the answer so screen readers read it and Space cannot grade by accident.
@@ -96,6 +98,7 @@ export function FlashCard({ set, direction, terms, onAnswer }: ModeCardProps) {
             {t("train.card.promptLabel", { lang: promptLanguage })}
           </p>
           <p className="session-card-term">{terms.prompt}</p>
+          <SpeakButton text={terms.prompt} lang={codes.prompt} autoPlay />
         </div>
         <div
           ref={backRef}
@@ -110,6 +113,7 @@ export function FlashCard({ set, direction, terms, onAnswer }: ModeCardProps) {
           <p className="session-card-term">
             {acceptedAnswers(terms).join(" / ")}
           </p>
+          <SpeakButton text={terms.answer} lang={codes.answer} />
         </div>
       </div>
       {flipped ? (

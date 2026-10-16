@@ -43,6 +43,14 @@ export interface Library {
   readonly reload: () => Promise<void>;
   readonly createSet: (fields: SetFields) => SetResult;
   readonly updateSet: (id: string, fields: SetFields) => SetResult;
+  /** Sets the voice language tags used for pronunciation (NH-2); `null` removes a tag. */
+  readonly updateSpeechLanguages: (
+    id: string,
+    codes: {
+      readonly langACode: string | null;
+      readonly langBCode: string | null;
+    },
+  ) => void;
   /** Copies a set without progress; `baseName` is made unique. Returns `null` for an unknown id. */
   readonly duplicateSet: (id: string, baseName: string) => WordSet | null;
   /** Deletes a set with all its data; clears the active set if it was the one deleted. */

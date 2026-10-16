@@ -1,4 +1,4 @@
-import type { Direction, DirectionMode, WordPair } from "../types";
+import type { Direction, DirectionMode, WordPair, WordSet } from "../types";
 import type { Rng } from "./shuffle";
 
 /**
@@ -38,4 +38,17 @@ export function termsFor(pair: WordPair, direction: Direction): CardTerms {
 /** The main answer followed by its alternatives; the first entry is the main term. */
 export function acceptedAnswers(terms: CardTerms): readonly string[] {
   return [terms.answer, ...terms.alternatives];
+}
+
+/** The voice language tags (NH-2) of the prompt and answer side; `undefined` when the set has none. */
+export function speechCodesFor(
+  set: Pick<WordSet, "langACode" | "langBCode">,
+  direction: Direction,
+): {
+  readonly prompt: string | undefined;
+  readonly answer: string | undefined;
+} {
+  return direction === "AtoB"
+    ? { prompt: set.langACode, answer: set.langBCode }
+    : { prompt: set.langBCode, answer: set.langACode };
 }

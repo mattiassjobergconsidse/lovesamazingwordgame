@@ -9,6 +9,7 @@ import { ExportPanel } from "../data/ExportPanel";
 import { BulkAddPanel } from "./BulkAddPanel";
 import { PairTable } from "./PairTable";
 import { SetFieldsForm } from "./SetFieldsForm";
+import { SpeechLanguageFields } from "./SpeechLanguageFields";
 import "./sets.css";
 
 /** Search is offered once a set is big enough to need it (FR-SET-9). */
@@ -22,6 +23,7 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
     sets,
     pairs,
     updateSet,
+    updateSpeechLanguages,
     addPair,
     addParsedPairs,
     updatePair,
@@ -97,6 +99,13 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
           onChange={handleDetailsChange}
         />
       </section>
+
+      <SpeechLanguageFields
+        set={set}
+        onChange={(codes) => {
+          updateSpeechLanguages(id, codes);
+        }}
+      />
 
       <section aria-labelledby="editor-words-heading">
         <h2 id="editor-words-heading">{t("editor.words")}</h2>
