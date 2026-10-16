@@ -1,0 +1,79 @@
+/* Statistics screen. Mobile first; colours only from theme tokens. */
+.stats-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+.stats-figure {
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+.stats-figure dt {
+  color: var(--color-text-muted);
+}
+.stats-figure dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.stats-empty {
+  color: var(--color-text-muted);
+}
+.hard-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding-inline-start: var(--space-4);
+}
+.hard-list li {
+  padding-inline-start: var(--space-1);
+}
+.hard-score {
+  margin-inline-start: var(--space-2);
+  color: var(--color-text-muted);
+}
+.activity-chart {
+  margin: 0;
+}
+.activity-chart svg {
+  inline-size: 100%;
+  block-size: 6rem;
+}
+.chart-bar-answered {
+  fill: var(--color-border);
+}
+.chart-bar-correct {
+  fill: var(--color-correct);
+}
+.chart-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+.chart-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.chart-swatch {
+  display: inline-block;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  margin-inline-start: var(--space-2);
+}
+.chart-swatch-answered {
+  background: var(--color-border);
+}
+.chart-swatch-correct {
+  background: var(--color-correct);
+}

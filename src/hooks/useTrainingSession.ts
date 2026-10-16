@@ -13,6 +13,7 @@ import {
   type SessionState,
 } from "../core/session";
 import type { Rng } from "../core/shuffle";
+import { hardestWords } from "../core/stats";
 import type { AnswerResult, Direction, WordPair, WordProgress } from "../types";
 import { useLibrary } from "./useLibrary";
 import { useSettings } from "./useSettings";
@@ -43,6 +44,9 @@ const DEFAULT_ENVIRONMENT: TrainingEnvironment = {
   now: () => Date.now(),
   rng: () => Math.random(),
 };
+
+/** Which words a session draws from: the whole set or only its hardest words (FR-ST-2). */
+export type TrainingFocus = "all" | "hardest";
 
 /** State and actions of one training session of the active set. */
 export interface TrainingSession {
@@ -78,11 +82,13 @@ export interface TrainingSession {
  *
  * @param setId The set to practise; all of its words take part.
  * @param environment Clock and random source; defaults to the real ones.
+ * @param focus "hardest" limits sessions to the set's hardest words.
  * @throws If used outside the settings and library providers.
  */
 export function useTrainingSession(
   setId: string,
   environment: TrainingEnvironment = DEFAULT_ENVIRONMENT,
+  focus: TrainingFocus = "all",
 ): TrainingSession {
   const { now, rng } = environment;
   const { pairs, progress, recordAnswer } = useLibrary();
@@ -96,6 +102,13 @@ export function useTrainingSession(
   const setPairs = useMemo(
     () => pairs.filter((pair) => pair.setId === setId),
     [pairs, setId],
+  );
+  const sessionPairs = useMemo(
+    () =>
+      focus === "hardest"
+        ? hardestWords(setPairs, progress).map((hard) => hard.pair)
+        : setPairs,
+    [focus, setPairs, progress],
   );
   const progressByPair = useMemo(
     () =>
@@ -119,13 +132,13 @@ export function useTrainingSession(
 
   const start = useCallback(() => {
     begin(
-      buildSessionQueue(setPairs, progressByPair, {
+      buildSessionQueue(sessionPairs, progressByPair, {
         size: sessionSize,
         now: now(),
         rng,
       }),
     );
-  }, [begin, setPairs, progressByPair, sessionSize, now, rng]);
+  }, [begin, sessionPairs, progressByPair, sessionSize, now, rng]);
 
   const practiseMistakes = useCallback(() => {
     if (view.status === "finished") {
@@ -199,9 +212,10 @@ export function useTrainingSession(
     view,
     plannedCount:
       sessionSize === "all"
-        ? setPairs.length
-        : Math.min(sessionSize, setPairs.length),
-    extraPractice: isExtraPractice(setPairs, progressByPair, openedAt),
+        ? sessionPairs.length
+        : Math.min(sessionSize, sessionPairs.length),
+    extraPractice:
+      focus === "all" && isExtraPractice(setPairs, progressByPair, openedAt),
     card: view.status === "running" ? currentCard(view.session) : null,
     pool: setPairs,
     rng,

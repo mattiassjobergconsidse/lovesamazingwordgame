@@ -15,7 +15,12 @@ export type Route =
   | { readonly name: "sets" }
   | { readonly name: "setEditor"; readonly id: string }
   | { readonly name: "train" }
-  | { readonly name: "trainMode"; readonly mode: TrainMode }
+  | {
+      readonly name: "trainMode";
+      readonly mode: TrainMode;
+      /** Practise only the hardest words of the set (FR-ST-2). */
+      readonly focus?: "hardest";
+    }
   | { readonly name: "stats" }
   | { readonly name: "settings" };
 
@@ -36,9 +41,9 @@ export function parseRoute(hash: string): Route {
     .replace(/^#\/?/, "")
     .split("/")
     .filter((segment) => segment !== "");
-  const [first, second, ...rest] = segments;
+  const [first, second, third, ...rest] = segments;
 
-  if (rest.length > 0) {
+  if (rest.length > 0 || (third !== undefined && first !== "train")) {
     return HOME;
   }
   switch (first) {
@@ -50,7 +55,7 @@ export function parseRoute(hash: string): Route {
       if (second === undefined) {
         return { name: "train" };
       }
-      return isTrainMode(second) ? { name: "trainMode", mode: second } : HOME;
+      return parseTrainMode(second, third);
     case "stats":
       return second === undefined ? { name: "stats" } : HOME;
     case "settings":
@@ -58,6 +63,18 @@ export function parseRoute(hash: string): Route {
     default:
       return HOME;
   }
+}
+
+function parseTrainMode(
+  mode: string | undefined,
+  focus: string | undefined,
+): Route {
+  if (!isTrainMode(mode) || (focus !== undefined && focus !== "hardest")) {
+    return HOME;
+  }
+  return focus === undefined
+    ? { name: "trainMode", mode }
+    : { name: "trainMode", mode, focus };
 }
 
 function parseSetEditor(encodedId: string): Route {
@@ -85,7 +102,9 @@ export function routeToHash(route: Route): string {
     case "train":
       return "#/train";
     case "trainMode":
-      return `#/train/${route.mode}`;
+      return route.focus === undefined
+        ? `#/train/${route.mode}`
+        : `#/train/${route.mode}/${route.focus}`;
     case "stats":
       return "#/stats";
     case "settings":

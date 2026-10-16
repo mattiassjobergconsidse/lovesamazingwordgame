@@ -2,7 +2,10 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
 import { useActiveSet } from "../../hooks/useActiveSet";
-import { useTrainingSession } from "../../hooks/useTrainingSession";
+import {
+  useTrainingSession,
+  type TrainingFocus,
+} from "../../hooks/useTrainingSession";
 import { useI18n, type MessageKey } from "../../i18n";
 import { navigate, type TrainMode } from "../../router";
 import type { WordSet } from "../../types";
@@ -19,6 +22,8 @@ import "./train.css";
 interface TrainSessionProps {
   readonly title: MessageKey;
   readonly mode: TrainMode;
+  /** "hardest" practises only the set's hardest words (FR-ST-2). */
+  readonly focus?: TrainingFocus;
   /** Renders the card of a mode; defaults to the generic reveal-and-grade card. */
   readonly renderCard?: (props: ModeCardProps) => ReactNode;
 }
@@ -60,6 +65,7 @@ function ActiveSession({
   set,
   title,
   mode,
+  focus = "all",
   renderCard = cardRendererFor(mode),
 }: ActiveSessionProps) {
   const { t, tp } = useI18n();
@@ -74,7 +80,7 @@ function ActiveSession({
     practiseMistakes,
     answer,
     answerRound,
-  } = useTrainingSession(set.id);
+  } = useTrainingSession(set.id, undefined, focus);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
   const running = view.status === "running";
@@ -127,9 +133,13 @@ function ActiveSession({
         <p>{set.name}</p>
         <p>{tp("train.session.size", plannedCount)}</p>
         {extraPractice && <p>{t("train.session.extra")}</p>}
-        <button type="button" className="button" onClick={start}>
-          {t("train.session.start")}
-        </button>
+        {plannedCount === 0 ? (
+          <p>{t("train.session.noHardWords")}</p>
+        ) : (
+          <button type="button" className="button" onClick={start}>
+            {t("train.session.start")}
+          </button>
+        )}
       </div>
     );
   }

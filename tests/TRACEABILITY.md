@@ -46,5 +46,12 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-FC-1     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
 | FR-FC-2     | P4 done    | `src/core/flashcardInput.test.ts`, `tests/training.test.tsx`                                                                                                       |
 | FR-FC-3     | P4 done    | `tests/training.test.tsx`                                                                                                                                          |
+| FR-ST-1     | P5 done    | `src/core/stats.test.ts`, `tests/stats.test.tsx`                                                                                                                   |
+| FR-ST-2     | P5 done    | `src/core/stats.test.ts`, `src/router.test.ts`, `tests/stats.test.tsx`                                                                                             |
+| FR-ST-3     | P5 done    | `src/core/stats.test.ts`, `tests/stats.test.tsx`                                                                                                                   |
+| FR-IO-1     | P5 done    | `src/core/exportFormat.test.ts`, `tests/dataExchange.test.tsx`                                                                                                     |
+| FR-IO-2     | P5 done    | `src/core/exportFormat.test.ts`, `src/core/importPlan.test.ts`, `src/storage/exportImport.test.ts`, `tests/dataExchange.test.tsx`                                  |
+| FR-IO-3     | P5 done    | `src/core/csv.test.ts`, `tests/dataExchange.test.tsx`                                                                                                              |
+| FR-IO-4     | P5 done    | `src/storage/exportImport.test.ts`, `tests/dataExchange.test.tsx`                                                                                                  |
 
 Requirements not listed here have not been implemented yet.

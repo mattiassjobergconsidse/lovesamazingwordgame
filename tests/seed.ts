@@ -1,7 +1,13 @@
 import { openAppDb } from "../src/storage/db";
 import { saveSettings } from "../src/storage/settingsRepo";
 import { loadLibrary } from "../src/storage/setsRepo";
-import type { Settings, WordPair, WordProgress, WordSet } from "../src/types";
+import type {
+  DailyActivity,
+  Settings,
+  WordPair,
+  WordProgress,
+  WordSet,
+} from "../src/types";
 import { makePair, makeSet, makeSettings } from "./factories";
 
 /** Data to put into IndexedDB before the app starts. */
@@ -9,6 +15,7 @@ export interface StoredData {
   readonly sets?: readonly WordSet[];
   readonly pairs?: readonly WordPair[];
   readonly progress?: readonly WordProgress[];
+  readonly activity?: readonly DailyActivity[];
   readonly settings?: Settings;
 }
 
@@ -28,10 +35,13 @@ export async function seedDatabase(data: StoredData): Promise<void> {
   for (const record of data.progress ?? []) {
     await db.put("progress", record);
   }
+  for (const day of data.activity ?? []) {
+    await db.put("activity", day);
+  }
   db.close();
 }
 
-/** Reads all sets, pairs and progress straight from IndexedDB. */
+/** Reads all sets, pairs, progress and activity straight from IndexedDB. */
 export async function readLibrary() {
   const db = await openAppDb();
   try {

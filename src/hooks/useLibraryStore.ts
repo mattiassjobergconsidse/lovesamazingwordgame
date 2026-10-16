@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { BulkParsedPair } from "../core/bulkParse";
-import { localDateKey } from "../core/activity";
+import {
+  activityId,
+  addAnswerToActivity,
+  localDateKey,
+} from "../core/activity";
 import { parseTerms } from "../core/pairText";
 import {
   makeUniqueName,
@@ -33,7 +37,12 @@ import type {
 import { useDatabase } from "./useDatabase";
 import { useSettings } from "./useSettings";
 
-const EMPTY: LibrarySnapshot = { sets: [], pairs: [], progress: [] };
+const EMPTY: LibrarySnapshot = {
+  sets: [],
+  pairs: [],
+  progress: [],
+  activity: [],
+};
 
 function buildPair(
   setId: string,
@@ -120,6 +129,13 @@ export function useLibraryStore(): Library {
     },
     [db, reportStorageError],
   );
+
+  const reload = useCallback(async () => {
+    if (db === null) {
+      return;
+    }
+    commit(await loadLibrary(db));
+  }, [db, commit]);
 
   const createSet = useCallback(
     (fields: SetFields): SetResult => {
@@ -221,6 +237,7 @@ export function useLibraryStore(): Library {
         sets: current.sets.filter((set) => set.id !== id),
         pairs: current.pairs.filter((pair) => pair.setId !== id),
         progress: current.progress.filter((record) => record.setId !== id),
+        activity: current.activity.filter((day) => day.setId !== id),
       });
       persist((database) => deleteSetCascade(database, id));
       if (activeSetId === id) {
@@ -352,6 +369,16 @@ export function useLibraryStore(): Library {
       const exists = current.progress.some(
         (record) => record.pairId === pair.id,
       );
+      const date = localDateKey(now);
+      const previousDay = current.activity.find(
+        (day) => day.id === activityId(pair.setId, date),
+      );
+      const updatedDay = addAnswerToActivity(
+        previousDay,
+        pair.setId,
+        date,
+        result,
+      );
       commit({
         ...current,
         progress: exists
@@ -359,10 +386,14 @@ export function useLibraryStore(): Library {
               record.pairId === pair.id ? updated : record,
             )
           : [...current.progress, updated],
+        activity:
+          previousDay === undefined
+            ? [...current.activity, updatedDay]
+            : current.activity.map((day) =>
+                day.id === updatedDay.id ? updatedDay : day,
+              ),
       });
-      persist((database) =>
-        saveAnswer(database, updated, localDateKey(now), result),
-      );
+      persist((database) => saveAnswer(database, updated, date, result));
     },
     [commit, persist],
   );
@@ -373,6 +404,7 @@ export function useLibraryStore(): Library {
       sets: data.sets,
       pairs: data.pairs,
       progress: data.progress,
+      activity: data.activity,
       createSet,
       updateSet,
       duplicateSet,
@@ -383,10 +415,12 @@ export function useLibraryStore(): Library {
       removePair,
       restorePair,
       recordAnswer,
+      reload,
     }),
     [
       status,
       data,
+      reload,
       createSet,
       updateSet,
       duplicateSet,

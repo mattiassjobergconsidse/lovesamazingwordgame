@@ -1,0 +1,32 @@
+/* Export, import and reset panels. Mobile first; colours only from theme tokens. */
+.data-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+.data-panel h2 {
+  margin: 0;
+}
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.check-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--tap-size);
+}
+.conflict-group {
+  margin-block: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.problem-list {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+}

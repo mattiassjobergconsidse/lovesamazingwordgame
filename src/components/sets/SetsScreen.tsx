@@ -6,6 +6,7 @@ import { useLibrary } from "../../hooks/useLibrary";
 import { useI18n } from "../../i18n";
 import { navigate } from "../../router";
 import type { WordSet } from "../../types";
+import { ImportPanel } from "../data/ImportPanel";
 import { DeleteSetDialog } from "./DeleteSetDialog";
 import { SetFieldsForm } from "./SetFieldsForm";
 import { SetListItem } from "./SetListItem";
@@ -106,6 +107,8 @@ export function SetsScreen() {
           ))}
         </ul>
       )}
+
+      <ImportPanel />
 
       {deleting !== null && (
         <DeleteSetDialog

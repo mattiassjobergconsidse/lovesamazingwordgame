@@ -1,4 +1,4 @@
-import type { WordPair, WordProgress, WordSet } from "../types";
+import type { DailyActivity, WordPair, WordProgress, WordSet } from "../types";
 import type { WordGameDatabase } from "./db";
 import { runTransaction } from "./transaction";
 /** Everything the app keeps in memory (FR-BP-4: read once at startup, write through). */
@@ -6,9 +6,10 @@ export interface LibrarySnapshot {
   readonly sets: readonly WordSet[];
   readonly pairs: readonly WordPair[];
   readonly progress: readonly WordProgress[];
+  readonly activity: readonly DailyActivity[];
 }
 /**
- * Reads all sets, pairs and progress in one transaction.
+ * Reads all sets, pairs, progress and activity in one transaction.
  *
  * @param db Open database.
  * @returns The snapshot; pairs are ordered by creation time so tables stay stable.
@@ -16,18 +17,23 @@ export interface LibrarySnapshot {
 export async function loadLibrary(
   db: WordGameDatabase,
 ): Promise<LibrarySnapshot> {
-  const tx = db.transaction(["sets", "pairs", "progress"], "readonly");
-  const [sets, pairs, progress] = await runTransaction(tx, (track) =>
+  const tx = db.transaction(
+    ["sets", "pairs", "progress", "activity"],
+    "readonly",
+  );
+  const [sets, pairs, progress, activity] = await runTransaction(tx, (track) =>
     Promise.all([
       track(tx.objectStore("sets").getAll()),
       track(tx.objectStore("pairs").getAll()),
       track(tx.objectStore("progress").getAll()),
+      track(tx.objectStore("activity").getAll()),
     ]),
   );
   return {
     sets,
     pairs: [...pairs].sort((left, right) => left.createdAt - right.createdAt),
     progress,
+    activity,
   };
 }
 /** Creates or replaces a set (FR-SET-1, FR-SET-2). */

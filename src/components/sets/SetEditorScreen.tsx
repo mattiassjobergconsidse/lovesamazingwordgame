@@ -5,6 +5,7 @@ import { useLibrary } from "../../hooks/useLibrary";
 import { useToast } from "../../hooks/useToast";
 import { useI18n } from "../../i18n";
 import { routeToHash } from "../../router";
+import { ExportPanel } from "../data/ExportPanel";
 import { BulkAddPanel } from "./BulkAddPanel";
 import { PairTable } from "./PairTable";
 import { SetFieldsForm } from "./SetFieldsForm";
@@ -133,6 +134,8 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
           }}
         />
       </section>
+
+      <ExportPanel setId={id} />
     </div>
   );
 }

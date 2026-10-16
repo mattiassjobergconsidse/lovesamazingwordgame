@@ -186,7 +186,13 @@ describe("matching mode", () => {
     const user = userEvent.setup();
     render(<App />);
     await startMatching(user);
-    const [first, second] = column("Svenska").getAllByRole("button");
+    // The board randomly puts either language on the left, so pick columns by position.
+    const svenskaIsLeft =
+      column("Svenska").getAllByRole("button")[0]?.dataset.column === "left";
+    const [leftLanguage, rightLanguage]: [Language, Language] = svenskaIsLeft
+      ? ["Svenska", "English"]
+      : ["English", "Svenska"];
+    const [first, second] = column(leftLanguage).getAllByRole("button");
     first?.focus();
 
     await user.keyboard("{ArrowDown}");
@@ -194,7 +200,7 @@ describe("matching mode", () => {
     await user.keyboard("{ArrowUp}");
     expect(first).toHaveFocus();
     await user.keyboard("{ArrowRight}");
-    expect(column("English").getAllByRole("button")[0]).toHaveFocus();
+    expect(column(rightLanguage).getAllByRole("button")[0]).toHaveFocus();
     await user.keyboard("{ArrowLeft}");
     expect(first).toHaveFocus();
   });
