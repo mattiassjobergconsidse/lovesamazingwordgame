@@ -15,6 +15,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Import and export as JSON or CSV
 - UI in Swedish and English; light, dark or system theme
 - A bundled example set on first visit
+- Installable and works offline after the first load (PWA, hand-written service worker)
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 
 ## Tech stack

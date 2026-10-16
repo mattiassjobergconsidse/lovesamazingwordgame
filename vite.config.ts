@@ -1,9 +1,53 @@
+import { createHash } from "node:crypto";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, relative } from "node:path";
 import react from "@vitejs/plugin-react";
+import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
+
+function listFiles(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    return entry.isDirectory() ? listFiles(path) : [path];
+  });
+}
+
+/** Fills the placeholders in the built service worker (NH-1) with the file list and a content hash. */
+function precacheServiceWorker(): Plugin {
+  let outDir = "dist";
+  return {
+    name: "precache-service-worker",
+    apply: "build",
+    configResolved(config) {
+      outDir = config.build.outDir;
+    },
+    closeBundle() {
+      const swPath = join(outDir, "sw.js");
+      const files = listFiles(outDir)
+        .filter((file) => file !== swPath)
+        .sort();
+      const hash = createHash("sha256");
+      for (const file of files) {
+        hash.update(relative(outDir, file)).update(readFileSync(file));
+      }
+      const urls = [
+        "./",
+        ...files.map(
+          (file) => "./" + relative(outDir, file).split("\\").join("/"),
+        ),
+      ];
+      const source = readFileSync(swPath, "utf8")
+        .replace("__BUILD_VERSION__", hash.digest("hex").slice(0, 12))
+        .replace('"__PRECACHE_URLS__"', JSON.stringify(urls));
+      writeFileSync(swPath, source);
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   base: "/lovesamazingwordgame/",
-  plugins: [react()],
+  plugins: [react(), precacheServiceWorker()],
   test: {
     environment: "jsdom",
     globals: true,

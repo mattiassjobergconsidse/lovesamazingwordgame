@@ -333,7 +333,7 @@ Words without a `WordProgress` record are treated as box 0 (new); the record is 
 
 Implement in this order. Each needs its own PR and must not break the "no backend / no tracking" rules.
 
-1. **PWA / offline** (`NH-1`): web manifest, app icons, service worker that precaches the build so the app works offline and is installable.
+1. **PWA / offline** (`NH-1`, done): web manifest, app icons, service worker that precaches the build so the app works offline and is installable.
    Ask before adding `vite-plugin-pwa`; a hand-written service worker is the default. AC: Lighthouse PWA installable; works in airplane mode after first load.
 2. **Pronunciation** (`NH-2`): speaker button on cards using the Web Speech API (`speechSynthesis`). Voice language is taken from a BCP-47 tag
    stored on the set (`langACode`, `langBCode`, already in the schema; picked from a dropdown of available voices).

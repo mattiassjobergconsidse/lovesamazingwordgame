@@ -10,6 +10,7 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-SETT-1   | P0 partial | `src/storage/settingsRepo.test.ts`, `src/hooks/useSettingsStore.test.ts` (persistence only; Settings screen comes later)                                           |
 | FR-THEME-1  | P0 partial | `src/core/settings.test.ts`, `src/hooks/useResolvedTheme.test.ts`, `src/storage/preferenceMirror.test.ts`, `tests/app.test.tsx` (selector in Settings comes later) |
 | FR-THEME-2  | P0 manual  | Tokens in `src/index.css`; visual check in both themes at review time                                                                                              |
+| NH-1        | P8 partial | `src/storage/serviceWorker.test.ts` (registration); worker, manifest and installability are checked manually with `npm run build` + `npm run preview`              |
 | FR-LANG-3   | P0 done    | `tests/app.test.tsx`                                                                                                                                               |
 | FR-BP-2     | P0 done    | `src/components/common/ErrorBoundary.test.tsx`, `tests/trainingErrors.test.tsx` (per training mode)                                                                |
 | FR-BP-4     | P0 done    | `src/storage/db.test.ts`, `src/hooks/useSettingsStore.test.ts`, `tests/app.test.tsx`                                                                               |
