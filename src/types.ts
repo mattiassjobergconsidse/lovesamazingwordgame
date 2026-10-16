@@ -69,6 +69,10 @@ export interface Settings {
   /** When true, accent-only differences count as correct in Writing mode (FR-WR-2). */
   readonly ignoreAccents: boolean;
   readonly speechEnabled: boolean;
+  /** Plays a short tone after each answer (NH-4). Off by default. */
+  readonly soundEnabled: boolean;
+  /** Vibrates briefly after each answer where supported (NH-4). Off by default. */
+  readonly hapticsEnabled: boolean;
 }
 
 /** One record per set and local calendar day, used for streaks and the 14-day chart. */

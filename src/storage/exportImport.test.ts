@@ -144,6 +144,8 @@ describe("clearLibrary", () => {
         sessionSize: 20,
         ignoreAccents: false,
         speechEnabled: false,
+        soundEnabled: false,
+        hapticsEnabled: false,
       },
       "settings",
     );

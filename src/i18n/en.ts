@@ -32,6 +32,9 @@ export const en = {
   "settings.speech.autoPlay": "Read each word aloud when a card appears",
   "settings.speech.hint":
     "Words are read with your device's voices. Pick a voice language for each set when you edit it.",
+  "settings.feedback.heading": "Sounds and vibration",
+  "settings.feedback.sound": "Play a short sound after each answer",
+  "settings.feedback.haptics": "Vibrate briefly after each answer",
   "speech.speak": "Listen to {text}",
   "editor.voice.heading": "Pronunciation",
   "editor.voice.field": "Voice for {lang}",

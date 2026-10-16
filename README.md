@@ -18,6 +18,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Installable and works offline after the first load (PWA, hand-written service worker)
 - Pronunciation: speaker button on cards using the browser's voices, with optional auto-play
 - Extra Ocean and Sunset themes and smooth colour transitions when switching theme
+- Optional short answer sounds (generated in the browser) and vibration on mobile, off by default
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 
 ## Tech stack

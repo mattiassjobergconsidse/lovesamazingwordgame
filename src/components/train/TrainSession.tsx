@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
+import { useAnswerFeedback } from "../../hooks/useAnswerFeedback";
 import { useActiveSet } from "../../hooks/useActiveSet";
 import {
   useTrainingSession,
@@ -82,6 +83,7 @@ function ActiveSession({
     answer,
     answerRound,
   } = useTrainingSession(set.id, undefined, focus);
+  const giveFeedback = useAnswerFeedback();
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
   const running = view.status === "running";
@@ -183,7 +185,10 @@ function ActiveSession({
                 view.session.position,
               )}
               rng={rng}
-              onComplete={answerRound}
+              onComplete={(results) => {
+                giveFeedback(results.values());
+                answerRound(results);
+              }}
             />
           ) : (
             renderCard({
@@ -193,7 +198,10 @@ function ActiveSession({
               terms,
               pool,
               rng,
-              onAnswer: answer,
+              onAnswer: (result) => {
+                giveFeedback(result);
+                answer(result);
+              },
             })
           )}
         </div>

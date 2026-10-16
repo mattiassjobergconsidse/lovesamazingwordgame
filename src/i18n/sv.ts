@@ -34,6 +34,9 @@ export const sv: Record<MessageKey, string> = {
   "settings.speech.autoPlay": "Läs upp varje ord när ett kort visas",
   "settings.speech.hint":
     "Orden läses upp med enhetens röster. Välj ett röstspråk för varje lista när du redigerar den.",
+  "settings.feedback.heading": "Ljud och vibration",
+  "settings.feedback.sound": "Spela ett kort ljud efter varje svar",
+  "settings.feedback.haptics": "Vibrera kort efter varje svar",
   "speech.speak": "Lyssna på {text}",
   "editor.voice.heading": "Uttal",
   "editor.voice.field": "Röst för {lang}",

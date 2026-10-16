@@ -65,6 +65,8 @@ export function createDefaultSettings(
     sessionSize: 20,
     ignoreAccents: false,
     speechEnabled: false,
+    soundEnabled: false,
+    hapticsEnabled: false,
   };
 }
 
@@ -86,6 +88,8 @@ export function parseSettings(value: unknown): Settings | null {
     sessionSize,
     ignoreAccents,
     speechEnabled,
+    soundEnabled = false,
+    hapticsEnabled = false,
   } = value;
   if (
     !isUiLanguage(uiLanguage) ||
@@ -99,7 +103,9 @@ export function parseSettings(value: unknown): Settings | null {
       sessionSize !== 50 &&
       sessionSize !== "all") ||
     typeof ignoreAccents !== "boolean" ||
-    typeof speechEnabled !== "boolean"
+    typeof speechEnabled !== "boolean" ||
+    typeof soundEnabled !== "boolean" ||
+    typeof hapticsEnabled !== "boolean"
   ) {
     return null;
   }
@@ -111,6 +117,8 @@ export function parseSettings(value: unknown): Settings | null {
     sessionSize,
     ignoreAccents,
     speechEnabled,
+    soundEnabled,
+    hapticsEnabled,
   };
 }
 
