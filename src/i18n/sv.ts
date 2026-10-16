@@ -11,6 +11,7 @@ export const sv: Record<MessageKey, string> = {
   "nav.stats": "Statistik",
   "nav.settings": "Inställningar",
   "route.setEditor": "Redigera lista",
+  "route.share": "Delad lista",
   "route.train.flashcards": "Kort",
   "route.train.quiz": "Flerval",
   "route.train.matching": "Para ihop",
@@ -179,6 +180,25 @@ export const sv: Record<MessageKey, string> = {
   "stats.chart.legendAnswered": "Svar",
   "stats.chart.legendCorrect": "Rätt",
   "data.heading": "Dina data",
+  "share.heading": "Dela",
+  "share.create": "Skapa delningslänk",
+  "share.link": "Delningslänk",
+  "share.copy": "Kopiera länk",
+  "share.copied": "Länken kopierades",
+  "share.copyFailed":
+    "Länken kunde inte kopieras; markera den och kopiera för hand.",
+  "share.failed": "Länken kunde inte skapas.",
+  "share.privacy":
+    "Länken innehåller själva orden, inte dina framsteg. Alla som har länken kan läsa dem.",
+  "share.long":
+    "Länken är mycket lång och kan kapas av vissa appar. Överväg att exportera en fil i stället.",
+  "share.import.intro": "Någon har delat en ordlista med dig.",
+  "share.import.details": "{languages} · {count} ordpar",
+  "share.import.confirm": "Lägg till i mina listor",
+  "share.import.decline": "Inte nu",
+  "share.import.invalid":
+    "Delningslänken är skadad eller ofullständig, så ingenting importerades.",
+  "share.import.loading": "Läser länken…",
   "data.export.heading": "Exportera",
   "data.export.json": "Exportera som JSON",
   "data.export.csv": "Exportera som CSV",

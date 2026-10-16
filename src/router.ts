@@ -22,7 +22,9 @@ export type Route =
       readonly focus?: "hardest";
     }
   | { readonly name: "stats" }
-  | { readonly name: "settings" };
+  | { readonly name: "settings" }
+  /** A set shared via link; `payload` is the encoded set (NH-5). */
+  | { readonly name: "share"; readonly payload: string };
 
 const HOME: Route = { name: "home" };
 
@@ -60,6 +62,8 @@ export function parseRoute(hash: string): Route {
       return second === undefined ? { name: "stats" } : HOME;
     case "settings":
       return second === undefined ? { name: "settings" } : HOME;
+    case "share":
+      return second === undefined ? HOME : { name: "share", payload: second };
     default:
       return HOME;
   }
@@ -109,6 +113,8 @@ export function routeToHash(route: Route): string {
       return "#/stats";
     case "settings":
       return "#/settings";
+    case "share":
+      return `#/share/${route.payload}`;
   }
 }
 

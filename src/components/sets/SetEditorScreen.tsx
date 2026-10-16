@@ -9,6 +9,7 @@ import { ExportPanel } from "../data/ExportPanel";
 import { BulkAddPanel } from "./BulkAddPanel";
 import { PairTable } from "./PairTable";
 import { SetFieldsForm } from "./SetFieldsForm";
+import { SharePanel } from "./SharePanel";
 import { SpeechLanguageFields } from "./SpeechLanguageFields";
 import "./sets.css";
 
@@ -145,6 +146,7 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
       </section>
 
       <ExportPanel setId={id} />
+      <SharePanel set={set} pairs={setPairs} />
     </div>
   );
 }

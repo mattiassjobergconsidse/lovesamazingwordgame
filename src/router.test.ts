@@ -32,6 +32,7 @@ describe("parseRoute", () => {
     ],
     ["#/stats", { name: "stats" }],
     ["#/settings", { name: "settings" }],
+    ["#/share/zAbC-_1", { name: "share", payload: "zAbC-_1" }],
   ])("maps %j to a route", (hash, expected) => {
     expect(parseRoute(hash)).toEqual(expected);
   });
@@ -45,6 +46,8 @@ describe("parseRoute", () => {
     "#/stats/extra/more",
     "#/stats/extra",
     "#/settings/extra",
+    "#/share",
+    "#/share/abc/def",
     "#/sets/%E0%A4%A",
   ])("falls back to home for %j", (hash) => {
     expect(parseRoute(hash)).toEqual({ name: "home" });
@@ -62,6 +65,7 @@ describe("routeToHash", () => {
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
       { name: "stats" },
       { name: "settings" },
+      { name: "share", payload: "zAbC-_1" },
     ];
 
     for (const route of routes) {

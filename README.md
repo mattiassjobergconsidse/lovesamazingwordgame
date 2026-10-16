@@ -19,6 +19,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Pronunciation: speaker button on cards using the browser's voices, with optional auto-play
 - Extra Ocean and Sunset themes and smooth colour transitions when switching theme
 - Optional short answer sounds (generated in the browser) and vibration on mobile, off by default
+- Share a set as a link (the words are compressed into the address, no server involved) and import it from the link
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 
 ## Tech stack
