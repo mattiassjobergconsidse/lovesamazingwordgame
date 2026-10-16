@@ -38,6 +38,8 @@ describe("createDefaultSettings", () => {
       sessionSize: 20,
       ignoreAccents: false,
       speechEnabled: false,
+      soundEnabled: false,
+      hapticsEnabled: false,
     });
   });
 });
@@ -77,8 +79,19 @@ describe("parseSettings", () => {
     ["an invalid session size", { ...valid, sessionSize: 15 }],
     ["a non-boolean ignoreAccents", { ...valid, ignoreAccents: "no" }],
     ["a non-boolean speechEnabled", { ...valid, speechEnabled: 1 }],
+    ["a non-boolean soundEnabled", { ...valid, soundEnabled: 1 }],
+    ["a non-boolean hapticsEnabled", { ...valid, hapticsEnabled: "yes" }],
   ])("rejects %s", (_label, value) => {
     expect(parseSettings(value)).toBeNull();
+  });
+
+  it("NH-4: treats missing sound and haptics fields of older records as off", () => {
+    const older = Object.fromEntries(
+      Object.entries(valid).filter(
+        ([key]) => key !== "soundEnabled" && key !== "hapticsEnabled",
+      ),
+    );
+    expect(parseSettings(older)).toEqual(valid);
   });
 
   it("accepts every direction mode", () => {
@@ -116,5 +129,12 @@ describe("fun themes", () => {
     expect(isDarkTheme("halloween")).toBe(true);
     expect(isDarkTheme("blocks")).toBe(true);
     expect(isDarkTheme("battle")).toBe(true);
+  });
+
+  it("NH-3: offers the extra ocean (light) and sunset (dark) palettes", () => {
+    expect(THEMES).toEqual(expect.arrayContaining(["ocean", "sunset"]));
+    expect(isTheme("ocean")).toBe(true);
+    expect(isDarkTheme("ocean")).toBe(false);
+    expect(isDarkTheme("sunset")).toBe(true);
   });
 });

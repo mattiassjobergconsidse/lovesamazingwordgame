@@ -1,6 +1,6 @@
 # Love's Amazing Word Game
 
-A web app for learning vocabulary ("glosor") from word pairs, for example Swedish ↔ English, but any two
+A web app for learning vocabulary ("glosor") from word pairs, for example Swedish â†” English, but any two
 languages work. Create or import word lists (one per week, for instance), practise them and let spaced
 repetition focus on the words you find hard. All data stays in your browser. No accounts, no backend, no tracking.
 
@@ -15,6 +15,13 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Import and export as JSON or CSV
 - UI in Swedish and English; light, dark or system theme
 - A bundled example set on first visit
+- Installable and works offline after the first load (PWA, hand-written service worker)
+- Pronunciation: speaker button on cards using the browser's voices, with optional auto-play
+- Extra Ocean and Sunset themes and smooth colour transitions when switching theme
+- Optional short answer sounds (generated in the browser) and vibration on mobile, off by default
+- Share a set as a link (the words are compressed into the address, no server involved) and import it from the link
+- Press `?` (or use the header button) to see the keyboard shortcuts
+- Print a set's word list as a plain table from the set editor
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 
 ## Tech stack

@@ -1,6 +1,33 @@
 import { describe, expect, it } from "vitest";
 import { makePair } from "../../tests/factories";
-import { acceptedAnswers, pickDirection, termsFor } from "./direction";
+import {
+  acceptedAnswers,
+  pickDirection,
+  speechCodesFor,
+  termsFor,
+} from "./direction";
+
+describe("speechCodesFor", () => {
+  const set = { langACode: "sv-SE", langBCode: "en-GB" };
+
+  it("NH-2: maps the voice tags to prompt and answer by direction", () => {
+    expect(speechCodesFor(set, "AtoB")).toEqual({
+      prompt: "sv-SE",
+      answer: "en-GB",
+    });
+    expect(speechCodesFor(set, "BtoA")).toEqual({
+      prompt: "en-GB",
+      answer: "sv-SE",
+    });
+  });
+
+  it("NH-2: leaves missing tags undefined", () => {
+    expect(speechCodesFor({}, "AtoB")).toEqual({
+      prompt: undefined,
+      answer: undefined,
+    });
+  });
+});
 
 describe("pickDirection", () => {
   it("FR-TRN-3: returns a forced direction regardless of rng", () => {

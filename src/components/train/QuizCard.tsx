@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { buildQuizQuestion } from "../../core/quiz";
+import { speechCodesFor } from "../../core/direction";
 import { useI18n } from "../../i18n";
+import { isModalOpen } from "../common/modalOpen";
+import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
 /** How long the feedback stays before the next question (FR-QZ-2). */
@@ -13,6 +16,7 @@ const IGNORED_ADVANCE_KEYS = new Set([
   "Control",
   "Alt",
   "Meta",
+  "?",
 ]);
 
 /**
@@ -74,7 +78,7 @@ export function QuizCard({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.altKey || event.ctrlKey || event.metaKey || isModalOpen()) {
         return;
       }
       if (chosen === null) {
@@ -113,6 +117,11 @@ export function QuizCard({
         {t("train.card.promptLabel", { lang: promptLanguage })}
       </p>
       <p className="session-card-term">{question.prompt}</p>
+      <SpeakButton
+        text={question.prompt}
+        lang={speechCodesFor(set, direction).prompt}
+        autoPlay
+      />
       <ul
         className="quiz-options"
         aria-label={t("train.quiz.options", { lang: answerLanguage })}

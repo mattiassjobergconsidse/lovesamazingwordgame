@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { routeToHash, useRoute, type Route } from "../../router";
 import type { MessageKey } from "../../i18n";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
+import { ShareImportScreen } from "../data/ShareImportScreen";
 import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
 import { SettingsScreen } from "../settings/SettingsScreen";
@@ -40,6 +41,8 @@ function renderScreen(route: Route) {
       return <StatsScreen />;
     case "settings":
       return <SettingsScreen />;
+    case "share":
+      return <ShareImportScreen key={route.payload} payload={route.payload} />;
     case "home":
       return <ScreenPlaceholder title={titleFor(route)} />;
   }
@@ -60,6 +63,8 @@ function titleFor(route: Route): MessageKey {
       return "nav.stats";
     case "settings":
       return "nav.settings";
+    case "share":
+      return "route.share";
   }
 }
 

@@ -13,6 +13,8 @@ export const THEMES = [
   "halloween",
   "blocks",
   "battle",
+  "ocean",
+  "sunset",
 ] as const satisfies readonly Theme[];
 
 /** Type guard for {@link Theme}. */
@@ -26,7 +28,7 @@ export function isTheme(value: unknown): value is Theme {
  * @param theme A resolved theme.
  */
 export function isDarkTheme(theme: ResolvedTheme): boolean {
-  return theme !== "light" && theme !== "christmas";
+  return theme !== "light" && theme !== "christmas" && theme !== "ocean";
 }
 
 /** Type guard for {@link UiLanguage}. */
@@ -63,6 +65,8 @@ export function createDefaultSettings(
     sessionSize: 20,
     ignoreAccents: false,
     speechEnabled: false,
+    soundEnabled: false,
+    hapticsEnabled: false,
   };
 }
 
@@ -84,6 +88,8 @@ export function parseSettings(value: unknown): Settings | null {
     sessionSize,
     ignoreAccents,
     speechEnabled,
+    soundEnabled = false,
+    hapticsEnabled = false,
   } = value;
   if (
     !isUiLanguage(uiLanguage) ||
@@ -97,7 +103,9 @@ export function parseSettings(value: unknown): Settings | null {
       sessionSize !== 50 &&
       sessionSize !== "all") ||
     typeof ignoreAccents !== "boolean" ||
-    typeof speechEnabled !== "boolean"
+    typeof speechEnabled !== "boolean" ||
+    typeof soundEnabled !== "boolean" ||
+    typeof hapticsEnabled !== "boolean"
   ) {
     return null;
   }
@@ -109,6 +117,8 @@ export function parseSettings(value: unknown): Settings | null {
     sessionSize,
     ignoreAccents,
     speechEnabled,
+    soundEnabled,
+    hapticsEnabled,
   };
 }
 

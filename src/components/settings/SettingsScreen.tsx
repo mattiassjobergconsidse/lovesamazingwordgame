@@ -2,6 +2,8 @@ import { useI18n } from "../../i18n";
 import { ExportPanel } from "../data/ExportPanel";
 import { ImportPanel } from "../data/ImportPanel";
 import { ResetPanel } from "../data/ResetPanel";
+import { FeedbackSettings } from "./FeedbackSettings";
+import { SpeechSettings } from "./SpeechSettings";
 import { ThemeSelector } from "./ThemeSelector";
 import "./settings.css";
 
@@ -16,6 +18,8 @@ export function SettingsScreen() {
     <div className="settings-screen">
       <h1 tabIndex={-1}>{t("nav.settings")}</h1>
       <ThemeSelector />
+      <SpeechSettings />
+      <FeedbackSettings />
       <h2>{t("data.heading")}</h2>
       <ExportPanel />
       <ImportPanel />

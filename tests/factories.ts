@@ -14,6 +14,8 @@ export function makeSettings(overrides: Partial<Settings> = {}): Settings {
     sessionSize: 20,
     ignoreAccents: false,
     speechEnabled: false,
+    soundEnabled: false,
+    hapticsEnabled: false,
     ...overrides,
   };
 }

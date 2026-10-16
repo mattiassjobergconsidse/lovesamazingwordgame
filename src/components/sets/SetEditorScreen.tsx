@@ -8,7 +8,10 @@ import { routeToHash } from "../../router";
 import { ExportPanel } from "../data/ExportPanel";
 import { BulkAddPanel } from "./BulkAddPanel";
 import { PairTable } from "./PairTable";
+import { PrintableList } from "./PrintableList";
 import { SetFieldsForm } from "./SetFieldsForm";
+import { SharePanel } from "./SharePanel";
+import { SpeechLanguageFields } from "./SpeechLanguageFields";
 import "./sets.css";
 
 /** Search is offered once a set is big enough to need it (FR-SET-9). */
@@ -22,6 +25,7 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
     sets,
     pairs,
     updateSet,
+    updateSpeechLanguages,
     addPair,
     addParsedPairs,
     updatePair,
@@ -98,6 +102,13 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
         />
       </section>
 
+      <SpeechLanguageFields
+        set={set}
+        onChange={(codes) => {
+          updateSpeechLanguages(id, codes);
+        }}
+      />
+
       <section aria-labelledby="editor-words-heading">
         <h2 id="editor-words-heading">{t("editor.words")}</h2>
         {setPairs.length > SEARCH_MIN_WORDS && (
@@ -136,6 +147,22 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
       </section>
 
       <ExportPanel setId={id} />
+      <SharePanel set={set} pairs={setPairs} />
+
+      {setPairs.length > 0 && (
+        <>
+          <button
+            type="button"
+            className="button button-secondary no-print"
+            onClick={() => {
+              window.print();
+            }}
+          >
+            {t("editor.print")}
+          </button>
+          <PrintableList set={set} pairs={setPairs} />
+        </>
+      )}
     </div>
   );
 }
