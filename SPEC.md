@@ -478,7 +478,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
 - [x] **P3 Training shell**: `FR-TRN-*`, mode picker, session end screen, progress persistence.
 - [x] **P4 Modes**: Flashcards -> Writing -> Quiz -> Matching (one PR each).
 - [x] **P5 Stats + import/export**: `FR-ST-*`, `FR-IO-*`.
-- [ ] **P6 Polish**: UX requirements audit (section 9), accessibility pass, performance check, README with screenshots, Pages deploy verified.
+- [x] **P6 Polish**: UX requirements audit (section 9), accessibility pass, performance check, README (screenshots skipped by decision), Pages deploy verified.
 - [ ] **P7 More themes**: Not just light/dark. Also ability to choose Christmas, Halloween, Minecraft, Fortnite, etc. (whatever is fun for a 10 year old learning the words, CSS variables only, no images). Optional, but a nice-to-have for the first release.
 - [ ] **P8 Nice-to-have**: NH-1 .. NH-7 in order, as time allows.
 

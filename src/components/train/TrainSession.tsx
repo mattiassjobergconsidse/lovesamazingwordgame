@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
+import { AppErrorBoundary } from "../common/AppErrorBoundary";
 import { useActiveSet } from "../../hooks/useActiveSet";
 import {
   useTrainingSession,
@@ -171,30 +172,32 @@ function ActiveSession({
           <span className="session-repeat">{t("train.session.repeat")}</span>
         )}
       </div>
-      <div key={view.session.position} data-mode={mode}>
-        {mode === "matching" ? (
-          // A matching screen covers a whole round, so it answers several words at once.
-          <MatchingBoard
-            set={set}
-            pairs={roundAt(
-              view.session.queue.map((queued) => queued.pair),
-              view.session.position,
-            )}
-            rng={rng}
-            onComplete={answerRound}
-          />
-        ) : (
-          renderCard({
-            card,
-            set,
-            direction: view.direction,
-            terms,
-            pool,
-            rng,
-            onAnswer: answer,
-          })
-        )}
-      </div>
+      <AppErrorBoundary>
+        <div key={view.session.position} data-mode={mode}>
+          {mode === "matching" ? (
+            // A matching screen covers a whole round, so it answers several words at once.
+            <MatchingBoard
+              set={set}
+              pairs={roundAt(
+                view.session.queue.map((queued) => queued.pair),
+                view.session.position,
+              )}
+              rng={rng}
+              onComplete={answerRound}
+            />
+          ) : (
+            renderCard({
+              card,
+              set,
+              direction: view.direction,
+              terms,
+              pool,
+              rng,
+              onAnswer: answer,
+            })
+          )}
+        </div>
+      </AppErrorBoundary>
     </div>
   );
 }
