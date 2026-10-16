@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  THEMES,
   createDefaultSettings,
+  isDarkTheme,
   isTheme,
   isUiLanguage,
   parseSettings,
@@ -95,5 +97,24 @@ describe("resolveTheme", () => {
   it("FR-THEME-1: explicit choices ignore the system preference", () => {
     expect(resolveTheme("light", true)).toBe("light");
     expect(resolveTheme("dark", false)).toBe("dark");
+    expect(resolveTheme("christmas", true)).toBe("christmas");
+  });
+});
+
+describe("fun themes", () => {
+  it("P7: accepts every listed theme", () => {
+    expect(THEMES.every(isTheme)).toBe(true);
+    expect(THEMES).toEqual(
+      expect.arrayContaining(["christmas", "halloween", "blocks", "battle"]),
+    );
+  });
+
+  it("P7: reports the colour scheme of each resolved theme", () => {
+    expect(isDarkTheme("light")).toBe(false);
+    expect(isDarkTheme("christmas")).toBe(false);
+    expect(isDarkTheme("dark")).toBe(true);
+    expect(isDarkTheme("halloween")).toBe(true);
+    expect(isDarkTheme("blocks")).toBe(true);
+    expect(isDarkTheme("battle")).toBe(true);
   });
 });

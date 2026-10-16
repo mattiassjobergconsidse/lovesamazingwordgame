@@ -35,6 +35,58 @@
   --color-correct: #7fdc9d;
   --color-wrong: #ff8a80;
 }
+/* Fun themes (P7): palettes only, no images. Text/background pairs meet WCAG AA. */
+:root[data-theme="christmas"] {
+  color-scheme: light;
+  --color-bg: #fff8ee;
+  --color-surface: #e6f3e8;
+  --color-border: #587a5e;
+  --color-text: #1d2b1f;
+  --color-text-muted: #435346;
+  --color-primary: #b3202a;
+  --color-on-primary: #ffffff;
+  --color-correct: #1b6e3c;
+  --color-wrong: #a3201a;
+}
+:root[data-theme="halloween"] {
+  color-scheme: dark;
+  --color-bg: #140a20;
+  --color-surface: #241335;
+  --color-border: #9b80ba;
+  --color-text: #f6eefb;
+  --color-text-muted: #cdbcdf;
+  --color-primary: #ff8a1f;
+  --color-on-primary: #1a0b00;
+  --color-correct: #8be28b;
+  --color-wrong: #ff8a80;
+}
+:root[data-theme="blocks"] {
+  color-scheme: dark;
+  --radius: 0;
+  --font-sans:
+    ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  --color-bg: #1f2a1a;
+  --color-surface: #31402a;
+  --color-border: #93b37d;
+  --color-text: #f1f6ea;
+  --color-text-muted: #c6d4b8;
+  --color-primary: #7ed957;
+  --color-on-primary: #0f1a0a;
+  --color-correct: #8be28b;
+  --color-wrong: #ff8a80;
+}
+:root[data-theme="battle"] {
+  color-scheme: dark;
+  --color-bg: #1a1040;
+  --color-surface: #2a1a66;
+  --color-border: #a79cff;
+  --color-text: #ffffff;
+  --color-text-muted: #d3ccff;
+  --color-primary: #ffe14d;
+  --color-on-primary: #1a1040;
+  --color-correct: #7fdc9d;
+  --color-wrong: #ff9a90;
+}
 *,
 *::before,
 *::after {

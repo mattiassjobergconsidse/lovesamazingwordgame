@@ -49,7 +49,12 @@ export interface WordProgress {
 }
 
 export type UiLanguage = "sv" | "en";
-export type Theme = "light" | "dark" | "system";
+/** Fun themes (P7). Each one is a fixed palette with its own light or dark colour scheme. */
+export type FunTheme = "christmas" | "halloween" | "blocks" | "battle";
+/** A theme the user can choose; `system` follows the OS light/dark preference. */
+export type Theme = "light" | "dark" | "system" | FunTheme;
+/** A theme as applied to the page, i.e. never `system`. */
+export type ResolvedTheme = Exclude<Theme, "system">;
 export type DirectionMode = "random" | Direction;
 export type SessionSize = 10 | 20 | 50 | "all";
 
