@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { pickDirection } from "../core/direction";
 import {
   answerCard,
+  answerRound as answerSessionRound,
   buildSessionQueue,
   currentCard,
   isExtraPractice,
@@ -52,6 +53,10 @@ export interface TrainingSession {
   readonly extraPractice: boolean;
   /** The card to answer now, or `null` when not running. */
   readonly card: SessionCard | null;
+  /** All pairs of the set; modes such as Quiz draw distractors from them. */
+  readonly pool: readonly WordPair[];
+  /** The random source of this session, for modes that shuffle per card. */
+  readonly rng: Rng;
   /** Builds a session from the whole set in spaced-repetition order and starts it. */
   readonly start: () => void;
   /** Starts a new session with only the words answered wrongly (FR-TRN-5). */
@@ -61,6 +66,11 @@ export interface TrainingSession {
    * and is written to storage right away (FR-TRN-4); repeats do not.
    */
   readonly answer: (result: AnswerResult) => void;
+  /**
+   * Answers every word of a round at once (Matching, FR-MT-3): each first answer
+   * updates progress like {@link TrainingSession.answer}, but nothing is re-queued.
+   */
+  readonly answerRound: (results: ReadonlyMap<string, AnswerResult>) => void;
 }
 
 /**
@@ -154,6 +164,37 @@ export function useTrainingSession(
     [view, now, rng, recordAnswer, directionMode],
   );
 
+  const answerRound = useCallback(
+    (results: ReadonlyMap<string, AnswerResult>) => {
+      if (view.status !== "running") {
+        return;
+      }
+      const timestamp = now();
+      const { state: next, answered } = answerSessionRound(
+        view.session,
+        results,
+      );
+      for (const { card, result } of answered) {
+        if (!card.isRepeat) {
+          recordAnswer(card.pair, result, timestamp);
+        }
+      }
+      setView(
+        isFinished(next)
+          ? {
+              status: "finished",
+              session: next,
+              durationMs: timestamp - view.startedAt,
+            }
+          : {
+              ...view,
+              session: next,
+              direction: pickDirection(directionMode, rng),
+            },
+      );
+    },
+    [view, now, rng, recordAnswer, directionMode],
+  );
   return {
     view,
     plannedCount:
@@ -162,8 +203,11 @@ export function useTrainingSession(
         : Math.min(sessionSize, setPairs.length),
     extraPractice: isExtraPractice(setPairs, progressByPair, openedAt),
     card: view.status === "running" ? currentCard(view.session) : null,
+    pool: setPairs,
+    rng,
     start,
     practiseMistakes,
     answer,
+    answerRound,
   };
 }

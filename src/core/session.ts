@@ -165,4 +165,41 @@ export function mistakePairs(state: SessionState): WordPair[] {
         !card.isRepeat && state.firstResults.get(card.pair.id) === "wrong",
     )
     .map((card) => card.pair);
+} /** A card answered as part of a batch, with its result. */
+export interface AnsweredCard {
+  readonly card: SessionCard;
+  readonly result: AnswerResult;
+}
+/**
+ * Answers several consecutive cards at once, for modes where one screen covers
+ * a whole round of words (Matching, FR-MT-3).
+ *
+ * Starting at the current card, every card whose pair has a result is answered in
+ * queue order; the batch stops at the first card without one. Wrong results are NOT
+ * re-queued: the user already had to find the right match before the round ended.
+ *
+ * @param state The running session.
+ * @param results Result per pair ID.
+ * @returns The next state and the cards that were answered, in order.
+ */
+export function answerRound(
+  state: SessionState,
+  results: ReadonlyMap<string, AnswerResult>,
+): { readonly state: SessionState; readonly answered: AnsweredCard[] } {
+  const answered: AnsweredCard[] = [];
+  const firstResults = new Map(state.firstResults);
+  let position = state.position;
+  for (;;) {
+    const card = state.queue[position];
+    const result = card === undefined ? undefined : results.get(card.pair.id);
+    if (card === undefined || result === undefined) {
+      break;
+    }
+    answered.push({ card, result });
+    if (!card.isRepeat) {
+      firstResults.set(card.pair.id, result);
+    }
+    position += 1;
+  }
+  return { state: { ...state, position, firstResults }, answered };
 }

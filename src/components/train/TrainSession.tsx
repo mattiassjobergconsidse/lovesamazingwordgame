@@ -7,8 +7,13 @@ import { useI18n, type MessageKey } from "../../i18n";
 import { navigate, type TrainMode } from "../../router";
 import type { WordSet } from "../../types";
 import "../common/common.css";
+import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
+import { FlashCard } from "./FlashCard";
+import { MatchingBoard } from "./MatchingBoard";
+import { QuizCard } from "./QuizCard";
 import { SessionResult } from "./SessionResult";
+import { WritingCard } from "./WritingCard";
 import "./train.css";
 
 interface TrainSessionProps {
@@ -26,11 +31,36 @@ function defaultRenderCard(props: ModeCardProps): ReactNode {
   return <BasicCard {...props} />;
 }
 
+function renderFlashCard(props: ModeCardProps): ReactNode {
+  return <FlashCard {...props} />;
+}
+
+function renderQuizCard(props: ModeCardProps): ReactNode {
+  return <QuizCard {...props} />;
+}
+function renderWritingCard(props: ModeCardProps): ReactNode {
+  return <WritingCard {...props} />;
+}
+
+/** Modes without their own card yet fall back to the generic card. */
+function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
+  switch (mode) {
+    case "flashcards":
+      return renderFlashCard;
+    case "writing":
+      return renderWritingCard;
+    case "quiz":
+      return renderQuizCard;
+    case "matching":
+      return defaultRenderCard;
+  }
+}
+
 function ActiveSession({
   set,
   title,
   mode,
-  renderCard = defaultRenderCard,
+  renderCard = cardRendererFor(mode),
 }: ActiveSessionProps) {
   const { t, tp } = useI18n();
   const {
@@ -38,9 +68,12 @@ function ActiveSession({
     plannedCount,
     extraPractice,
     card,
+    pool,
+    rng,
     start,
     practiseMistakes,
     answer,
+    answerRound,
   } = useTrainingSession(set.id);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
@@ -49,7 +82,11 @@ function ActiveSession({
   useEffect(() => {
     // Keyboard and screen reader users land on the new phase's heading.
     if (previousStatus.current !== view.status) {
-      containerRef.current?.querySelector("h1")?.focus();
+      // A mode card may already have focused its own control (e.g. the Writing input).
+      const container = containerRef.current;
+      if (!container?.contains(document.activeElement)) {
+        container?.querySelector("h1")?.focus();
+      }
       previousStatus.current = view.status;
     }
   }, [view.status]);
@@ -125,13 +162,28 @@ function ActiveSession({
         )}
       </div>
       <div key={view.session.position} data-mode={mode}>
-        {renderCard({
-          card,
-          set,
-          direction: view.direction,
-          terms,
-          onAnswer: answer,
-        })}
+        {mode === "matching" ? (
+          // A matching screen covers a whole round, so it answers several words at once.
+          <MatchingBoard
+            set={set}
+            pairs={roundAt(
+              view.session.queue.map((queued) => queued.pair),
+              view.session.position,
+            )}
+            rng={rng}
+            onComplete={answerRound}
+          />
+        ) : (
+          renderCard({
+            card,
+            set,
+            direction: view.direction,
+            terms,
+            pool,
+            rng,
+            onAnswer: answer,
+          })
+        )}
       </div>
     </div>
   );

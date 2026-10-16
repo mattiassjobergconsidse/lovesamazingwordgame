@@ -476,7 +476,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
 - [x] **P1 Sets**: `FR-SET-*`, `FR-ACT-*`, example set, set list/editor screens, tests.
 - [x] **P2 Core engine**: `shuffle`, `direction`, `checkAnswer`, `spacedRepetition`, `session`, `quiz`, `matching` with unit tests (no UI).
 - [x] **P3 Training shell**: `FR-TRN-*`, mode picker, session end screen, progress persistence.
-- [ ] **P4 Modes**: Flashcards -> Writing -> Quiz -> Matching (one PR each).
+- [x] **P4 Modes**: Flashcards -> Writing -> Quiz -> Matching (one PR each).
 - [ ] **P5 Stats + import/export**: `FR-ST-*`, `FR-IO-*`.
 - [ ] **P6 Polish**: UX requirements audit (section 9), accessibility pass, performance check, README with screenshots, Pages deploy verified.
 - [ ] **P7 Nice-to-have**: NH-1 .. NH-7 in order, as time allows.

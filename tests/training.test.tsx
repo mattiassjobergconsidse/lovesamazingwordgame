@@ -1,4 +1,10 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent, { type UserEvent } from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
@@ -266,5 +272,158 @@ describe("running a session", () => {
     render(<App />);
 
     expect(await screen.findByText("10 words in this session")).toBeVisible();
+  });
+});
+
+describe("flashcards", () => {
+  it("FR-FC-1, FR-FC-2: flips with Space and grades with the arrow keys", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await user.keyboard(" ");
+    expect(screen.getByText("Answer (English)")).toBeVisible();
+    await user.keyboard("{ArrowLeft}");
+    expect(screen.getByText("1 / 2")).toBeVisible();
+    await user.keyboard(" ");
+    await user.keyboard("{ArrowRight}");
+
+    expect(screen.getByText("2 / 2")).toBeVisible();
+    expect(screen.getByText("Repeat")).toBeVisible();
+  });
+
+  it("FR-FC-2: ignores grade keys before the card is flipped", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await user.keyboard("2");
+
+    expect(screen.getByText("0 / 2")).toBeVisible();
+  });
+
+  it("FR-FC-2: grades with the keys 1 and 2", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await user.keyboard(" 2");
+    expect(screen.getByText("1 / 2")).toBeVisible();
+    await user.keyboard(" 1");
+
+    expect(screen.getByText("2 / 2")).toBeVisible();
+    expect(screen.getByText("Repeat")).toBeVisible();
+  });
+
+  it("FR-FC-1: flips by clicking the card", async () => {
+    await seedWeek(1);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await user.click(screen.getByText(/^ord\d$/));
+
+    expect(screen.getByRole("button", { name: "I knew it" })).toBeVisible();
+  });
+
+  it("FR-FC-3: shows the answer with its alternatives on the back", async () => {
+    const { set, pairs } = setWithPairs("Week 1", [["stor", "big"]]);
+    await seedDatabase({
+      sets: [set],
+      pairs: pairs.map((pair) => ({ ...pair, altB: ["large"] })),
+      settings: makeSettings({ activeSetId: set.id, directionMode: "AtoB" }),
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await user.keyboard(" ");
+
+    expect(screen.getByText("big / large")).toBeVisible();
+    expect(screen.getByText("Answer (English)")).toBeVisible();
+  });
+
+  it("FR-FC-2: swiping right on the flipped card means correct", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    await user.keyboard(" ");
+
+    const card = screen.getByText(/^ord\d$/).closest(".flashcard");
+    expect(card).not.toBeNull();
+    if (card !== null) {
+      fireEvent.pointerDown(card, { clientX: 20, clientY: 100 });
+      fireEvent.pointerUp(card, { clientX: 160, clientY: 105 });
+    }
+
+    expect(await screen.findByText("1 / 2")).toBeVisible();
+    await waitFor(async () => {
+      const { progress } = await readLibrary();
+      expect(progress[0]).toMatchObject({ correct: 1 });
+    });
+  });
+
+  it("FR-FC-2: swiping left on the flipped card means not yet", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    await user.keyboard(" ");
+
+    const card = screen.getByText(/^ord\d$/).closest(".flashcard");
+    if (card !== null) {
+      fireEvent.pointerDown(card, { clientX: 200, clientY: 100 });
+      fireEvent.pointerUp(card, { clientX: 20, clientY: 100 });
+    }
+
+    expect(await screen.findByText("1 / 2")).toBeVisible();
+    await waitFor(async () => {
+      const { progress } = await readLibrary();
+      expect(progress[0]).toMatchObject({ wrong: 1 });
+    });
+  });
+
+  it("FR-FC-2: a short swipe does not grade", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    await user.keyboard(" ");
+
+    const card = screen.getByText(/^ord\d$/).closest(".flashcard");
+    if (card !== null) {
+      fireEvent.pointerDown(card, { clientX: 100, clientY: 100 });
+      fireEvent.pointerUp(card, { clientX: 120, clientY: 100 });
+    }
+
+    expect(screen.getByText("0 / 2")).toBeVisible();
+  });
+
+  it("FR-FC-3: completes a 10-card session using only the keyboard", async () => {
+    await seedWeek(10);
+    const user = userEvent.setup();
+    render(<App />);
+    (await screen.findByRole("button", { name: "Start" })).focus();
+    await user.keyboard("{Enter}");
+    for (let card = 0; card < 10; card += 1) {
+      await user.keyboard(" ");
+      await user.keyboard("{ArrowRight}");
+    }
+
+    expect(await screen.findByText("10 of 10 correct")).toBeVisible();
+  });
+
+  it("FR-BP-11: has no axe violations on a flipped card", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    const { container } = render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    await user.keyboard(" ");
+
+    expect(await axe(container)).toHaveNoViolations();
   });
 });
