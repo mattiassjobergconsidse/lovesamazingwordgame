@@ -97,6 +97,8 @@ export const sv: Record<MessageKey, string> = {
   "editor.notFound": "Listan finns inte.",
   "editor.details": "Om listan",
   "editor.words": "Ord",
+  "editor.print": "Skriv ut ordlistan",
+  "editor.print.pairs": "Ordlista att skriva ut",
   "editor.search": "Sök bland orden",
   "editor.search.noResults": "Inga ord matchar sökningen.",
   "editor.empty": "Inga ord än. Lägg till ditt första ord nedan.",

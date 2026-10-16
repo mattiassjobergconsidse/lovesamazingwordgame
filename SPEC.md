@@ -19,7 +19,7 @@ for rules and architecture; ask the user before deviating.
 A static web app for learning vocabulary ("glosor") from word pairs. Typical use: a school pupil or adult
 learner gets a new list of word pairs each week and wants to practise it in a smooth, friendly way.
 It must be **language independent**: a set is just pairs of "term A" and "term B" with two user-defined language
-labels (e.g. Svenska/English, but also Español/Svenska or anything else).
+labels (e.g. Svenska/English, but also EspaÃ±ol/Svenska or anything else).
 
 Hosting: GitHub Pages, https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 Repo: https://github.com/mattiassjobergconsidse/lovesamazingwordgame
@@ -127,26 +127,26 @@ Deleting a set deletes its pairs, progress and activity (in one transaction).
 
 ```
 src/
-├── main.tsx
-├── App.tsx                  # shell: header, nav, router outlet, active-set bar
-├── types.ts
-├── data/                    # bundled example set (example-sv-en.json), imported as a module
-├── i18n/                    # sv.ts, en.ts, index.ts (typed keys, t() hook), no library
-├── core/                    # PURE. No browser APIs, no I/O, no Date.now()/Math.random() (inject them)
-│   ├── spacedRepetition.ts  # applyResult, intervals, isDue, countDue
-│   ├── session.ts           # buildSessionQueue, re-queue of wrong answers, session state transitions
-│   ├── direction.ts         # pick direction per card (random or forced)
-│   ├── checkAnswer.ts       # normalisation + comparison for Writing mode
-│   ├── quiz.ts              # distractor selection, option shuffling
-│   ├── matching.ts          # round building, pair validation
-│   ├── shuffle.ts           # Fisher-Yates with injected rng
-│   ├── stats.ts             # statistics and streak calculation
-│   └── importParse.ts       # parse CSV/JSON/pasted text into pairs (returns result + errors)
-├── storage/                 # ALL I/O: db.ts, setsRepo.ts, pairsRepo.ts, progressRepo.ts,
-│                            # settingsRepo.ts, exportImport.ts, speech.ts (nice-to-have)
-├── hooks/                   # useSets, usePairs, useActiveSet, useSettings, useTrainingSession, ...
-├── components/              # UI only; common/ (Button, Dialog, Toast, ...) and one folder per screen
-└── router.ts                # hash router
+â”œâ”€â”€ main.tsx
+â”œâ”€â”€ App.tsx                  # shell: header, nav, router outlet, active-set bar
+â”œâ”€â”€ types.ts
+â”œâ”€â”€ data/                    # bundled example set (example-sv-en.json), imported as a module
+â”œâ”€â”€ i18n/                    # sv.ts, en.ts, index.ts (typed keys, t() hook), no library
+â”œâ”€â”€ core/                    # PURE. No browser APIs, no I/O, no Date.now()/Math.random() (inject them)
+â”‚   â”œâ”€â”€ spacedRepetition.ts  # applyResult, intervals, isDue, countDue
+â”‚   â”œâ”€â”€ session.ts           # buildSessionQueue, re-queue of wrong answers, session state transitions
+â”‚   â”œâ”€â”€ direction.ts         # pick direction per card (random or forced)
+â”‚   â”œâ”€â”€ checkAnswer.ts       # normalisation + comparison for Writing mode
+â”‚   â”œâ”€â”€ quiz.ts              # distractor selection, option shuffling
+â”‚   â”œâ”€â”€ matching.ts          # round building, pair validation
+â”‚   â”œâ”€â”€ shuffle.ts           # Fisher-Yates with injected rng
+â”‚   â”œâ”€â”€ stats.ts             # statistics and streak calculation
+â”‚   â””â”€â”€ importParse.ts       # parse CSV/JSON/pasted text into pairs (returns result + errors)
+â”œâ”€â”€ storage/                 # ALL I/O: db.ts, setsRepo.ts, pairsRepo.ts, progressRepo.ts,
+â”‚                            # settingsRepo.ts, exportImport.ts, speech.ts (nice-to-have)
+â”œâ”€â”€ hooks/                   # useSets, usePairs, useActiveSet, useSettings, useTrainingSession, ...
+â”œâ”€â”€ components/              # UI only; common/ (Button, Dialog, Toast, ...) and one folder per screen
+â””â”€â”€ router.ts                # hash router
 tests/                       # test setup + integration tests; unit tests sit next to files as *.test.ts
 ```
 
@@ -175,7 +175,7 @@ Global, always visible: a compact **active set bar** (set name, word count, "Cha
 ### 6.1 Sets (`FR-SET`)
 
 - `FR-SET-1` Create a set with a mandatory name and mandatory language labels A and B (empty fields with translated placeholders,
-  e.g. "Language A"/"Språk A"; the last used labels are pre-filled for convenience).
+  e.g. "Language A"/"SprÃ¥k A"; the last used labels are pre-filled for convenience).
   AC: Save is disabled while name or a label is empty/whitespace; inline error shown; duplicate name rejected (case-insensitive).
 - `FR-SET-2` Rename a set and edit language labels at any time. AC: changes persist and update everywhere immediately.
 - `FR-SET-3` Delete a set with confirmation dialog stating the set name and the number of words. Deletes pairs, progress and activity.
@@ -228,7 +228,7 @@ Global, always visible: a compact **active set bar** (set name, word count, "Cha
 
 - `FR-WR-1` Show the prompt in one language; the user types the translation in a text field (auto-focused, Enter submits, no autocorrect/autocapitalize/spellcheck).
 - `FR-WR-2` Answer checking (`core/checkAnswer.ts`): compare after normalising (trim, collapse whitespace, case-insensitive,
-  Unicode NFC, strip surrounding punctuation). Accent differences are **not correct by default** (e.g. `a` vs `ä`, matters for Swedish)
+  Unicode NFC, strip surrounding punctuation). Accent differences are **not correct by default** (e.g. `a` vs `Ã¤`, matters for Swedish)
   but shown as "almost, check accents" with partial feedback; result `assisted` (not correct). If `Settings.ignoreAccents` is on (off by default), accent-only differences count as `correct`. Accept any of `b` / `altB` (or `a` / `altA`).
 - `FR-WR-3` Feedback: correct = green + icon + brief success animation, auto-advance after ~0.8 s (or Enter). Wrong = show the correct answer
   with a diff highlight of what differed, user presses Enter/Next to continue. Offer "I was right" override button (result `correct`) for synonyms not in the list.
@@ -342,7 +342,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 4. **Sounds and haptics** (`NH-4`, done): short correct/wrong sounds (generated with WebAudio, no files) and `navigator.vibrate` on mobile; off by default, setting to enable.
 5. **Share a set via link** (`NH-5`, done): encode a small set as compressed base64 in the URL hash so it can be sent to a friend; import dialog on open. No server.
 6. **Keyboard shortcut help** (`NH-6`, done): `?` opens an overlay listing shortcuts.
-7. **Print view** (`NH-7`): print-friendly list of a set (CSS `@media print`).
+7. **Print view** (`NH-7`, done): print-friendly list of a set (CSS `@media print`).
 
 ## 8b. Language and encoding conventions (`FR-LANG`)
 
@@ -350,7 +350,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
   The only non-English text allowed is user-facing UI text in `src/i18n/sv.ts` and bundled example word data in `src/data/`.
 - `FR-LANG-2` Every text file is **UTF-8 without BOM** with LF line endings (enforced by `.gitattributes`: `* text=auto eol=lf`).
   Exception: CSV export for Excel uses UTF-8 **with** BOM (FR-IO-3).
-  `index.html` keeps `<meta charset="UTF-8" />`. Never escape non-ASCII characters (å, ä, ö) in source or data; write them directly.
+  `index.html` keeps `<meta charset="UTF-8" />`. Never escape non-ASCII characters (Ã¥, Ã¤, Ã¶) in source or data; write them directly.
 - `FR-LANG-3` The `lang` attribute on `<html>` follows the selected UI language (`sv`/`en`).
 - AC: a reviewer can grep the repo (excluding `src/i18n/sv.ts` and `src/data/`) and find no Swedish text; Swedish characters in tests and examples render correctly.
 
@@ -430,7 +430,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
   (requirement ID -> test file(s)); update it in every PR that touches requirements.
 - `FR-TEST-3` Bug fix = first a failing regression test that reproduces it, then the fix.
 - `FR-TEST-4` Cover edge cases and error paths, not only the happy path: empty set, 1-3 words, duplicates, whitespace and Unicode
-  input (å, ä, ö, emoji), very long text, storage failure, malformed import files, missing translation keys, no active set, reduced motion.
+  input (Ã¥, Ã¤, Ã¶, emoji), very long text, storage failure, malformed import files, missing translation keys, no active set, reduced motion.
 - `FR-TEST-5` Tests are deterministic: inject `now` and `rng`, use fake timers, never depend on real time, network or test order. No flaky tests.
 - `FR-TEST-6` Tests are independent and fast (whole suite < 30 s). Each test sets up its own data via factory helpers (`tests/factories.ts`).
 - `FR-TEST-7` Test code follows the same rules as production code (English, typed, no `any`, readable names, no copy-paste walls).
@@ -480,7 +480,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
 - [x] **P5 Stats + import/export**: `FR-ST-*`, `FR-IO-*`.
 - [x] **P6 Polish**: UX requirements audit (section 9), accessibility pass, performance check, README (screenshots skipped by decision), Pages deploy verified.
 - [x] **P7 More themes**: Not just light/dark. Also ability to choose Christmas, Halloween, Minecraft, Fortnite, etc. (whatever is fun for a 10 year old learning the words, CSS variables only, no images). Optional, but a nice-to-have for the first release.
-- [ ] **P8 Nice-to-have**: NH-1 .. NH-7 in order, as time allows.
+- [x] **P8 Nice-to-have**: NH-1 .. NH-7 in order, as time allows.
 
 Time budget: about 6 weeks alongside full-time work. If behind schedule cut in this order: `NH-*`, `FR-ST-3`, `FR-SET-8`/`FR-SET-9`, `FR-IO-3`, then Matching polish. Never cut tests.
 

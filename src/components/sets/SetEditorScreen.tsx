@@ -8,6 +8,7 @@ import { routeToHash } from "../../router";
 import { ExportPanel } from "../data/ExportPanel";
 import { BulkAddPanel } from "./BulkAddPanel";
 import { PairTable } from "./PairTable";
+import { PrintableList } from "./PrintableList";
 import { SetFieldsForm } from "./SetFieldsForm";
 import { SharePanel } from "./SharePanel";
 import { SpeechLanguageFields } from "./SpeechLanguageFields";
@@ -147,6 +148,21 @@ export function SetEditorScreen({ id }: { readonly id: string }) {
 
       <ExportPanel setId={id} />
       <SharePanel set={set} pairs={setPairs} />
+
+      {setPairs.length > 0 && (
+        <>
+          <button
+            type="button"
+            className="button button-secondary no-print"
+            onClick={() => {
+              window.print();
+            }}
+          >
+            {t("editor.print")}
+          </button>
+          <PrintableList set={set} pairs={setPairs} />
+        </>
+      )}
     </div>
   );
 }

@@ -127,3 +127,36 @@
   align-items: center;
   text-decoration: none;
 }
+/* Print view (NH-7): only the set's word list is printed. */
+.print-only {
+  display: none;
+}
+@media print {
+  .app-header,
+  .skip-link,
+  .toast-region,
+  .no-print,
+  .editor-screen > :not(.print-only) {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .print-table th,
+  .print-table td {
+    border: 1px solid #000;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+  }
+  .print-table tr {
+    break-inside: avoid;
+  }
+}

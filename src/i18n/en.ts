@@ -95,6 +95,8 @@ export const en = {
   "editor.notFound": "This set does not exist.",
   "editor.details": "Set details",
   "editor.words": "Words",
+  "editor.print": "Print the word list",
+  "editor.print.pairs": "Printable word list",
   "editor.search": "Search words",
   "editor.search.noResults": "No words match your search.",
   "editor.empty": "No words yet. Add your first word below.",
