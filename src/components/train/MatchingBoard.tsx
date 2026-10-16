@@ -7,6 +7,7 @@ import {
 import type { Rng } from "../../core/shuffle";
 import { useI18n } from "../../i18n";
 import type { AnswerResult, WordPair, WordSet } from "../../types";
+import { isModalOpen } from "../common/modalOpen";
 
 /** How long a wrong pair stays marked (FR-MT-2). */
 const WRONG_FLASH_MS = 500;
@@ -119,7 +120,7 @@ export function MatchingBoard({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.altKey || event.ctrlKey || event.metaKey || isModalOpen()) {
         return;
       }
       const key = event.key.toUpperCase();

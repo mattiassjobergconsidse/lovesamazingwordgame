@@ -2,6 +2,7 @@ import { useI18n, type MessageKey } from "../../i18n";
 import { routeToHash, useRoute, type Route } from "../../router";
 import { LanguageSwitch } from "../common/LanguageSwitch";
 import { ThemeToggle } from "../common/ThemeToggle";
+import { ShortcutHelp } from "./ShortcutHelp";
 
 interface NavItem {
   readonly route: Route;
@@ -57,6 +58,7 @@ export function AppHeader() {
       <div className="app-header-actions">
         <LanguageSwitch />
         <ThemeToggle />
+        <ShortcutHelp />
       </div>
     </header>
   );

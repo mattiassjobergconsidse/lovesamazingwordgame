@@ -5,6 +5,7 @@ import {
   gradeFromSwipe,
 } from "../../core/flashcardInput";
 import { useI18n } from "../../i18n";
+import { isModalOpen } from "../common/modalOpen";
 import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
@@ -37,7 +38,13 @@ export function FlashCard({ set, direction, terms, onAnswer }: ModeCardProps) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const action = flashcardActionForKey(event.key);
-      if (action === null || event.altKey || event.ctrlKey || event.metaKey) {
+      if (
+        action === null ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        isModalOpen()
+      ) {
         return;
       }
       if (action === "flip") {

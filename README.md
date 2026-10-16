@@ -20,6 +20,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Extra Ocean and Sunset themes and smooth colour transitions when switching theme
 - Optional short answer sounds (generated in the browser) and vibration on mobile, off by default
 - Share a set as a link (the words are compressed into the address, no server involved) and import it from the link
+- Press `?` (or use the header button) to see the keyboard shortcuts
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 
 ## Tech stack

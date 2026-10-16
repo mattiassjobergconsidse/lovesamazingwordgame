@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { buildQuizQuestion } from "../../core/quiz";
 import { speechCodesFor } from "../../core/direction";
 import { useI18n } from "../../i18n";
+import { isModalOpen } from "../common/modalOpen";
 import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
@@ -15,6 +16,7 @@ const IGNORED_ADVANCE_KEYS = new Set([
   "Control",
   "Alt",
   "Meta",
+  "?",
 ]);
 
 /**
@@ -76,7 +78,7 @@ export function QuizCard({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.altKey || event.ctrlKey || event.metaKey || isModalOpen()) {
         return;
       }
       if (chosen === null) {
