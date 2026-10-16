@@ -117,4 +117,11 @@ describe("fun themes", () => {
     expect(isDarkTheme("blocks")).toBe(true);
     expect(isDarkTheme("battle")).toBe(true);
   });
+
+  it("NH-3: offers the extra ocean (light) and sunset (dark) palettes", () => {
+    expect(THEMES).toEqual(expect.arrayContaining(["ocean", "sunset"]));
+    expect(isTheme("ocean")).toBe(true);
+    expect(isDarkTheme("ocean")).toBe(false);
+    expect(isDarkTheme("sunset")).toBe(true);
+  });
 });

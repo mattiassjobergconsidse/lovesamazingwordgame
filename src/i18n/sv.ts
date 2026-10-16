@@ -28,6 +28,8 @@ export const sv: Record<MessageKey, string> = {
   "settings.theme.halloween": "Halloween",
   "settings.theme.blocks": "Block",
   "settings.theme.battle": "Strid",
+  "settings.theme.ocean": "Hav",
+  "settings.theme.sunset": "Solnedgång",
   "settings.speech.heading": "Uttal",
   "settings.speech.autoPlay": "Läs upp varje ord när ett kort visas",
   "settings.speech.hint":

@@ -87,6 +87,40 @@
   --color-correct: #7fdc9d;
   --color-wrong: #ff9a90;
 }
+/* Extra palettes (NH-3): one light and one dark, both WCAG AA. */
+:root[data-theme="ocean"] {
+  color-scheme: light;
+  --color-bg: #f2fafc;
+  --color-surface: #dff0f5;
+  --color-border: #4f7f8c;
+  --color-text: #0f2a33;
+  --color-text-muted: #3b5a64;
+  --color-primary: #006c84;
+  --color-on-primary: #ffffff;
+  --color-correct: #1b6e3c;
+  --color-wrong: #a3201a;
+}
+:root[data-theme="sunset"] {
+  color-scheme: dark;
+  --color-bg: #1f1020;
+  --color-surface: #321a33;
+  --color-border: #b58aa8;
+  --color-text: #fdf0f5;
+  --color-text-muted: #dcc0cf;
+  --color-primary: #ff7a9c;
+  --color-on-primary: #2a0612;
+  --color-correct: #8be28b;
+  --color-wrong: #ff9a90;
+}
+/* Smooth colour changes when the theme switches (NH-3). Disabled by the reduced-motion rule below. */
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--duration) ease,
+    border-color var(--duration) ease,
+    color var(--duration) ease;
+}
 *,
 *::before,
 *::after {

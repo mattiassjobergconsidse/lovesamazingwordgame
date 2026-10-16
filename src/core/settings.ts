@@ -13,6 +13,8 @@ export const THEMES = [
   "halloween",
   "blocks",
   "battle",
+  "ocean",
+  "sunset",
 ] as const satisfies readonly Theme[];
 
 /** Type guard for {@link Theme}. */
@@ -26,7 +28,7 @@ export function isTheme(value: unknown): value is Theme {
  * @param theme A resolved theme.
  */
 export function isDarkTheme(theme: ResolvedTheme): boolean {
-  return theme !== "light" && theme !== "christmas";
+  return theme !== "light" && theme !== "christmas" && theme !== "ocean";
 }
 
 /** Type guard for {@link UiLanguage}. */

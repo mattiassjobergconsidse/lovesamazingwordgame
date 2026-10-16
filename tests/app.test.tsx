@@ -146,6 +146,17 @@ describe("theme", () => {
     );
     expect(document.documentElement.dataset.theme).toBe("light");
   });
+
+  it("NH-3: chooses the Sunset palette and it is mirrored for the next start", async () => {
+    const user = userEvent.setup();
+    window.location.hash = "#/settings";
+    render(<App />);
+
+    await user.click(screen.getByRole("radio", { name: "Sunset" }));
+
+    expect(document.documentElement.dataset.theme).toBe("sunset");
+    expect(localStorage.getItem(THEME_MIRROR_KEY)).toBe("sunset");
+  });
 });
 
 describe("language", () => {

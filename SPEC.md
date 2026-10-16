@@ -338,7 +338,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 2. **Pronunciation** (`NH-2`, done): speaker button on cards using the Web Speech API (`speechSynthesis`). Voice language is taken from a BCP-47 tag
    stored on the set (`langACode`, `langBCode`, already in the schema; picked from a dropdown of available voices).
    Wrap in `storage/speech.ts`; hide the button if unsupported. Optional auto-play when a card shows.
-3. **Theme polish** (`NH-3`): light/dark selection itself is a must-have (`FR-THEME-*`); this item is extra polish only (smooth colour transitions, additional accent colour choices).
+3. **Theme polish** (`NH-3`, done): light/dark selection itself is a must-have (`FR-THEME-*`); this item is extra polish only (smooth colour transitions, additional accent colour choices, delivered as the extra Ocean and Sunset palettes so no settings-format change is needed).
 4. **Sounds and haptics** (`NH-4`): short correct/wrong sounds (generated with WebAudio, no files) and `navigator.vibrate` on mobile; off by default, setting to enable.
 5. **Share a set via link** (`NH-5`): encode a small set as compressed base64 in the URL hash so it can be sent to a friend; import dialog on open. No server.
 6. **Keyboard shortcut help** (`NH-6`): `?` opens an overlay listing shortcuts.

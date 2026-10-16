@@ -26,6 +26,8 @@ export const en = {
   "settings.theme.halloween": "Halloween",
   "settings.theme.blocks": "Blocks",
   "settings.theme.battle": "Battle",
+  "settings.theme.ocean": "Ocean",
+  "settings.theme.sunset": "Sunset",
   "settings.speech.heading": "Pronunciation",
   "settings.speech.autoPlay": "Read each word aloud when a card appears",
   "settings.speech.hint":
