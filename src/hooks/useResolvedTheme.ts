@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { resolveTheme } from "../core/settings";
-import type { Theme } from "../types";
+import type { ResolvedTheme, Theme } from "../types";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
@@ -21,7 +21,7 @@ function getSystemPrefersDark(): boolean {
  *
  * @param theme The user's choice.
  */
-export function useResolvedTheme(theme: Theme): "light" | "dark" {
+export function useResolvedTheme(theme: Theme): ResolvedTheme {
   const systemPrefersDark = useSyncExternalStore(
     subscribe,
     getSystemPrefersDark,

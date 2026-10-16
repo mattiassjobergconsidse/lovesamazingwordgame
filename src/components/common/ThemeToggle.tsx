@@ -1,3 +1,4 @@
+import { isDarkTheme } from "../../core/settings";
 import { useResolvedTheme } from "../../hooks/useResolvedTheme";
 import { useSettings } from "../../hooks/useSettings";
 import { useI18n } from "../../i18n";
@@ -7,7 +8,8 @@ export function ThemeToggle() {
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
   const resolved = useResolvedTheme(settings.theme);
-  const next = resolved === "dark" ? "light" : "dark";
+  const isDark = isDarkTheme(resolved);
+  const next = isDark ? "light" : "dark";
 
   return (
     <button
@@ -20,7 +22,7 @@ export function ThemeToggle() {
         updateSettings({ theme: next });
       }}
     >
-      <span aria-hidden="true">{resolved === "dark" ? "☀" : "☾"}</span>
+      <span aria-hidden="true">{isDark ? "☀" : "☾"}</span>
     </button>
   );
 }

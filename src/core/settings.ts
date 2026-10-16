@@ -1,12 +1,32 @@
-import type { Settings, Theme, UiLanguage } from "../types";
+import type { ResolvedTheme, Settings, Theme, UiLanguage } from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/** Every selectable theme in display order. Keep in sync with the inline script in `index.html`. */
+export const THEMES = [
+  "system",
+  "light",
+  "dark",
+  "christmas",
+  "halloween",
+  "blocks",
+  "battle",
+] as const satisfies readonly Theme[];
+
 /** Type guard for {@link Theme}. */
 export function isTheme(value: unknown): value is Theme {
-  return value === "light" || value === "dark" || value === "system";
+  return THEMES.some((theme) => theme === value);
+}
+
+/**
+ * Tells whether a theme uses a dark colour scheme, so the header toggle knows which way to flip.
+ *
+ * @param theme A resolved theme.
+ */
+export function isDarkTheme(theme: ResolvedTheme): boolean {
+  return theme !== "light" && theme !== "christmas";
 }
 
 /** Type guard for {@link UiLanguage}. */
@@ -101,7 +121,7 @@ export function parseSettings(value: unknown): Settings | null {
 export function resolveTheme(
   theme: Theme,
   systemPrefersDark: boolean,
-): "light" | "dark" {
+): ResolvedTheme {
   if (theme === "system") {
     return systemPrefersDark ? "dark" : "light";
   }

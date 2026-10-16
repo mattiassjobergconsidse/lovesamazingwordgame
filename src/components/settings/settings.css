@@ -4,3 +4,18 @@
   flex-direction: column;
   gap: var(--space-3);
 }
+
+/* Theme selector */
+.theme-selector {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.theme-selector .check-field {
+  min-block-size: var(--tap-size);
+}
+.theme-selector input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}

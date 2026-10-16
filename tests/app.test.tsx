@@ -131,6 +131,21 @@ describe("theme", () => {
       expect(document.documentElement.dataset.theme).toBe("dark");
     });
   });
+
+  it("P7: chooses a fun theme in settings and the header toggle then flips to the other scheme", async () => {
+    const user = userEvent.setup();
+    window.location.hash = "#/settings";
+    render(<App />);
+
+    await user.click(screen.getByRole("radio", { name: "Halloween" }));
+
+    expect(document.documentElement.dataset.theme).toBe("halloween");
+    expect(localStorage.getItem(THEME_MIRROR_KEY)).toBe("halloween");
+    await user.click(
+      screen.getByRole("button", { name: "Switch to light theme" }),
+    );
+    expect(document.documentElement.dataset.theme).toBe("light");
+  });
 });
 
 describe("language", () => {

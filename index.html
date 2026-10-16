@@ -16,7 +16,17 @@
           var storedLang = localStorage.getItem(
             "lovesamazingwordgame.uiLanguage",
           );
-          if (["light", "dark", "system"].indexOf(storedTheme) !== -1) {
+          if (
+            [
+              "light",
+              "dark",
+              "system",
+              "christmas",
+              "halloween",
+              "blocks",
+              "battle",
+            ].indexOf(storedTheme) !== -1
+          ) {
             theme = storedTheme;
           }
           var browserLang = (navigator.language || "")
