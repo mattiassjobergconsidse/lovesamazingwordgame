@@ -80,6 +80,42 @@ describe("useLibraryStore sets", () => {
     expect(result.current.library.duplicateSet("missing", "Copy")).toBeNull();
   });
 
+  it("NH-6: sets and clears speech languages on one set only", async () => {
+    const first = setWithPairs("Week 1", [["hus", "house"]]);
+    const second = setWithPairs("Week 2", [["bil", "car"]]);
+    await seedDatabase({
+      sets: [first.set, second.set],
+      pairs: [...first.pairs, ...second.pairs],
+    });
+    const { result } = await renderLibrary();
+
+    act(() => {
+      result.current.library.updateSpeechLanguages("missing", {
+        langACode: "sv-SE",
+        langBCode: null,
+      });
+    });
+    expect(result.current.library.sets.some((s) => s.langACode)).toBe(false);
+
+    act(() => {
+      result.current.library.updateSpeechLanguages(first.set.id, {
+        langACode: "sv-SE",
+        langBCode: "en-GB",
+      });
+    });
+    act(() => {
+      result.current.library.updateSpeechLanguages(first.set.id, {
+        langACode: null,
+        langBCode: "en-GB",
+      });
+    });
+
+    const [updated, untouched] = result.current.library.sets;
+    expect(updated?.langACode).toBeUndefined();
+    expect(updated?.langBCode).toBe("en-GB");
+    expect(untouched?.langBCode).toBeUndefined();
+  });
+
   it("FR-SET-3: deleting the active set clears the active set id", async () => {
     const { set, pairs } = setWithPairs("Week 1", [["hus", "house"]]);
     await seedDatabase({
