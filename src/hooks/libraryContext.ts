@@ -1,7 +1,13 @@
 import { createContext } from "react";
 import type { BulkParsedPair } from "../core/bulkParse";
 import type { SetFieldErrors, SetFields } from "../core/setValidation";
-import type { AnswerResult, WordPair, WordProgress, WordSet } from "../types";
+import type {
+  AnswerResult,
+  DailyActivity,
+  WordPair,
+  WordProgress,
+  WordSet,
+} from "../types";
 
 /** Result of creating or editing a set: validation problems are data, not exceptions. */
 export type SetResult =
@@ -27,6 +33,14 @@ export interface Library {
   readonly sets: readonly WordSet[];
   readonly pairs: readonly WordPair[];
   readonly progress: readonly WordProgress[];
+  readonly activity: readonly DailyActivity[];
+  /**
+   * Re-reads everything from storage after a bulk change made outside the
+   * store (import, reset).
+   *
+   * @throws If reading fails.
+   */
+  readonly reload: () => Promise<void>;
   readonly createSet: (fields: SetFields) => SetResult;
   readonly updateSet: (id: string, fields: SetFields) => SetResult;
   /** Copies a set without progress; `baseName` is made unique. Returns `null` for an unknown id. */

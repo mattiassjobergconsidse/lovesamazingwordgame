@@ -26,6 +26,10 @@ describe("parseRoute", () => {
     ["#/train/quiz", { name: "trainMode", mode: "quiz" }],
     ["#/train/matching", { name: "trainMode", mode: "matching" }],
     ["#/train/writing", { name: "trainMode", mode: "writing" }],
+    [
+      "#/train/flashcards/hardest",
+      { name: "trainMode", mode: "flashcards", focus: "hardest" },
+    ],
     ["#/stats", { name: "stats" }],
     ["#/settings", { name: "settings" }],
   ])("maps %j to a route", (hash, expected) => {
@@ -35,7 +39,10 @@ describe("parseRoute", () => {
   it.each([
     "#/unknown",
     "#/train/dancing",
+    "#/train/quiz/easiest",
     "#/sets/a/b",
+    "#/sets/a/b/c",
+    "#/stats/extra/more",
     "#/stats/extra",
     "#/settings/extra",
     "#/sets/%E0%A4%A",
@@ -52,6 +59,7 @@ describe("routeToHash", () => {
       { name: "setEditor", id: "a b/c" },
       { name: "train" },
       { name: "trainMode", mode: "writing" },
+      { name: "trainMode", mode: "flashcards", focus: "hardest" },
       { name: "stats" },
       { name: "settings" },
     ];

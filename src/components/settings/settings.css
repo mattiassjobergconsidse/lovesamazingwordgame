@@ -1,0 +1,6 @@
+/* Settings screen. Mobile first; colours only from theme tokens. */
+.settings-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

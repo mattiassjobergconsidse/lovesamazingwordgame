@@ -4,6 +4,8 @@ import type { MessageKey } from "../../i18n";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
 import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
+import { SettingsScreen } from "../settings/SettingsScreen";
+import { StatsScreen } from "../stats/StatsScreen";
 import { TrainGate } from "../train/TrainGate";
 import { TrainScreen } from "../train/TrainScreen";
 import { TrainSession } from "../train/TrainSession";
@@ -25,14 +27,20 @@ function renderScreen(route: Route) {
     case "trainMode":
       return (
         <TrainGate title={titleFor(route)} mode={route.mode}>
-          <AppErrorBoundary key={route.mode}>
-            <TrainSession title={titleFor(route)} mode={route.mode} />
+          <AppErrorBoundary key={routeToHash(route)}>
+            <TrainSession
+              title={titleFor(route)}
+              mode={route.mode}
+              focus={route.focus}
+            />
           </AppErrorBoundary>
         </TrainGate>
       );
-    case "home":
     case "stats":
+      return <StatsScreen />;
     case "settings":
+      return <SettingsScreen />;
+    case "home":
       return <ScreenPlaceholder title={titleFor(route)} />;
   }
 }
