@@ -283,4 +283,142 @@ describe("parseExport", () => {
 
     expect(!result.ok && result.problems.length).toBe(50);
   });
+
+  it("FR-IO-2: accepts optional language codes, alternatives and dates", () => {
+    const file = {
+      formatVersion: 1,
+      sets: [
+        {
+          id: "s1",
+          name: "A",
+          langA: "a",
+          langB: "b",
+          langACode: "sv",
+          langBCode: "en",
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      pairs: [
+        {
+          id: "p1",
+          setId: "s1",
+          a: "x",
+          b: "y",
+          altA: [" z ", "  "],
+          altB: ["  "],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      progress: [
+        {
+          pairId: "p1",
+          setId: "s1",
+          box: 3,
+          dueAt: 0,
+          correct: 1,
+          wrong: 0,
+          lastSeenAt: 7,
+          streak: 1,
+        },
+      ],
+      activity: [{ setId: "s1", date: "2026-10-16", answered: 2, correct: 2 }],
+    };
+
+    const result = parseExport(JSON.stringify(file));
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    const bundle = result.bundles[0];
+    expect(bundle?.set.langACode).toBe("sv");
+    expect(bundle?.set.langBCode).toBe("en");
+    expect(bundle?.pairs[0]?.altA).toEqual(["z"]);
+    expect(bundle?.pairs[0]?.altB).toBeUndefined();
+    expect(bundle?.progress[0]?.lastSeenAt).toBe(7);
+  });
+
+  it("FR-IO-2: reports malformed lists, records and fields", () => {
+    const set = {
+      id: "s1",
+      name: "A",
+      langA: "a",
+      langB: "b",
+      createdAt: 1,
+      updatedAt: 1,
+    };
+    const pair = { id: "p1", setId: "s1", a: "x", b: "y", ...{ createdAt: 1 } };
+    const progress = {
+      pairId: "p1",
+      setId: "s1",
+      box: 1,
+      dueAt: 0,
+      correct: 0,
+      wrong: 0,
+      lastSeenAt: null,
+      streak: 0,
+    };
+    const file = {
+      formatVersion: 1,
+      sets: [set, 5, { ...set, id: "s2", name: "B", langACode: 1 }],
+      pairs: [
+        7,
+        { ...pair, updatedAt: 1, altA: "no" },
+        { ...pair, id: "p2", updatedAt: 1, altB: [1] },
+        { ...pair, id: "p3", updatedAt: Number.NaN },
+      ],
+      progress: [
+        "x",
+        { ...progress, lastSeenAt: "x" },
+        { ...progress, correct: -1 },
+      ],
+      activity: [
+        null,
+        { setId: "s1", date: "2026-10-16", answered: 1, correct: 2 },
+        { setId: "s1", answered: 1, correct: 1 },
+      ],
+    };
+
+    const result = parseExport(JSON.stringify(file));
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    const found = result.problems.map(
+      (problem) => `${problem.path}:${problem.reason}`,
+    );
+    expect(found).toEqual(
+      expect.arrayContaining([
+        "sets[1]:notAnObject",
+        "sets[2].langACode:wrongType",
+        "pairs[0]:notAnObject",
+        "pairs[1].altA:wrongType",
+        "pairs[2].altB:wrongType",
+        "progress[0]:notAnObject",
+        "progress[1].lastSeenAt:wrongType",
+        "progress[2].correct:outOfRange",
+        "activity[0]:notAnObject",
+        "activity[1].correct:outOfRange",
+        "activity[2].date:missing",
+      ]),
+    );
+  });
+
+  it("FR-IO-2: rejects lists of the wrong type or missing", () => {
+    const result = parseExport(
+      JSON.stringify({ formatVersion: 1, sets: "x", progress: {} }),
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      problems: [
+        { path: "sets", reason: "wrongType" },
+        { path: "pairs", reason: "missing" },
+        { path: "progress", reason: "wrongType" },
+      ],
+    });
+  });
 });

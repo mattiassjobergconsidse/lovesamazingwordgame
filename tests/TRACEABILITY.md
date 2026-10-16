@@ -11,7 +11,7 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | FR-THEME-1  | P0 partial | `src/core/settings.test.ts`, `src/hooks/useResolvedTheme.test.ts`, `src/storage/preferenceMirror.test.ts`, `tests/app.test.tsx` (selector in Settings comes later) |
 | FR-THEME-2  | P0 manual  | Tokens in `src/index.css`; visual check in both themes at review time                                                                                              |
 | FR-LANG-3   | P0 done    | `tests/app.test.tsx`                                                                                                                                               |
-| FR-BP-2     | P0 done    | `src/components/common/ErrorBoundary.test.tsx`                                                                                                                     |
+| FR-BP-2     | P0 done    | `src/components/common/ErrorBoundary.test.tsx`, `tests/trainingErrors.test.tsx` (per training mode)                                                                |
 | FR-BP-4     | P0 done    | `src/storage/db.test.ts`, `src/hooks/useSettingsStore.test.ts`, `tests/app.test.tsx`                                                                               |
 | FR-BP-11    | P0 done    | `tests/app.test.tsx` (axe on the shell)                                                                                                                            |
 | FR-SET-1    | P1 done    | `src/core/setValidation.test.ts`, `src/storage/exampleSeed.test.ts`, `tests/sets.test.tsx`                                                                         |
