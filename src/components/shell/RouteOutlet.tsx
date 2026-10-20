@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { routeToHash, useRoute, type Route } from "../../router";
 import type { MessageKey } from "../../i18n";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
+import { HomeScreen } from "../home/HomeScreen";
 import { ShareImportScreen } from "../data/ShareImportScreen";
 import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
@@ -10,7 +11,6 @@ import { StatsScreen } from "../stats/StatsScreen";
 import { TrainGate } from "../train/TrainGate";
 import { TrainScreen } from "../train/TrainScreen";
 import { TrainSession } from "../train/TrainSession";
-import { ScreenPlaceholder } from "./ScreenPlaceholder";
 
 /** Chooses the screen for a route; unfinished screens show a placeholder. */
 function renderScreen(route: Route) {
@@ -44,7 +44,7 @@ function renderScreen(route: Route) {
     case "share":
       return <ShareImportScreen key={route.payload} payload={route.payload} />;
     case "home":
-      return <ScreenPlaceholder title={titleFor(route)} />;
+      return <HomeScreen />;
   }
 }
 function titleFor(route: Route): MessageKey {

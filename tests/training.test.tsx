@@ -238,7 +238,7 @@ describe("running a session", () => {
     await user.keyboard("{Escape}");
 
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Train" }),
+      await screen.findByRole("heading", { level: 1, name: "Practise" }),
     ).toBeVisible();
     expect(window.location.hash).toBe("#/train");
     const { progress } = await readLibrary();

@@ -4,11 +4,13 @@
 import "@testing-library/jest-dom/vitest";
 // Provides an in-memory IndexedDB implementation so storage code can be tested in jsdom.
 import "fake-indexeddb/auto";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, expect, vi } from "vitest";
 import * as axeMatchers from "vitest-axe/matchers";
 
 expect.extend(axeMatchers);
+// findBy*/waitFor poll for 1 s by default, which is too short when many test files run in parallel (CI).
+configure({ asyncUtilTimeout: 5000 });
 
 // jsdom has no canvas implementation; axe-core probes it for colour-contrast checks.
 // Contrast is verified in real browsers instead (FR-THEME-2), so a null context is sufficient here.

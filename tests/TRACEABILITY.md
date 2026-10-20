@@ -1,4 +1,4 @@
-﻿# Requirement traceability
+# Requirement traceability
 
 Maps each requirement ID to the tests that verify it (FR-TEST-2). Update this table in every PR that touches requirements.
 Tests carry the ID in their title; search the repo for the ID to find them.
@@ -13,6 +13,7 @@ Tests carry the ID in their title; search the repo for the ID to find them.
 | NH-1        | P8 partial | `src/storage/serviceWorker.test.ts` (registration); worker, manifest and installability are checked manually with `npm run build` + `npm run preview`                                                                                    |
 | NH-2        | P8 partial | `src/storage/speech.test.ts`, `src/core/direction.test.ts`, `tests/speech.test.tsx` (speaker button, auto-play, voice picker, hidden when unsupported); real voices are checked manually                                                 |
 | NH-3        | P8 partial | `src/core/settings.test.ts`, `tests/app.test.tsx` (Ocean and Sunset palettes); transitions and colours are checked manually                                                                                                              |
+| HOME-1      | P9 done    | `tests/home.test.tsx` (due words, modes, goal setting, snapshot, empty states); `src/core/home.test.ts` (figures, greeting); SPEC section 7 `#/`                                                                                         |
 | NH-7        | P8 partial | `tests/print.test.tsx` (printable table and print button); the `@media print` layout is checked manually with the browser print preview                                                                                                  |
 | NH-6        | P8 partial | `tests/shortcuts.test.tsx` (? key and header button open the list, Esc closes it, ignored while typing)                                                                                                                                  |
 | NH-5        | P8 partial | `src/core/shareFormat.test.ts`, `src/storage/shareLink.test.ts`, `src/router.test.ts`, `tests/share.test.tsx` (link creation and copy, import after confirmation, name conflicts, damaged links)                                         |

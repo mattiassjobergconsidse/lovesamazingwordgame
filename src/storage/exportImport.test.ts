@@ -146,6 +146,7 @@ describe("clearLibrary", () => {
         speechEnabled: false,
         soundEnabled: false,
         hapticsEnabled: false,
+        dailyGoal: 10,
       },
       "settings",
     );

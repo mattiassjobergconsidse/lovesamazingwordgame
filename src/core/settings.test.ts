@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DAILY_GOALS,
   THEMES,
   createDefaultSettings,
   isDarkTheme,
@@ -40,6 +41,7 @@ describe("createDefaultSettings", () => {
       speechEnabled: false,
       soundEnabled: false,
       hapticsEnabled: false,
+      dailyGoal: 10,
     });
   });
 });
@@ -81,6 +83,8 @@ describe("parseSettings", () => {
     ["a non-boolean speechEnabled", { ...valid, speechEnabled: 1 }],
     ["a non-boolean soundEnabled", { ...valid, soundEnabled: 1 }],
     ["a non-boolean hapticsEnabled", { ...valid, hapticsEnabled: "yes" }],
+    ["an unknown daily goal", { ...valid, dailyGoal: 7 }],
+    ["a non-numeric daily goal", { ...valid, dailyGoal: "10" }],
   ])("rejects %s", (_label, value) => {
     expect(parseSettings(value)).toBeNull();
   });
@@ -92,6 +96,16 @@ describe("parseSettings", () => {
       ),
     );
     expect(parseSettings(older)).toEqual(valid);
+  });
+
+  it("HOME-1: treats a missing daily goal of older records as 10 and accepts every choice", () => {
+    const older = Object.fromEntries(
+      Object.entries(valid).filter(([key]) => key !== "dailyGoal"),
+    );
+    expect(parseSettings(older)).toEqual({ ...valid, dailyGoal: 10 });
+    for (const dailyGoal of DAILY_GOALS) {
+      expect(parseSettings({ ...valid, dailyGoal })?.dailyGoal).toBe(dailyGoal);
+    }
   });
 
   it("accepts every direction mode", () => {
