@@ -30,6 +30,7 @@ export function useSettingsStore(): SettingsStore {
       return;
     }
     const abort = new AbortController();
+    const isAborted = (): boolean => abort.signal.aborted;
     void (async () => {
       try {
         const stored = await loadSettings(db);
@@ -37,13 +38,21 @@ export function useSettingsStore(): SettingsStore {
           return;
         }
         const hasPending = Object.keys(pendingRef.current).length > 0;
-        const next =
+        const merged =
           stored === null
             ? settingsRef.current
             : { ...stored, ...pendingRef.current };
         if (stored === null || hasPending) {
-          await saveSettings(db, next);
+          await saveSettings(db, merged);
+          if (isAborted()) {
+            return;
+          }
         }
+        // Changes made while the save above was in flight must not be overwritten.
+        const next =
+          stored === null
+            ? settingsRef.current
+            : { ...stored, ...pendingRef.current };
         settingsRef.current = next;
         setSettings(next);
         writePreferenceMirror(next);
