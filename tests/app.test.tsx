@@ -144,7 +144,9 @@ describe("theme", () => {
     await user.click(
       screen.getByRole("button", { name: "Switch to light theme" }),
     );
-    expect(document.documentElement.dataset.theme).toBe("light");
+    await waitFor(() => {
+      expect(document.documentElement.dataset.theme).toBe("light");
+    });
   });
 
   it("NH-3: chooses the Sunset palette and it is mirrored for the next start", async () => {

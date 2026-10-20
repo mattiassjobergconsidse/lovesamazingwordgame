@@ -58,6 +58,8 @@ export type Theme = "light" | "dark" | "system" | FunTheme;
 export type ResolvedTheme = Exclude<Theme, "system">;
 export type DirectionMode = "random" | Direction;
 export type SessionSize = 10 | 20 | 50 | "all";
+/** Answers per day that fill the daily goal ring on the home screen. */
+export type DailyGoal = 5 | 10 | 15 | 20 | 30 | 50;
 
 /** User preferences, stored as a single record. */
 export interface Settings {
@@ -73,6 +75,8 @@ export interface Settings {
   readonly soundEnabled: boolean;
   /** Vibrates briefly after each answer where supported (NH-4). Off by default. */
   readonly hapticsEnabled: boolean;
+  /** Answers per day the home screen counts towards the daily goal. Default 10. */
+  readonly dailyGoal: DailyGoal;
 }
 
 /** One record per set and local calendar day, used for streaks and the 14-day chart. */

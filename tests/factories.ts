@@ -16,6 +16,7 @@ export function makeSettings(overrides: Partial<Settings> = {}): Settings {
     speechEnabled: false,
     soundEnabled: false,
     hapticsEnabled: false,
+    dailyGoal: 10,
     ...overrides,
   };
 }

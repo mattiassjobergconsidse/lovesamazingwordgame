@@ -1,4 +1,10 @@
-import type { ResolvedTheme, Settings, Theme, UiLanguage } from "../types";
+import type {
+  DailyGoal,
+  ResolvedTheme,
+  Settings,
+  Theme,
+  UiLanguage,
+} from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -16,6 +22,19 @@ export const THEMES = [
   "ocean",
   "sunset",
 ] as const satisfies readonly Theme[];
+
+/** Selectable daily goals in display order. */
+export const DAILY_GOALS = [
+  5, 10, 15, 20, 30, 50,
+] as const satisfies readonly DailyGoal[];
+
+/** Daily goal used until the user changes it. */
+export const DEFAULT_DAILY_GOAL: DailyGoal = 10;
+
+/** Type guard for {@link DailyGoal}. */
+export function isDailyGoal(value: unknown): value is DailyGoal {
+  return DAILY_GOALS.some((goal) => goal === value);
+}
 
 /** Type guard for {@link Theme}. */
 export function isTheme(value: unknown): value is Theme {
@@ -67,6 +86,7 @@ export function createDefaultSettings(
     speechEnabled: false,
     soundEnabled: false,
     hapticsEnabled: false,
+    dailyGoal: DEFAULT_DAILY_GOAL,
   };
 }
 
@@ -90,6 +110,7 @@ export function parseSettings(value: unknown): Settings | null {
     speechEnabled,
     soundEnabled = false,
     hapticsEnabled = false,
+    dailyGoal = DEFAULT_DAILY_GOAL,
   } = value;
   if (
     !isUiLanguage(uiLanguage) ||
@@ -105,7 +126,8 @@ export function parseSettings(value: unknown): Settings | null {
     typeof ignoreAccents !== "boolean" ||
     typeof speechEnabled !== "boolean" ||
     typeof soundEnabled !== "boolean" ||
-    typeof hapticsEnabled !== "boolean"
+    typeof hapticsEnabled !== "boolean" ||
+    !isDailyGoal(dailyGoal)
   ) {
     return null;
   }
@@ -119,6 +141,7 @@ export function parseSettings(value: unknown): Settings | null {
     speechEnabled,
     soundEnabled,
     hapticsEnabled,
+    dailyGoal,
   };
 }
 

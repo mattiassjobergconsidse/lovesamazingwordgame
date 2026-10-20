@@ -21,6 +21,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Optional short answer sounds (generated in the browser) and vibration on mobile, off by default
 - Share a set as a link (the words are compressed into the address, no server involved) and import it from the link
 - Press `?` (or use the header button) to see the keyboard shortcuts
+- A home screen with today's words to practise, one-tap training modes, a daily goal (5 to 50 answers, set in Settings), streak and progress snapshot
 - Print a set's word list as a plain table from the set editor
 - Keyboard friendly, works from 360 px width, WCAG 2.2 AA as the baseline
 

@@ -158,15 +158,15 @@ Components never call IndexedDB directly. Errors from storage surface as a user-
 
 Hash routes:
 
-| Route                                                                       | Screen                                                                                           |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `#/`                                                                        | Home: active set summary, big "Train" buttons for the four modes, due-word count, stats snapshot |
-| `#/sets`                                                                    | Set list: create, open, duplicate, delete, choose active                                         |
-| `#/sets/:id`                                                                | Set editor: name, language labels, word pairs table (add/edit/remove), import/export             |
-| `#/train`                                                                   | Mode picker (Flashcards, Quiz, Matching, Writing) for the active set                             |
-| `#/train/flashcards`, `#/train/quiz`, `#/train/matching`, `#/train/writing` | Training modes                                                                                   |
-| `#/stats`                                                                   | Statistics for the active set                                                                    |
-| `#/settings`                                                                | UI language, theme, direction, session size, export/import all, reset                            |
+| Route                                                                       | Screen                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `#/`                                                                        | Home (`HOME-1`, done): greeting, due and new words with a "Practise due words" button, hardest-words shortcut, four mode cards, daily goal (setting dailyGoal: 5, 10, 15, 20, 30 or 50 answers, default 10; older stored settings without it read as 10), streak, mastered and 7-day accuracy |
+| `#/sets`                                                                    | Set list: create, open, duplicate, delete, choose active                                                                                                                                                                                                                                      |
+| `#/sets/:id`                                                                | Set editor: name, language labels, word pairs table (add/edit/remove), import/export                                                                                                                                                                                                          |
+| `#/train`                                                                   | Mode picker (Flashcards, Quiz, Matching, Writing) for the active set                                                                                                                                                                                                                          |
+| `#/train/flashcards`, `#/train/quiz`, `#/train/matching`, `#/train/writing` | Training modes                                                                                                                                                                                                                                                                                |
+| `#/stats`                                                                   | Statistics for the active set                                                                                                                                                                                                                                                                 |
+| `#/settings`                                                                | UI language, theme, direction, session size, export/import all, reset                                                                                                                                                                                                                         |
 
 Global, always visible: a compact **active set bar** (set name, word count, "Change" button).
 
@@ -343,6 +343,29 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 5. **Share a set via link** (`NH-5`, done): encode a small set as compressed base64 in the URL hash so it can be sent to a friend; import dialog on open. No server.
 6. **Keyboard shortcut help** (`NH-6`, done): `?` opens an overlay listing shortcuts.
 7. **Print view** (`NH-7`, done): print-friendly list of a set (CSS `@media print`).
+8. **Kid-friendly look** (`NH-8`): make the overall layout suit a 10-year-old: more emojis, illustrations/images, rounded shapes, playful colours and
+   small animations. Keep usability and accessibility (contrast, labels, keyboard) intact; the goal is to balance function with a less dull appearance.
+   AC: home, training modes and stats screens show friendly visuals (e.g. emoji per mode, mascot/illustrations) in both themes; no regression in a11y tests.
+9. **Hangman practice mode** (`NH-9`): a fifth training mode "Hangman" next to flashcards, writing, quiz and matching. A word from the session is
+   hidden as blanks (prompt shown in the other language); the user guesses letters (on-screen keyboard and physical keys, including å/ä/ö), with a
+   limited number of wrong guesses (e.g. 6) drawn as a progressive figure. Solved = `correct`, out of guesses = `wrong` (SR result as in section 7).
+   Follows the shared session rules (FR-TRN) and eligibility rules (FR-ACT-1).
+10. **Trophies** (`NH-10`): unlockable trophies shown on a trophy screen (locked ones shown greyed out with their requirement). Trophy state is
+    stored locally (IndexedDB) and included in export/import. Rules are pure functions in `core/` computed from progress/activity. Suggested trophies:
+    - First session completed.
+    - Practice streak of 3 / 7 / 30 days.
+    - 10 / 50 / 100 words mastered (box 5).
+    - A perfect writing session (all correct).
+    - Completing a session in each of the training modes (including Hangman).
+    - 100 correct answers in total.
+    Unlocking shows a short celebration toast/animation. Final list and thresholds can be tuned in one constants file.
+11. **Unlockable mini-games** (`NH-11`): 2-3 small, simple and fun games for a 10-year-old (e.g. memory/pairs with emojis, catch-the-falling-items,
+    whack-a-mole) that are unlocked by getting **all answers correct** in a Writing session (no hints, no "almost", no overrides needed to count).
+    - Each unlock gives **one play** of a game; after playing, the games lock again until the next perfect Writing session.
+    - Playing is **optional**: after a perfect session the user is offered a choice of the unlocked games and can pick one or skip
+      (a skipped unlock is kept until used or until the next perfect session, whichever comes first; unlocks do not accumulate).
+    - Games are short (about 1-2 minutes), need no backend, work with touch and keyboard, and are not tied to the word data.
+    - Unlock state is stored locally; the unlock rule is a pure function in `core/` with unit tests.
 
 ## 8b. Language and encoding conventions (`FR-LANG`)
 
