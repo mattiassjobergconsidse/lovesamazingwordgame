@@ -358,7 +358,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - A perfect writing session (all correct).
     - Completing a session in each of the training modes (including Hangman).
     - 100 correct answers in total.
-    Unlocking shows a short celebration toast/animation. Final list and thresholds can be tuned in one constants file.
+      Unlocking shows a short celebration toast/animation. Final list and thresholds can be tuned in one constants file.
 11. **Unlockable mini-games** (`NH-11`): 2-3 small, simple and fun games for a 10-year-old (e.g. memory/pairs with emojis, catch-the-falling-items,
     whack-a-mole) that are unlocked by getting **all answers correct** in a Writing session (no hints, no "almost", no overrides needed to count).
     - Each unlock gives **one play** of a game; after playing, the games lock again until the next perfect Writing session.
