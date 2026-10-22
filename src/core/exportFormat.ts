@@ -50,7 +50,8 @@ export type ProblemReason =
   | "unknownReference"
   | "duplicateId"
   | "duplicateName"
-  | "unreadable";
+  | "unreadable"
+  | "tooLarge";
 
 /** A validation problem; `path` locates it, e.g. `pairs[3].a`. */
 export interface ImportProblem {

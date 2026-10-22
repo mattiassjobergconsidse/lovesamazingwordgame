@@ -1,3 +1,6 @@
+/** Largest import file accepted, in bytes (10 MB). */
+export const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
+
 /**
  * Offers text as a file download.
  *
@@ -23,8 +26,11 @@ export function downloadTextFile(
 /**
  * Reads a user-selected file as UTF-8 text.
  *
- * @throws If the file cannot be read.
+ * @throws If the file is larger than {@link MAX_IMPORT_FILE_BYTES} or cannot be read.
  */
 export async function readFileText(file: File): Promise<string> {
+  if (file.size > MAX_IMPORT_FILE_BYTES) {
+    throw new Error("File is too large to import.");
+  }
   return await file.text();
 }

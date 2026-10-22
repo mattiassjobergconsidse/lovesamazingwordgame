@@ -62,10 +62,14 @@ export function speak(
   if (synthesis === null) {
     return;
   }
-  synthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  synthesis.speak(utterance);
+  try {
+    synthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    synthesis.speak(utterance);
+  } catch {
+    // Speech is optional: a failing speech engine must never break a card.
+  }
 }
 
 /** Stops any speech in progress. */
