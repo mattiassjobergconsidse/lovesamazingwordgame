@@ -147,6 +147,22 @@ describe("statistics screen", () => {
     ).toBeVisible();
   });
 
+  it("NH-8: shows an emoji per figure and keeps it out of the accessibility tree", async () => {
+    await seedStats();
+    const { container } = render(<App />);
+
+    const overview = await screen.findByRole("region", { name: "Overview" });
+    expect(within(overview).getByText("📚")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(overview.querySelectorAll("dt .stats-emoji")).toHaveLength(7);
+    expect(container.querySelectorAll("h2 .stats-emoji")).toHaveLength(3);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Overview" }),
+    ).toBeVisible();
+  });
+
   it("FR-BP-11: has no accessibility violations", async () => {
     await seedStats();
     const { container } = render(<App />);

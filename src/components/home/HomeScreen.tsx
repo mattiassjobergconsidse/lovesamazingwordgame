@@ -9,7 +9,9 @@ import { useI18n } from "../../i18n";
 import { routeToHash } from "../../router";
 import type { WordSet } from "../../types";
 import "../common/common.css";
+import { Mascot } from "../common/Mascot";
 import { SetPickerDialog } from "../sets/SetPickerDialog";
+import "../stats/stats.css";
 import { ModeCards } from "../train/ModeCards";
 import "./home.css";
 
@@ -57,7 +59,12 @@ function SetHome({ set }: { readonly set: WordSet }) {
   return (
     <>
       <section aria-labelledby="home-due" className="home-section">
-        <h2 id="home-due">{t("home.due.heading")}</h2>
+        <h2 id="home-due">
+          <span className="home-emoji" aria-hidden="true">
+            ⏰
+          </span>
+          {t("home.due.heading")}
+        </h2>
         {readyToPractise ? (
           <>
             {stats.due > 0 && <p>{tp("home.due.some", stats.due)}</p>}
@@ -89,17 +96,32 @@ function SetHome({ set }: { readonly set: WordSet }) {
       </section>
 
       <section aria-labelledby="home-modes" className="home-section">
-        <h2 id="home-modes">{t("home.modes.heading")}</h2>
+        <h2 id="home-modes">
+          <span className="home-emoji" aria-hidden="true">
+            🎮
+          </span>
+          {t("home.modes.heading")}
+        </h2>
         <ModeCards wordCount={wordCount} labelledBy="home-modes" />
       </section>
 
       <div className="home-columns">
         <section aria-labelledby="home-goal" className="home-section">
-          <h2 id="home-goal">{t("home.goal.heading")}</h2>
+          <h2 id="home-goal">
+            <span className="home-emoji" aria-hidden="true">
+              🎯
+            </span>
+            {t("home.goal.heading")}
+          </h2>
           <div className="home-goal">
             <span className="home-ring" style={ringStyle} aria-hidden="true">
               <span className="home-ring-inner">{summary.answeredToday}</span>
             </span>
+            {goalReached && (
+              <span className="home-goal-emoji" aria-hidden="true">
+                🏆
+              </span>
+            )}
             <p>
               {goalReached
                 ? t("home.goal.reached")
@@ -112,13 +134,18 @@ function SetHome({ set }: { readonly set: WordSet }) {
         </section>
 
         <section aria-labelledby="home-snapshot" className="home-section">
-          <h2 id="home-snapshot">{t("home.snapshot.heading")}</h2>
+          <h2 id="home-snapshot">
+            <span className="home-emoji" aria-hidden="true">
+              📊
+            </span>
+            {t("home.snapshot.heading")}
+          </h2>
           <dl className="stats-grid">
-            <div className="stats-figure">
+            <div className="stats-figure card">
               <dt>{t("stats.streak")}</dt>
               <dd>{tp("stats.streak.value", stats.streak)}</dd>
             </div>
-            <div className="stats-figure">
+            <div className="stats-figure card">
               <dt>{t("home.snapshot.mastered")}</dt>
               <dd>
                 {t("home.snapshot.masteredValue", {
@@ -127,7 +154,7 @@ function SetHome({ set }: { readonly set: WordSet }) {
                 })}
               </dd>
             </div>
-            <div className="stats-figure">
+            <div className="stats-figure card">
               <dt>{t("home.snapshot.accuracy")}</dt>
               <dd>
                 {summary.weekAccuracy === null
@@ -152,8 +179,15 @@ export function HomeScreen() {
 
   return (
     <div className="home-screen">
-      <h1 tabIndex={-1}>{t("nav.home")}</h1>
-      <p className="home-greeting">{t(`home.greeting.${dayPeriod(hour)}`)}</p>
+      <div className="home-hero">
+        <Mascot />
+        <div>
+          <h1 tabIndex={-1}>{t("nav.home")}</h1>
+          <p className="home-greeting">
+            {t(`home.greeting.${dayPeriod(hour)}`)}
+          </p>
+        </div>
+      </div>
       {!ready ? null : activeSet === null ? (
         <>
           <p>{t("home.noSet")}</p>

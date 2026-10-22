@@ -34,21 +34,13 @@ export function useSettingsStore(): SettingsStore {
     void (async () => {
       try {
         const stored = await loadSettings(db);
-        if (abort.signal.aborted) {
+        if (isAborted()) {
           return;
         }
+        // From here until the save below is issued everything runs synchronously, so no
+        // change can slip in between: earlier changes are in `pendingRef`, later ones
+        // see `loadedRef` and save directly on top of the merged settings.
         const hasPending = Object.keys(pendingRef.current).length > 0;
-        const merged =
-          stored === null
-            ? settingsRef.current
-            : { ...stored, ...pendingRef.current };
-        if (stored === null || hasPending) {
-          await saveSettings(db, merged);
-          if (isAborted()) {
-            return;
-          }
-        }
-        // Changes made while the save above was in flight must not be overwritten.
         const next =
           stored === null
             ? settingsRef.current
@@ -59,9 +51,13 @@ export function useSettingsStore(): SettingsStore {
         pendingRef.current = {};
         loadedRef.current = true;
         setReady(true);
+        if (stored === null || hasPending) {
+          // Issued before any later change, so IndexedDB applies it first.
+          await saveSettings(db, next);
+        }
       } catch (error) {
         console.error("Failed to load settings", error);
-        if (!abort.signal.aborted) {
+        if (!isAborted()) {
           reportStorageError("failed");
         }
       }
@@ -79,7 +75,10 @@ export function useSettingsStore(): SettingsStore {
       writePreferenceMirror(next);
 
       if (!loadedRef.current) {
+        // Not loaded yet: `settingsRef` still holds defaults, so saving now would overwrite
+        // the stored settings (for example the active set). The load merges and saves this.
         pendingRef.current = { ...pendingRef.current, ...patch };
+        return;
       }
       if (db === null) {
         return;

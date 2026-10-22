@@ -6,6 +6,8 @@ import {
 } from "../../core/session";
 import { useI18n } from "../../i18n";
 import { routeToHash } from "../../router";
+import "../common/common.css";
+import { Mascot } from "../common/Mascot";
 
 interface SessionResultProps {
   readonly session: SessionState;
@@ -24,9 +26,16 @@ export function SessionResult({
   const { t } = useI18n();
   const score = sessionScore(session);
   const mistakes = mistakePairs(session);
+  const perfect = mistakes.length === 0;
 
   return (
     <div className="session-result">
+      <div className="session-result-hero">
+        <Mascot cheer={perfect} />
+        <span className="session-result-emoji" aria-hidden="true">
+          {perfect ? "🎉" : "💪"}
+        </span>
+      </div>
       <h1 tabIndex={-1}>{t("train.result.title")}</h1>
       <p className="session-result-score">
         {t("train.result.score", {

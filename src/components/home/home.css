@@ -35,15 +35,18 @@
   gap: var(--space-1);
   block-size: 100%;
   padding: var(--space-3);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
   color: inherit;
   text-decoration: none;
+  transition:
+    transform var(--duration) var(--ease-bounce),
+    border-color var(--duration) ease,
+    background-color var(--duration) ease,
+    color var(--duration) ease;
 }
 a.home-mode:hover,
 a.home-mode:focus-visible {
   border-color: var(--color-primary);
+  transform: translateY(-3px) rotate(-0.5deg);
 }
 .home-mode-disabled {
   opacity: 0.6;
@@ -57,6 +60,35 @@ button.home-mode:disabled {
   cursor: not-allowed;
 }
 .home-mode-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  font-size: 2rem;
+  background: color-mix(
+    in srgb,
+    var(--color-primary) 22%,
+    var(--color-surface)
+  );
+  border-radius: 50%;
+}
+.home-mode[data-mode="writing"] .home-mode-icon,
+.home-mode[data-mode="matching"] .home-mode-icon {
+  background: color-mix(in srgb, var(--color-accent) 30%, var(--color-surface));
+}
+.home-hero {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.home-hero h1,
+.home-hero p {
+  margin: 0;
+}
+.home-emoji {
+  margin-inline-end: var(--space-1);
+}
+.home-goal-emoji {
   font-size: 2rem;
 }
 .home-mode-title {

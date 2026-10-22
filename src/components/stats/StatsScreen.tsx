@@ -32,37 +32,57 @@ function SetStatistics({ set }: { readonly set: WordSet }) {
   const { stats, hardest, days } = view;
 
   const figures = [
-    { label: t("stats.total"), value: String(stats.total) },
-    { label: t("stats.new"), value: String(stats.newWords) },
-    { label: t("stats.learning"), value: String(stats.learning) },
-    { label: t("stats.mastered"), value: String(stats.mastered) },
-    { label: t("stats.due"), value: String(stats.due) },
+    { emoji: "📚", label: t("stats.total"), value: String(stats.total) },
+    { emoji: "🌱", label: t("stats.new"), value: String(stats.newWords) },
+    { emoji: "🧠", label: t("stats.learning"), value: String(stats.learning) },
+    { emoji: "⭐", label: t("stats.mastered"), value: String(stats.mastered) },
+    { emoji: "⏰", label: t("stats.due"), value: String(stats.due) },
     {
+      emoji: "🎯",
       label: t("stats.accuracy"),
       value:
         stats.accuracy === null
           ? t("stats.accuracy.none")
           : t("stats.accuracy.value", { value: stats.accuracy }),
     },
-    { label: t("stats.streak"), value: tp("stats.streak.value", stats.streak) },
+    {
+      emoji: "🔥",
+      label: t("stats.streak"),
+      value: tp("stats.streak.value", stats.streak),
+    },
   ];
 
   return (
     <>
-      <p>{set.name}</p>
+      <p className="stats-set-name">{set.name}</p>
       <section aria-labelledby="stats-overview">
-        <h2 id="stats-overview">{t("stats.overview")}</h2>
+        <h2 id="stats-overview">
+          <span className="stats-emoji" aria-hidden="true">
+            📊
+          </span>
+          {t("stats.overview")}
+        </h2>
         <dl className="stats-grid">
           {figures.map((figure) => (
-            <div key={figure.label} className="stats-figure">
-              <dt>{figure.label}</dt>
+            <div key={figure.label} className="stats-figure card">
+              <dt>
+                <span className="stats-emoji" aria-hidden="true">
+                  {figure.emoji}
+                </span>
+                {figure.label}
+              </dt>
               <dd>{figure.value}</dd>
             </div>
           ))}
         </dl>
       </section>
       <section aria-labelledby="stats-hardest">
-        <h2 id="stats-hardest">{t("stats.hardest.heading")}</h2>
+        <h2 id="stats-hardest">
+          <span className="stats-emoji" aria-hidden="true">
+            💪
+          </span>
+          {t("stats.hardest.heading")}
+        </h2>
         {hardest.length === 0 ? (
           <p className="stats-empty">{t("stats.hardest.empty")}</p>
         ) : (
@@ -99,7 +119,12 @@ function SetStatistics({ set }: { readonly set: WordSet }) {
         )}
       </section>
       <section aria-labelledby="stats-chart">
-        <h2 id="stats-chart">{t("stats.chart.heading")}</h2>
+        <h2 id="stats-chart">
+          <span className="stats-emoji" aria-hidden="true">
+            📈
+          </span>
+          {t("stats.chart.heading")}
+        </h2>
         <ActivityChart days={days} />
       </section>
     </>
