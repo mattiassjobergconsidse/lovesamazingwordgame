@@ -111,6 +111,24 @@ describe("useDataExchange", () => {
     });
   });
 
+  it("FR-IO-2: rejects a file over the size limit without reading it", async () => {
+    await seedDatabase({});
+    const { result } = await renderReady();
+    const file = new File(["x"], "huge.json");
+    Object.defineProperty(file, "size", {
+      value: fileIo.MAX_IMPORT_FILE_BYTES + 1,
+    });
+    vi.mocked(fileIo.readFileText).mockClear();
+
+    const draft = await result.current.exchange.readImportFile(file);
+
+    expect(draft).toEqual({
+      ok: false,
+      problems: [{ path: "huge.json", reason: "tooLarge" }],
+    });
+    expect(fileIo.readFileText).not.toHaveBeenCalled();
+  });
+
   it("FR-IO-2: returns the problems of an invalid JSON or CSV file", async () => {
     await seedDatabase({});
     const { result } = await renderReady();

@@ -269,6 +269,8 @@ export const en = {
   "data.problem.duplicateId": "This id is used more than once.",
   "data.problem.duplicateName": "This set name is used more than once.",
   "data.problem.unreadable": "The file could not be read.",
+  // Keep in sync with MAX_IMPORT_FILE_BYTES in storage/fileIo.ts.
+  "data.problem.tooLarge": "The file is too large. The limit is 10 MB.",
   "data.conflict.title": "Sets with the same name",
   "data.conflict.body":
     "These sets already exist. Choose what to do with each of them.",

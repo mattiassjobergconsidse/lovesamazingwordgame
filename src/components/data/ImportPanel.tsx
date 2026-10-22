@@ -25,6 +25,7 @@ const PROBLEM_KEYS: Readonly<Record<ProblemReason, MessageKey>> = {
   duplicateId: "data.problem.duplicateId",
   duplicateName: "data.problem.duplicateName",
   unreadable: "data.problem.unreadable",
+  tooLarge: "data.problem.tooLarge",
 };
 
 interface PendingImport {

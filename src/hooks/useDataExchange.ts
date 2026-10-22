@@ -15,7 +15,11 @@ import {
   type ImportConflict,
 } from "../core/importPlan";
 import { applyImportPlan, clearLibrary } from "../storage/exportImport";
-import { downloadTextFile, readFileText } from "../storage/fileIo";
+import {
+  downloadTextFile,
+  MAX_IMPORT_FILE_BYTES,
+  readFileText,
+} from "../storage/fileIo";
 import { useDatabase } from "./useDatabase";
 import { useLibrary } from "./useLibrary";
 import { useSettings } from "./useSettings";
@@ -133,6 +137,12 @@ export function useDataExchange(): DataExchange {
 
   const readImportFile = useCallback(
     async (file: File): Promise<ImportDraft> => {
+      if (file.size > MAX_IMPORT_FILE_BYTES) {
+        return {
+          ok: false,
+          problems: [{ path: file.name, reason: "tooLarge" }],
+        };
+      }
       let text: string;
       try {
         text = await readFileText(file);

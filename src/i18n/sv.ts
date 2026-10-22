@@ -271,6 +271,8 @@ export const sv: Record<MessageKey, string> = {
   "data.problem.duplicateId": "Samma id används flera gånger.",
   "data.problem.duplicateName": "Samma listnamn används flera gånger.",
   "data.problem.unreadable": "Filen kunde inte läsas.",
+  // Keep in sync with MAX_IMPORT_FILE_BYTES in storage/fileIo.ts.
+  "data.problem.tooLarge": "Filen är för stor. Gränsen är 10 MB.",
   "data.conflict.title": "Listor med samma namn",
   "data.conflict.body":
     "De här listorna finns redan. Välj vad som ska hända med var och en.",
