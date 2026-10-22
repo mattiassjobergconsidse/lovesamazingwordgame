@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { SetBundle } from "../../core/exportFormat";
 import { findConflicts } from "../../core/importPlan";
-import { parseSharePayload } from "../../core/shareFormat";
 import { useDataExchange } from "../../hooks/useDataExchange";
 import { useLibrary } from "../../hooks/useLibrary";
+import { useSharedSet } from "../../hooks/useSharedSet";
 import { useToast } from "../../hooks/useToast";
 import { useI18n } from "../../i18n";
 import { navigate } from "../../router";
-import { decodeSharePayload } from "../../storage/shareLink";
 import "../common/common.css";
 import "./data.css";
 import { ImportConflictDialog } from "./ImportConflictDialog";
-
-type Decoded =
-  | { readonly status: "loading" }
-  | { readonly status: "invalid" }
-  | { readonly status: "ready"; readonly bundle: SetBundle };
 
 /** `#/share/:payload`: shows a shared set and imports it after confirmation (NH-5). */
 export function ShareImportScreen({ payload }: { readonly payload: string }) {
@@ -23,30 +17,8 @@ export function ShareImportScreen({ payload }: { readonly payload: string }) {
   const { sets } = useLibrary();
   const { ready, commitImport } = useDataExchange();
   const { showToast } = useToast();
-  const [decoded, setDecoded] = useState<Decoded>({ status: "loading" });
+  const decoded = useSharedSet(payload);
   const [asking, setAsking] = useState(false);
-
-  useEffect(() => {
-    let current = true;
-    decodeSharePayload(payload)
-      .then((json) => {
-        const parsed = parseSharePayload(json, Date.now());
-        const bundle = parsed.ok ? parsed.bundles[0] : undefined;
-        return bundle === undefined
-          ? ({ status: "invalid" } as const)
-          : ({ status: "ready", bundle } as const);
-      })
-      .catch(() => ({ status: "invalid" }) as const)
-      .then((result) => {
-        if (current) {
-          setDecoded(result);
-        }
-      })
-      .catch(() => undefined);
-    return () => {
-      current = false;
-    };
-  }, [payload]);
 
   async function finish(
     bundle: SetBundle,
