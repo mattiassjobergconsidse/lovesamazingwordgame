@@ -1,4 +1,4 @@
-﻿# Code Quality Review
+# Code Quality Review
 Scope: `src/` (excluding tests). Focus: functions doing more than one thing, unclear naming, missing error handling for external calls, code that is hard to read without comments.
 ## The five most serious problems
 ### 1. `speak()` lacks error handling (external call) - FIXED
