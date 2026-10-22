@@ -38,6 +38,53 @@
   background: var(--color-wrong);
   border-color: var(--color-wrong);
 }
+/* Shared playful surface (NH-8); later steps apply it to cards across screens. */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+/* Mascot badge (NH-8): themed surface and accent ring keep the fixed-colour art readable on every theme. */
+.mascot {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 6.5rem;
+  block-size: 6.5rem;
+  padding: var(--space-1);
+  background: var(--color-surface);
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  animation: mascot-pop var(--duration-slow) var(--ease-bounce) 1;
+}
+.mascot svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+@keyframes mascot-pop {
+  from {
+    transform: scale(0.6) rotate(-8deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+.mascot-cheer {
+  animation: mascot-cheer 600ms var(--ease-bounce) 1;
+}
+@keyframes mascot-cheer {
+  0% {
+    transform: scale(0.6) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(8deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
 .dialog {
   inline-size: min(32rem, calc(100vw - 2 * var(--space-3)));
   padding: var(--space-3);

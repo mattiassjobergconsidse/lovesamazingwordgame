@@ -17,6 +17,7 @@ import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
 import { MatchingBoard } from "./MatchingBoard";
+import { MODE_ICONS } from "./modeIcons";
 import { QuizCard } from "./QuizCard";
 import { SessionResult } from "./SessionResult";
 import { WritingCard } from "./WritingCard";
@@ -133,7 +134,12 @@ function ActiveSession({
   if (view.status === "idle" || card === null) {
     return (
       <div ref={containerRef} className="session-start">
-        <h1 tabIndex={-1}>{t(title)}</h1>
+        <h1 tabIndex={-1}>
+          <span className="mode-emoji" aria-hidden="true">
+            {MODE_ICONS[mode]}
+          </span>
+          {t(title)}
+        </h1>
         <p>{set.name}</p>
         <p>{tp("train.session.size", plannedCount)}</p>
         {extraPractice && <p>{t("train.session.extra")}</p>}
@@ -153,7 +159,12 @@ function ActiveSession({
   return (
     <div ref={containerRef} className="session">
       <div className="session-header">
-        <h1 tabIndex={-1}>{t(title)}</h1>
+        <h1 tabIndex={-1}>
+          <span className="mode-emoji" aria-hidden="true">
+            {MODE_ICONS[mode]}
+          </span>
+          {t(title)}
+        </h1>
         <button
           type="button"
           className="button button-secondary"

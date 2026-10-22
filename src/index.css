@@ -5,6 +5,11 @@
   --space-3: 1rem;
   --space-4: 1.5rem;
   --radius: 0.5rem;
+  /* Playful shapes and motion (NH-8). The blocks theme resets --radius-lg to stay square. */
+  --radius-lg: 1.25rem;
+  --shadow: 0 3px 0 color-mix(in srgb, var(--color-text) 18%, transparent);
+  --duration-slow: 300ms;
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --tap-size: 2.75rem;
   --duration: 200ms;
   --font-sans:
@@ -22,6 +27,7 @@
   --color-on-primary: #ffffff;
   --color-correct: #1b6e3c;
   --color-wrong: #b3261e;
+  --color-accent: #f59e0b;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -34,6 +40,7 @@
   --color-on-primary: #0d1020;
   --color-correct: #7fdc9d;
   --color-wrong: #ff8a80;
+  --color-accent: #fbbf24;
 }
 /* Fun themes (P7): palettes only, no images. Text/background pairs meet WCAG AA. */
 :root[data-theme="christmas"] {
@@ -47,6 +54,7 @@
   --color-on-primary: #ffffff;
   --color-correct: #1b6e3c;
   --color-wrong: #a3201a;
+  --color-accent: #d4a017;
 }
 :root[data-theme="halloween"] {
   color-scheme: dark;
@@ -59,10 +67,12 @@
   --color-on-primary: #1a0b00;
   --color-correct: #8be28b;
   --color-wrong: #ff8a80;
+  --color-accent: #a855f7;
 }
 :root[data-theme="blocks"] {
   color-scheme: dark;
   --radius: 0;
+  --radius-lg: 0;
   --font-sans:
     ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
   --color-bg: #1f2a1a;
@@ -74,6 +84,7 @@
   --color-on-primary: #0f1a0a;
   --color-correct: #8be28b;
   --color-wrong: #ff8a80;
+  --color-accent: #f2b134;
 }
 :root[data-theme="battle"] {
   color-scheme: dark;
@@ -86,6 +97,7 @@
   --color-on-primary: #1a1040;
   --color-correct: #7fdc9d;
   --color-wrong: #ff9a90;
+  --color-accent: #38bdf8;
 }
 /* Extra palettes (NH-3): one light and one dark, both WCAG AA. */
 :root[data-theme="ocean"] {
@@ -99,6 +111,7 @@
   --color-on-primary: #ffffff;
   --color-correct: #1b6e3c;
   --color-wrong: #a3201a;
+  --color-accent: #f97316;
 }
 :root[data-theme="sunset"] {
   color-scheme: dark;
@@ -111,6 +124,7 @@
   --color-on-primary: #2a0612;
   --color-correct: #8be28b;
   --color-wrong: #ff9a90;
+  --color-accent: #fcd34d;
 }
 /* Smooth colour changes when the theme switches (NH-3). Disabled by the reduced-motion rule below. */
 *,

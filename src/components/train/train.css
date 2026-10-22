@@ -15,6 +15,25 @@
 .session-header h1 {
   margin: 0;
 }
+/* Per-mode colour (NH-8): decorative borders only, never text. */
+[data-mode] {
+  --mode-color: var(--color-primary);
+}
+[data-mode="writing"],
+[data-mode="matching"] {
+  --mode-color: var(--color-accent);
+}
+.mode-emoji {
+  margin-inline-end: var(--space-2);
+}
+.session-result-hero {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.session-result-emoji {
+  font-size: 3rem;
+}
 .session-progress {
   display: flex;
   align-items: center;
@@ -36,7 +55,9 @@
   gap: var(--space-2);
   padding: var(--space-4);
   background: var(--color-surface);
-  border-radius: var(--radius);
+  border: 2px solid var(--mode-color, var(--color-border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
 }
 .session-card-label {
   margin: 0;
@@ -87,19 +108,33 @@
   gap: var(--space-2);
   padding: var(--space-4);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border: 2px solid var(--mode-color, var(--color-border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
   backface-visibility: hidden;
 }
 .flashcard-back {
   transform: rotateY(180deg);
 }
 .key-hint {
-  margin-inline-start: var(--space-2);
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 1.5rem;
+  min-block-size: 1.5rem;
+  margin-inline: var(--space-2);
   padding-inline: var(--space-1);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
   border: 1px solid currentcolor;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+}
+/* The speaker is a compact round button, not a full-width bar inside the column layout. */
+.session-card .icon-button,
+.flashcard-face .icon-button {
+  align-self: flex-start;
+  min-inline-size: var(--tap-size);
+  font-size: 1.25rem;
+  border-radius: var(--radius-lg);
 }
 @media (prefers-reduced-motion: reduce) {
   .flashcard {
@@ -171,6 +206,7 @@
   inline-size: 100%;
   justify-content: flex-start;
   text-align: start;
+  border-radius: var(--radius-lg);
 }
 .quiz-option[data-state="correct"] {
   color: var(--color-on-primary);
@@ -208,6 +244,7 @@
   justify-content: flex-start;
   text-align: start;
   overflow-wrap: anywhere;
+  border-radius: var(--radius-lg);
   transition: background-color 200ms ease;
 }
 .match-item[data-state="selected"] {

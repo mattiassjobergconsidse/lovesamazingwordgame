@@ -343,7 +343,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 5. **Share a set via link** (`NH-5`, done): encode a small set as compressed base64 in the URL hash so it can be sent to a friend; import dialog on open. No server.
 6. **Keyboard shortcut help** (`NH-6`, done): `?` opens an overlay listing shortcuts.
 7. **Print view** (`NH-7`, done): print-friendly list of a set (CSS `@media print`).
-8. **Kid-friendly look** (`NH-8`): make the overall layout suit a 10-year-old: more emojis, illustrations/images, rounded shapes, playful colours and
+8. **Kid-friendly look** (`NH-8`, done): make the overall layout suit a 10-year-old: more emojis, illustrations/images, rounded shapes, playful colours and
    small animations. Keep usability and accessibility (contrast, labels, keyboard) intact; the goal is to balance function with a less dull appearance.
    AC: home, training modes and stats screens show friendly visuals (e.g. emoji per mode, mascot/illustrations) in both themes; no regression in a11y tests.
 9. **Hangman practice mode** (`NH-9`): a fifth training mode "Hangman" next to flashcards, writing, quiz and matching. A word from the session is
@@ -503,7 +503,7 @@ user-visible effects). Tests that only execute code without meaningful assertion
 - [x] **P5 Stats + import/export**: `FR-ST-*`, `FR-IO-*`.
 - [x] **P6 Polish**: UX requirements audit (section 9), accessibility pass, performance check, README (screenshots skipped by decision), Pages deploy verified.
 - [x] **P7 More themes**: Not just light/dark. Also ability to choose Christmas, Halloween, Minecraft, Fortnite, etc. (whatever is fun for a 10 year old learning the words, CSS variables only, no images). Optional, but a nice-to-have for the first release.
-- [x] **P8 Nice-to-have**: NH-1 .. NH-7 in order, as time allows.
+- [x] **P8 Nice-to-have**: NH-1 .. NH-8 in order, as time allows.
 
 Time budget: about 6 weeks alongside full-time work. If behind schedule cut in this order: `NH-*`, `FR-ST-3`, `FR-SET-8`/`FR-SET-9`, `FR-IO-3`, then Matching polish. Never cut tests.
 

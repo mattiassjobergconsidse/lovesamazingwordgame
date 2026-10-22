@@ -1,15 +1,10 @@
 import { useId } from "react";
 import { isModeAvailable, MIN_WORDS } from "../../core/trainingEligibility";
 import { useI18n } from "../../i18n";
-import { routeToHash, TRAIN_MODES, type TrainMode } from "../../router";
+import { routeToHash, TRAIN_MODES } from "../../router";
+import "../common/common.css";
 import "../home/home.css";
-
-const MODE_ICONS: Readonly<Record<TrainMode, string>> = {
-  flashcards: "🃏",
-  writing: "✏️",
-  quiz: "❓",
-  matching: "🧩",
-};
+import { MODE_ICONS } from "./modeIcons";
 
 interface ModeCardsProps {
   /** Number of words in the active set; modes it is too small for are disabled. */
@@ -43,7 +38,8 @@ export function ModeCards({ wordCount, labelledBy }: ModeCardsProps) {
           <li key={mode}>
             {isModeAvailable(mode, wordCount) ? (
               <a
-                className="home-mode"
+                className="home-mode card"
+                data-mode={mode}
                 aria-labelledby={titleId}
                 href={routeToHash({ name: "trainMode", mode })}
               >
@@ -53,7 +49,8 @@ export function ModeCards({ wordCount, labelledBy }: ModeCardsProps) {
               <>
                 <button
                   type="button"
-                  className="home-mode home-mode-disabled"
+                  className="home-mode home-mode-disabled card"
+                  data-mode={mode}
                   disabled
                   aria-labelledby={titleId}
                   aria-describedby={noteId}

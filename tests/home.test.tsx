@@ -147,6 +147,34 @@ describe("home screen (SPEC 7, #/)", () => {
     expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(2);
   });
 
+  it("NH-8: keeps mascot and emoji decoration out of the accessibility tree", async () => {
+    const { set, pairs } = setWithPairs("Kids", [
+      ["hus", "house"],
+      ["bil", "car"],
+    ]);
+    await seedDatabase({
+      sets: [set],
+      pairs,
+      settings: makeSettings({ activeSetId: set.id }),
+    });
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 2,
+        name: "Choose how to practise",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Home" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("img")).toBeNull();
+    // Decorative, but it must be on screen and hidden from assistive technology.
+    expect(screen.getByTestId("mascot")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("link", { name: "Flashcards" })).toBeVisible();
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
+
   it("HOME-1: celebrates a reached daily goal", async () => {
     const { set, pairs } = setWithPairs("Busy", [["hus", "house"]]);
     await seedDatabase({

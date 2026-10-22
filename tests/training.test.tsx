@@ -171,6 +171,45 @@ describe("running a session", () => {
     );
   });
 
+  it("NH-8: shows the mode emoji and the mascot without changing accessible names", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Flashcards" }),
+    ).toBeVisible();
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Flashcards" }),
+    ).toHaveTextContent("🃏");
+
+    await answerCurrentCard(user, "I knew it");
+    await answerCurrentCard(user, "I knew it");
+
+    expect(
+      await screen.findByRole("heading", { name: "Session complete" }),
+    ).toBeVisible();
+    expect(screen.getByTestId("mascot")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.queryByRole("img")).toBeNull();
+  });
+
+  it("NH-8: still shows the mascot when the session had mistakes", async () => {
+    await seedWeek(2);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+
+    await answerCurrentCard(user, "Not yet");
+    await answerCurrentCard(user, "I knew it");
+    await answerCurrentCard(user, "I knew it");
+
+    expect(
+      await screen.findByRole("button", { name: "Practise mistakes" }),
+    ).toBeVisible();
+    expect(screen.getByTestId("mascot")).toBeInTheDocument();
+  });
+
   it("FR-TRN-7, FR-TRN-4: repeats a wrong word once without counting it twice", async () => {
     const { set } = await seedWeek(2);
     const user = userEvent.setup();
