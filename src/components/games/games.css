@@ -1,0 +1,173 @@
+/* Mini-games (NH-11). Mobile first; colours only from theme tokens. */
+.games-screen,
+.game-screen,
+.game-play {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.games-screen > h1,
+.game-screen > h1 {
+  margin-block-end: 0;
+}
+.games-summary,
+.game-status,
+.game-hint {
+  margin: 0;
+}
+.game-hint {
+  color: var(--color-text-muted);
+}
+.games-grid,
+.game-offer-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.games-grid {
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+}
+.game-card,
+.game-offer,
+.game-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+.game-card h2,
+.game-card p,
+.game-offer h2,
+.game-offer p,
+.game-result h2,
+.game-result p {
+  margin: 0;
+}
+.game-card-emoji,
+.game-result-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+.game-card-locked {
+  color: var(--color-text-muted);
+  border-style: dashed;
+}
+.game-card-locked .game-card-emoji {
+  filter: grayscale(1);
+}
+.game-offer {
+  border: 2px solid var(--color-accent);
+}
+.game-offer-list {
+  grid-template-columns: repeat(auto-fit, minmax(10rem, max-content));
+}
+
+/* Emoji memory */
+.memory-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  max-width: 28rem;
+}
+.memory-card {
+  aspect-ratio: 1;
+  min-height: var(--tap-size);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform var(--duration) var(--ease-bounce);
+}
+.memory-card-shown {
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+}
+.memory-card-matched {
+  border-color: var(--color-correct);
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* Catch the falling items */
+.catch-area {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 28rem;
+  aspect-ratio: 3 / 4;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  touch-action: none;
+  user-select: none;
+}
+.catch-item,
+.catch-basket {
+  position: absolute;
+  font-size: 1.75rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.catch-basket {
+  font-size: 2.5rem;
+}
+
+/* Simon pattern memory */
+.simon-pads {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  max-width: 24rem;
+}
+.simon-pad {
+  --pad-colour: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 7rem;
+  border: 4px solid var(--pad-colour);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--pad-colour) 18%, var(--color-bg));
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+.simon-pad > span:first-child {
+  font-size: 2rem;
+}
+.simon-pad[data-pad="1"] {
+  --pad-colour: var(--color-correct);
+}
+.simon-pad[data-pad="2"] {
+  --pad-colour: var(--color-wrong);
+}
+.simon-pad[data-pad="3"] {
+  --pad-colour: var(--color-accent);
+}
+.simon-pad-lit {
+  background: var(--pad-colour);
+  color: var(--color-bg);
+  transform: scale(1.04);
+}
+.simon-pad[aria-disabled="true"] {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-card,
+  .simon-pad {
+    transition: none;
+  }
+  .memory-card-shown,
+  .simon-pad-lit {
+    transform: none;
+  }
+}

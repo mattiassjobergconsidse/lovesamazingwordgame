@@ -4,6 +4,8 @@ import type { MessageKey } from "../../i18n";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
 import { HomeScreen } from "../home/HomeScreen";
 import { ShareImportScreen } from "../data/ShareImportScreen";
+import { GameScreen } from "../games/GameScreen";
+import { GamesScreen } from "../games/GamesScreen";
 import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
 import { SettingsScreen } from "../settings/SettingsScreen";
@@ -42,6 +44,10 @@ function renderScreen(route: Route) {
       return <StatsScreen />;
     case "trophies":
       return <TrophyScreen />;
+    case "games":
+      return <GamesScreen />;
+    case "game":
+      return <GameScreen key={route.game} game={route.game} />;
     case "settings":
       return <SettingsScreen />;
     case "share":
@@ -66,6 +72,10 @@ function titleFor(route: Route): MessageKey {
       return "nav.stats";
     case "trophies":
       return "nav.trophies";
+    case "games":
+      return "nav.games";
+    case "game":
+      return `game.${route.game}.name`;
     case "settings":
       return "nav.settings";
     case "share":

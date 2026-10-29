@@ -25,6 +25,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   },
   { route: { name: "stats" }, label: "nav.stats", matches: ["stats"] },
   { route: { name: "trophies" }, label: "nav.trophies", matches: ["trophies"] },
+  { route: { name: "games" }, label: "nav.games", matches: ["games", "game"] },
   {
     route: { name: "settings" },
     label: "nav.settings",

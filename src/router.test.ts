@@ -32,6 +32,10 @@ describe("parseRoute", () => {
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
     ],
     ["#/stats", { name: "stats" }],
+    ["#/games", { name: "games" }],
+    ["#/games/memory", { name: "game", game: "memory" }],
+    ["#/games/catch", { name: "game", game: "catch" }],
+    ["#/games/simon", { name: "game", game: "simon" }],
     ["#/settings", { name: "settings" }],
     ["#/share/zAbC-_1", { name: "share", payload: "zAbC-_1" }],
   ])("maps %j to a route", (hash, expected) => {
@@ -47,6 +51,8 @@ describe("parseRoute", () => {
     "#/stats/extra/more",
     "#/stats/extra",
     "#/settings/extra",
+    "#/games/bubble",
+    "#/games/memory/extra",
     "#/share",
     "#/share/abc/def",
     "#/sets/%E0%A4%A",
@@ -65,6 +71,8 @@ describe("routeToHash", () => {
       { name: "trainMode", mode: "writing" },
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
       { name: "stats" },
+      { name: "games" },
+      { name: "game", game: "simon" },
       { name: "settings" },
       { name: "share", payload: "zAbC-_1" },
     ];

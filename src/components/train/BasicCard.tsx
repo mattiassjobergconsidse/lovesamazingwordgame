@@ -3,6 +3,7 @@ import type { CardTerms } from "../../core/direction";
 import { speechCodesFor } from "../../core/direction";
 import type { SessionCard } from "../../core/session";
 import type { Rng } from "../../core/shuffle";
+import type { AnswerOptions } from "../../hooks/useTrainingSession";
 import { useI18n } from "../../i18n";
 import type { Direction, WordPair, WordSet } from "../../types";
 import { SpeakButton } from "../common/SpeakButton";
@@ -17,7 +18,10 @@ export interface ModeCardProps {
   readonly pool: readonly WordPair[];
   readonly rng: Rng;
   /** Reports the result; the shell saves progress and advances. */
-  readonly onAnswer: (result: "correct" | "wrong" | "assisted") => void;
+  readonly onAnswer: (
+    result: "correct" | "wrong" | "assisted",
+    options?: AnswerOptions,
+  ) => void;
 }
 
 /**

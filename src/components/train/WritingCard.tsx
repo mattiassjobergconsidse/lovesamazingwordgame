@@ -151,7 +151,7 @@ export function WritingCard({
             onAnswer(checked.result);
           }}
           onOverride={() => {
-            onAnswer("correct");
+            onAnswer("correct", { overridden: true });
           }}
         />
       )}

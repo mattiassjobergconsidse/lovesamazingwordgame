@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { isGameId, type GameId } from "./core/gameUnlock";
 
 export type TrainMode =
   "flashcards" | "quiz" | "matching" | "writing" | "hangman";
@@ -25,6 +26,9 @@ export type Route =
     }
   | { readonly name: "stats" }
   | { readonly name: "trophies" }
+  /** The mini-game hub and one game (NH-11). */
+  | { readonly name: "games" }
+  | { readonly name: "game"; readonly game: GameId }
   | { readonly name: "settings" }
   /** A set shared via link; `payload` is the encoded set (NH-5). */
   | { readonly name: "share"; readonly payload: string };
@@ -65,6 +69,11 @@ export function parseRoute(hash: string): Route {
       return second === undefined ? { name: "stats" } : HOME;
     case "trophies":
       return second === undefined ? { name: "trophies" } : HOME;
+    case "games":
+      if (second === undefined) {
+        return { name: "games" };
+      }
+      return isGameId(second) ? { name: "game", game: second } : HOME;
     case "settings":
       return second === undefined ? { name: "settings" } : HOME;
     case "share":
@@ -118,6 +127,10 @@ export function routeToHash(route: Route): string {
       return "#/stats";
     case "trophies":
       return "#/trophies";
+    case "games":
+      return "#/games";
+    case "game":
+      return `#/games/${route.game}`;
     case "settings":
       return "#/settings";
     case "share":
