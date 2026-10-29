@@ -1,4 +1,6 @@
 import type { ImportPlan } from "../core/importPlan";
+import { mergeTrophies } from "../core/trophies";
+import type { TrophyRecord } from "../core/trophyDefinitions";
 import type { WordGameDatabase } from "./db";
 import { runTransaction } from "./transaction";
 
@@ -9,17 +11,28 @@ import { runTransaction } from "./transaction";
  *
  * @param db Open database.
  * @param plan What to delete and write; ids must already be fresh.
+ * @param trophies Imported trophies, merged with the stored ones (earliest unlock wins).
  * @throws If a write fails; the database is left unchanged then.
  */
 export async function applyImportPlan(
   db: WordGameDatabase,
   plan: ImportPlan,
+  trophies: readonly TrophyRecord[] = [],
 ): Promise<void> {
   const tx = db.transaction(
-    ["sets", "pairs", "progress", "activity"],
+    ["sets", "pairs", "progress", "activity", "trophies"],
     "readwrite",
   );
   await runTransaction(tx, async (track) => {
+    if (trophies.length > 0) {
+      const stored = await track(tx.objectStore("trophies").getAll());
+      await Promise.all(
+        mergeTrophies(stored, trophies).map((record) =>
+          track(tx.objectStore("trophies").put(record)),
+        ),
+      );
+    }
+
     for (const setId of plan.removeSetIds) {
       const [pairIds, progressIds, activityIds] = await Promise.all([
         track(tx.objectStore("pairs").index("setId").getAllKeys(setId)),
@@ -49,14 +62,14 @@ export async function applyImportPlan(
 }
 
 /**
- * Deletes all sets, pairs, progress and activity in one transaction (FR-IO-4).
+ * Deletes all sets, pairs, progress, activity and trophies in one transaction (FR-IO-4).
  * Settings are kept; the caller clears the active set.
  *
  * @throws If a delete fails; nothing is deleted then.
  */
 export async function clearLibrary(db: WordGameDatabase): Promise<void> {
   const tx = db.transaction(
-    ["sets", "pairs", "progress", "activity"],
+    ["sets", "pairs", "progress", "activity", "trophies"],
     "readwrite",
   );
   await runTransaction(tx, (track) =>
@@ -65,6 +78,7 @@ export async function clearLibrary(db: WordGameDatabase): Promise<void> {
       track(tx.objectStore("pairs").clear()),
       track(tx.objectStore("progress").clear()),
       track(tx.objectStore("activity").clear()),
+      track(tx.objectStore("trophies").clear()),
     ]),
   );
 }

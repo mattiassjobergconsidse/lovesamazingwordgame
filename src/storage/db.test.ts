@@ -2,6 +2,7 @@ import { openDB } from "idb";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DB_NAME,
+  DB_VERSION,
   isIndexedDbAvailable,
   openAppDb,
   type WordGameDatabase,
@@ -43,7 +44,27 @@ describe("openAppDb", () => {
       "progress",
       "sets",
       "settings",
+      "trophies",
     ]);
+  });
+
+  it("NH-10: upgrades a version 1 database by adding trophies and keeping its data", async () => {
+    const old = await openDB(DB_NAME, 1, {
+      upgrade(database) {
+        database.createObjectStore("sets", { keyPath: "id" });
+        database.createObjectStore("pairs", { keyPath: "id" });
+        database.createObjectStore("progress", { keyPath: "pairId" });
+        database.createObjectStore("activity", { keyPath: "id" });
+        database.createObjectStore("settings");
+      },
+    });
+    await old.put("sets", { id: "kept", name: "Kept" });
+    old.close();
+
+    const db = await open();
+
+    expect([...db.objectStoreNames]).toContain("trophies");
+    expect(await db.get("sets", "kept")).toMatchObject({ name: "Kept" });
   });
 
   it("creates the setId index on pairs, progress and activity", async () => {
@@ -90,7 +111,7 @@ describe("openAppDb", () => {
       },
     });
 
-    const upgraded = await openDB(DB_NAME, 2);
+    const upgraded = await openDB(DB_NAME, DB_VERSION + 1);
     upgraded.close();
 
     expect(onBlocking).toHaveBeenCalledOnce();

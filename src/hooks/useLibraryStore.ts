@@ -13,6 +13,12 @@ import {
   type SetFields,
 } from "../core/setValidation";
 import { applyResult, createProgress } from "../core/spacedRepetition";
+import {
+  evaluateTrophies,
+  mergeTrophies,
+  type SessionEndEvent,
+} from "../core/trophies";
+import type { TrophyId, TrophyRecord } from "../core/trophyDefinitions";
 import { isIndexedDbAvailable, type WordGameDatabase } from "../storage/db";
 import {
   deletePairWithProgress,
@@ -27,6 +33,7 @@ import {
   putSetWithPairs,
   type LibrarySnapshot,
 } from "../storage/setsRepo";
+import { loadTrophies, putTrophies } from "../storage/trophiesRepo";
 import type { AnswerResult, WordPair, WordSet } from "../types";
 import type {
   Library,
@@ -80,10 +87,12 @@ export function useLibraryStore(): Library {
   const { db, reportStorageError } = useDatabase();
   const { settings, updateSettings } = useSettings();
   const [data, setData] = useState<LibrarySnapshot>(EMPTY);
+  const [trophies, setTrophies] = useState<readonly TrophyRecord[]>([]);
   const [status, setStatus] = useState<"loading" | "ready">(() =>
     isIndexedDbAvailable() ? "loading" : "ready",
   );
   const dataRef = useRef(data);
+  const trophiesRef = useRef(trophies);
   const activeSetId = settings.activeSetId;
 
   useEffect(() => {
@@ -93,12 +102,17 @@ export function useLibraryStore(): Library {
     const abort = new AbortController();
     void (async () => {
       try {
-        const snapshot = await loadLibrary(db);
+        const [snapshot, storedTrophies] = await Promise.all([
+          loadLibrary(db),
+          loadTrophies(db),
+        ]);
         if (abort.signal.aborted) {
           return;
         }
         dataRef.current = snapshot;
+        trophiesRef.current = storedTrophies;
         setData(snapshot);
+        setTrophies(storedTrophies);
         setStatus("ready");
       } catch (error) {
         console.error("Failed to load the library", error);
@@ -134,7 +148,13 @@ export function useLibraryStore(): Library {
     if (db === null) {
       return;
     }
-    commit(await loadLibrary(db));
+    const [snapshot, storedTrophies] = await Promise.all([
+      loadLibrary(db),
+      loadTrophies(db),
+    ]);
+    commit(snapshot);
+    trophiesRef.current = storedTrophies;
+    setTrophies(storedTrophies);
   }, [db, commit]);
 
   const createSet = useCallback(
@@ -433,6 +453,29 @@ export function useLibraryStore(): Library {
     [commit, persist],
   );
 
+  const completeSession = useCallback(
+    (event: SessionEndEvent, now: number): readonly TrophyId[] => {
+      const current = dataRef.current;
+      const owned = trophiesRef.current;
+      const unlockedIds = evaluateTrophies({
+        unlocked: new Set(owned.map((record) => record.id)),
+        progress: current.progress,
+        activity: current.activity,
+        event,
+        now,
+      });
+      if (unlockedIds.length === 0) {
+        return unlockedIds;
+      }
+      const added = unlockedIds.map((id) => ({ id, unlockedAt: now }));
+      trophiesRef.current = mergeTrophies(owned, added);
+      setTrophies(trophiesRef.current);
+      persist((database) => putTrophies(database, added));
+      return unlockedIds;
+    },
+    [persist],
+  );
+
   return useMemo(
     () => ({
       status,
@@ -440,6 +483,7 @@ export function useLibraryStore(): Library {
       pairs: data.pairs,
       progress: data.progress,
       activity: data.activity,
+      trophies,
       createSet,
       updateSet,
       updateSpeechLanguages,
@@ -451,11 +495,13 @@ export function useLibraryStore(): Library {
       removePair,
       restorePair,
       recordAnswer,
+      completeSession,
       reload,
     }),
     [
       status,
       data,
+      trophies,
       reload,
       createSet,
       updateSet,
@@ -468,6 +514,7 @@ export function useLibraryStore(): Library {
       removePair,
       restorePair,
       recordAnswer,
+      completeSession,
     ],
   );
 }

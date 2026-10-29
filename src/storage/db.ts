@@ -1,4 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import type { TrophyRecord } from "../core/trophyDefinitions";
 import type {
   DailyActivity,
   Settings,
@@ -8,11 +9,12 @@ import type {
 } from "../types";
 
 export const DB_NAME = "lovesamazingwordgame";
-export const DB_VERSION = 1;
+/** Version 2 added the `trophies` store (NH-10). */
+export const DB_VERSION = 2;
 /** Key of the single settings record. */
 export const SETTINGS_KEY = "settings";
 
-/** Typed schema of the IndexedDB database (version 1). */
+/** Typed schema of the IndexedDB database (version 2). */
 export interface WordGameDB extends DBSchema {
   sets: { key: string; value: WordSet };
   pairs: {
@@ -31,6 +33,7 @@ export interface WordGameDB extends DBSchema {
     indexes: { setId: string };
   };
   settings: { key: string; value: Settings };
+  trophies: { key: string; value: TrophyRecord };
 }
 
 export type WordGameDatabase = IDBPDatabase<WordGameDB>;
@@ -61,21 +64,27 @@ export async function openAppDb(
   handlers: DbEventHandlers = {},
 ): Promise<WordGameDatabase> {
   return await openDB<WordGameDB>(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      db.createObjectStore("sets", { keyPath: "id" });
-      db.createObjectStore("pairs", { keyPath: "id" }).createIndex(
-        "setId",
-        "setId",
-      );
-      db.createObjectStore("progress", { keyPath: "pairId" }).createIndex(
-        "setId",
-        "setId",
-      );
-      db.createObjectStore("activity", { keyPath: "id" }).createIndex(
-        "setId",
-        "setId",
-      );
-      db.createObjectStore("settings");
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        db.createObjectStore("sets", { keyPath: "id" });
+        db.createObjectStore("pairs", { keyPath: "id" }).createIndex(
+          "setId",
+          "setId",
+        );
+        db.createObjectStore("progress", { keyPath: "pairId" }).createIndex(
+          "setId",
+          "setId",
+        );
+        db.createObjectStore("activity", { keyPath: "id" }).createIndex(
+          "setId",
+          "setId",
+        );
+        db.createObjectStore("settings");
+      }
+      if (oldVersion < 2) {
+        // Only adds a store; version 1 data stays untouched.
+        db.createObjectStore("trophies", { keyPath: "id" });
+      }
     },
     blocked: handlers.onBlocked,
     blocking: handlers.onBlocking,

@@ -43,7 +43,12 @@ export function ToastProvider({ children }: { readonly children: ReactNode }) {
       {children}
       <div role="status" aria-label={t("toast.label")} className="toast-region">
         {toast !== null && (
-          <div className="toast" key={toast.id}>
+          <div
+            className={
+              toast.celebrate === true ? "toast toast-celebrate" : "toast"
+            }
+            key={toast.id}
+          >
             <span>{toast.message}</span>
             {toast.actionLabel !== undefined && (
               <button

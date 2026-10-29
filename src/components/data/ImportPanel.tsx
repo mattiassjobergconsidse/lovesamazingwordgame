@@ -5,6 +5,7 @@ import type {
   SetBundle,
 } from "../../core/exportFormat";
 import type { ConflictChoice, ImportConflict } from "../../core/importPlan";
+import type { TrophyRecord } from "../../core/trophyDefinitions";
 import { useDataExchange } from "../../hooks/useDataExchange";
 import { useToast } from "../../hooks/useToast";
 import { useI18n, type MessageKey } from "../../i18n";
@@ -31,6 +32,7 @@ const PROBLEM_KEYS: Readonly<Record<ProblemReason, MessageKey>> = {
 interface PendingImport {
   readonly bundles: readonly SetBundle[];
   readonly conflicts: readonly ImportConflict[];
+  readonly trophies: readonly TrophyRecord[] | undefined;
 }
 
 /** Pick a JSON or CSV file; shows what is wrong with it or imports it (FR-IO-2, FR-IO-3). */
@@ -45,8 +47,9 @@ export function ImportPanel() {
   async function finish(
     bundles: readonly SetBundle[],
     choices: ReadonlyMap<string, ConflictChoice>,
+    trophies?: readonly TrophyRecord[],
   ) {
-    const count = await commitImport(bundles, choices);
+    const count = await commitImport(bundles, choices, trophies);
     if (count === null) {
       return;
     }
@@ -69,9 +72,13 @@ export function ImportPanel() {
     if (!draft.ok) {
       setProblems(draft.problems);
     } else if (draft.conflicts.length > 0) {
-      setPending({ bundles: draft.bundles, conflicts: draft.conflicts });
+      setPending({
+        bundles: draft.bundles,
+        conflicts: draft.conflicts,
+        trophies: draft.trophies,
+      });
     } else {
-      await finish(draft.bundles, new Map());
+      await finish(draft.bundles, new Map(), draft.trophies);
     }
   }
 
@@ -117,7 +124,7 @@ export function ImportPanel() {
           }}
           onConfirm={(choices) => {
             setPending(null);
-            void finish(pending.bundles, choices);
+            void finish(pending.bundles, choices, pending.trophies);
           }}
         />
       )}

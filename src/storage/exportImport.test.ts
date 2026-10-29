@@ -9,6 +9,7 @@ import {
 import { openAppDb, type WordGameDatabase } from "./db";
 import { applyImportPlan, clearLibrary } from "./exportImport";
 import { loadLibrary, putSetWithPairs } from "./setsRepo";
+import { loadTrophies } from "./trophiesRepo";
 
 let db: WordGameDatabase;
 
@@ -117,9 +118,51 @@ describe("applyImportPlan", () => {
     expect(library.progress).toHaveLength(1);
     expect(library.activity).toHaveLength(1);
   });
+
+  it("NH-10: merges imported trophies with stored ones and keeps the earliest unlock", async () => {
+    await db.put("trophies", { id: "streak3", unlockedAt: 500 });
+    await db.put("trophies", { id: "firstSession", unlockedAt: 100 });
+
+    await applyImportPlan(db, emptyPlan(), [
+      { id: "streak3", unlockedAt: 900 },
+      { id: "firstSession", unlockedAt: 50 },
+      { id: "modeQuiz", unlockedAt: 700 },
+    ]);
+
+    expect(await loadTrophies(db)).toEqual([
+      { id: "firstSession", unlockedAt: 50 },
+      { id: "modeQuiz", unlockedAt: 700 },
+      { id: "streak3", unlockedAt: 500 },
+    ]);
+  });
+
+  it("NH-10: a failed import does not change the stored trophies", async () => {
+    await db.put("trophies", { id: "streak3", unlockedAt: 500 });
+    const broken = Object.assign(makeSet({ name: "Broken" }), {
+      cannotBeCloned: () => 1,
+    });
+
+    await expect(
+      applyImportPlan(db, emptyPlan({ sets: [broken] }), [
+        { id: "modeQuiz", unlockedAt: 700 },
+      ]),
+    ).rejects.toThrow();
+
+    expect(await loadTrophies(db)).toEqual([
+      { id: "streak3", unlockedAt: 500 },
+    ]);
+  });
 });
 
 describe("clearLibrary", () => {
+  it("NH-10: deletes the trophies as well", async () => {
+    await db.put("trophies", { id: "streak3", unlockedAt: 500 });
+
+    await clearLibrary(db);
+
+    expect(await loadTrophies(db)).toEqual([]);
+  });
+
   it("FR-IO-4: deletes all sets, pairs, progress and activity", async () => {
     await storeOldSet();
 

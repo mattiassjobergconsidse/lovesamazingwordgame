@@ -422,3 +422,104 @@ describe("parseExport", () => {
     });
   });
 });
+
+describe("trophies in the export file", () => {
+  const trophies = [
+    { id: "streak3", unlockedAt: 200 },
+    { id: "firstSession", unlockedAt: 100 },
+  ] as const;
+
+  function fileWith(extra: Record<string, unknown>): string {
+    const base = buildExport(sourceWithTwoSets(), ["s1"], false, 0);
+    return JSON.stringify({ ...base, ...extra });
+  }
+
+  it("NH-10: exports trophies together with progress when they are part of the source", () => {
+    const source = { ...sourceWithTwoSets(), trophies };
+
+    const file = buildExport(source, ["s1", "s2"], true, 0);
+
+    expect(file.trophies).toEqual(trophies);
+  });
+
+  it("NH-10: leaves trophies out without progress or when the source has none", () => {
+    const source = { ...sourceWithTwoSets(), trophies };
+
+    expect(buildExport(source, ["s1"], false, 0)).not.toHaveProperty(
+      "trophies",
+    );
+    expect(
+      buildExport(sourceWithTwoSets(), ["s1"], true, 0),
+    ).not.toHaveProperty("trophies");
+  });
+
+  it("NH-10: reads trophies in display order", () => {
+    const result = parseExport(fileWith({ trophies }));
+
+    expect(result.ok && result.trophies).toEqual([
+      { id: "firstSession", unlockedAt: 100 },
+      { id: "streak3", unlockedAt: 200 },
+    ]);
+  });
+
+  it("NH-10: files without trophies stay valid and report none", () => {
+    const result = parseExport(fileWith({}));
+
+    expect(result.ok).toBe(true);
+    expect(result).not.toHaveProperty("trophies");
+  });
+
+  it("NH-10: skips trophy ids from a newer version instead of rejecting the file", () => {
+    const result = parseExport(
+      fileWith({
+        trophies: [
+          { id: "fromTheFuture", unlockedAt: 1 },
+          { id: "streak3", unlockedAt: 5 },
+        ],
+      }),
+    );
+
+    expect(result.ok && result.trophies).toEqual([
+      { id: "streak3", unlockedAt: 5 },
+    ]);
+  });
+
+  it("NH-10: keeps the earliest time of a duplicated trophy", () => {
+    const result = parseExport(
+      fileWith({
+        trophies: [
+          { id: "streak3", unlockedAt: 9 },
+          { id: "streak3", unlockedAt: 4 },
+        ],
+      }),
+    );
+
+    expect(result.ok && result.trophies).toEqual([
+      { id: "streak3", unlockedAt: 4 },
+    ]);
+  });
+
+  it("NH-10: rejects malformed trophies with their path", () => {
+    const result = parseExport(
+      fileWith({
+        trophies: ["x", { id: "streak3" }, { id: "streak3", unlockedAt: -1 }],
+      }),
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      problems: [
+        { path: "trophies[0]", reason: "notAnObject" },
+        { path: "trophies[1].unlockedAt", reason: "missing" },
+        { path: "trophies[2].unlockedAt", reason: "outOfRange" },
+      ],
+    });
+  });
+
+  it("NH-10: rejects trophies that are not a list", () => {
+    expect(parseExport(fileWith({ trophies: {} }))).toEqual({
+      ok: false,
+      problems: [{ path: "trophies", reason: "wrongType" }],
+    });
+  });
+});

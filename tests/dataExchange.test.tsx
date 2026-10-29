@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { App } from "../src/App";
 import { buildExport } from "../src/core/exportFormat";
+import type { TrophyRecord } from "../src/core/trophyDefinitions";
 import { openAppDb } from "../src/storage/db";
 import {
   deleteAppDatabase,
@@ -12,7 +13,7 @@ import {
   makeSet,
   makeSettings,
 } from "./factories";
-import { readLibrary, seedDatabase, setWithPairs } from "./seed";
+import { readLibrary, readTrophies, seedDatabase, setWithPairs } from "./seed";
 
 interface Download {
   readonly fileName: string;
@@ -65,7 +66,7 @@ async function rawText(blob: Blob): Promise<string> {
   );
 }
 
-async function seedWeek() {
+async function seedWeek(trophies: readonly TrophyRecord[] = []) {
   const { set, pairs } = setWithPairs("Week 1", [
     ["hus", "house"],
     ["blå", "blue"],
@@ -86,6 +87,7 @@ async function seedWeek() {
         correct: 2,
       },
     ],
+    trophies,
     settings: makeSettings({ activeSetId: set.id }),
   });
   return { set, pairs };
@@ -150,6 +152,33 @@ describe("export", () => {
     expect(content).not.toHaveProperty("activity");
   });
 
+  it("NH-10: the full backup includes the unlocked trophies, a single set does not", async () => {
+    const { set } = await seedWeek([{ id: "streak3", unlockedAt: 4242 }]);
+    const user = userEvent.setup();
+    window.location.hash = "#/settings";
+    const view = await renderApp();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Export all data" }),
+    );
+
+    const content: unknown = JSON.parse(
+      (await downloads[0]?.blob.text()) ?? "",
+    );
+    expect(content).toMatchObject({
+      trophies: [{ id: "streak3", unlockedAt: 4242 }],
+    });
+
+    view.unmount();
+    window.location.hash = `#/sets/${set.id}`;
+    await renderApp();
+    await user.click(
+      await screen.findByRole("button", { name: "Export as JSON" }),
+    );
+    const single: unknown = JSON.parse((await downloads[1]?.blob.text()) ?? "");
+    expect(single).not.toHaveProperty("trophies");
+  });
+
   it("FR-IO-1: exports one set from the editor under its own name", async () => {
     const { set } = await seedWeek();
     window.location.hash = `#/sets/${set.id}`;
@@ -201,6 +230,45 @@ describe("import", () => {
     expect(library.pairs.map((pair) => pair.a)).toEqual(["bil"]);
     const list = await screen.findByRole("list", { name: "Your sets" });
     expect(within(list).getByText("Week 2")).toBeVisible();
+  });
+
+  it("NH-10: imports the trophies of a backup and keeps the earliest unlock time", async () => {
+    await seedDatabase({
+      trophies: [
+        { id: "streak3", unlockedAt: 100 },
+        { id: "firstSession", unlockedAt: 900 },
+      ],
+    });
+    const set = makeSet({ name: "Week 2" });
+    const file = {
+      ...buildExport(
+        { sets: [set], pairs: [], progress: [], activity: [] },
+        [set.id],
+        false,
+        0,
+      ),
+      trophies: [
+        { id: "streak3", unlockedAt: 500 },
+        { id: "firstSession", unlockedAt: 300 },
+        { id: "modeQuiz", unlockedAt: 700 },
+      ],
+    };
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.upload(
+      await screen.findByLabelText("Import a JSON or CSV file"),
+      new File([JSON.stringify(file)], "backup.json", {
+        type: "application/json",
+      }),
+    );
+
+    expect(await screen.findByText("1 set imported")).toBeVisible();
+    expect(await readTrophies()).toEqual([
+      { id: "firstSession", unlockedAt: 300 },
+      { id: "modeQuiz", unlockedAt: 700 },
+      { id: "streak3", unlockedAt: 100 },
+    ]);
   });
 
   it("FR-IO-3: imports a CSV file as a set named after the file", async () => {
@@ -390,6 +458,24 @@ describe("reset", () => {
       activity: [],
     });
     expect(screen.getByText("No set selected")).toBeVisible();
+  });
+
+  it("NH-10: resetting all data also removes the trophies", async () => {
+    await seedWeek([{ id: "streak3", unlockedAt: 100 }]);
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Reset all data…" }),
+    );
+    const dialog = await screen.findByRole("dialog");
+    await user.type(within(dialog).getByLabelText(/Type RESET/), "RESET");
+    await user.click(
+      within(dialog).getByRole("button", { name: "Delete everything" }),
+    );
+
+    expect(await screen.findByText("All data was deleted")).toBeVisible();
+    expect(await readTrophies()).toEqual([]);
   });
 
   it("FR-IO-4: cancelling deletes nothing", async () => {

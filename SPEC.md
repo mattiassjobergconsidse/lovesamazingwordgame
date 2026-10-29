@@ -350,7 +350,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
    hidden as blanks (prompt shown in the other language); the user guesses letters (on-screen keyboard and physical keys, including å/ä/ö), with a
    limited number of wrong guesses (e.g. 6) drawn as a progressive figure. Solved = `correct`, out of guesses = `wrong` (SR result as in section 7).
    Follows the shared session rules (FR-TRN) and eligibility rules (FR-ACT-1).
-10. **Trophies** (`NH-10`): unlockable trophies shown on a trophy screen (locked ones shown greyed out with their requirement). Trophy state is
+10. **Trophies** (`NH-10`, done): unlockable trophies shown on a trophy screen (locked ones shown greyed out with their requirement). Trophy state is
     stored locally (IndexedDB) and included in export/import. Rules are pure functions in `core/` computed from progress/activity. Suggested trophies:
     - First session completed.
     - Practice streak of 3 / 7 / 30 days.

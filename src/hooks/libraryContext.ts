@@ -1,6 +1,8 @@
 import { createContext } from "react";
 import type { BulkParsedPair } from "../core/bulkParse";
 import type { SetFieldErrors, SetFields } from "../core/setValidation";
+import type { SessionEndEvent } from "../core/trophies";
+import type { TrophyId, TrophyRecord } from "../core/trophyDefinitions";
 import type {
   AnswerResult,
   DailyActivity,
@@ -34,6 +36,8 @@ export interface Library {
   readonly pairs: readonly WordPair[];
   readonly progress: readonly WordProgress[];
   readonly activity: readonly DailyActivity[];
+  /** Unlocked trophies (NH-10). */
+  readonly trophies: readonly TrophyRecord[];
   /**
    * Re-reads everything from storage after a bulk change made outside the
    * store (import, reset).
@@ -76,6 +80,16 @@ export interface Library {
     result: AnswerResult,
     now: number,
   ) => void;
+  /**
+   * Evaluates the trophy rules for a session that just ended, using the
+   * latest progress and activity, and stores new unlocks right away (NH-10).
+   *
+   * @returns Ids of the trophies unlocked now; empty when there are none.
+   */
+  readonly completeSession: (
+    event: SessionEndEvent,
+    now: number,
+  ) => readonly TrophyId[];
 }
 
 export const LibraryContext = createContext<Library | null>(null);

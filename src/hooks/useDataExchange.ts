@@ -14,6 +14,7 @@ import {
   type ConflictChoice,
   type ImportConflict,
 } from "../core/importPlan";
+import type { TrophyRecord } from "../core/trophyDefinitions";
 import { applyImportPlan, clearLibrary } from "../storage/exportImport";
 import {
   downloadTextFile,
@@ -31,6 +32,8 @@ export type ImportDraft =
       readonly bundles: readonly SetBundle[];
       /** Sets that need a decision before importing (FR-IO-2). */
       readonly conflicts: readonly ImportConflict[];
+      /** Trophies from the file, merged into the stored ones on import (NH-10). */
+      readonly trophies?: readonly TrophyRecord[];
     }
   | { readonly ok: false; readonly problems: readonly ImportProblem[] };
 
@@ -40,7 +43,7 @@ export interface DataExchange {
   readonly ready: boolean;
   /** Downloads one set as a JSON file; progress and activity only when `includeProgress`. */
   readonly exportSet: (setId: string, includeProgress: boolean) => void;
-  /** Downloads all data as one JSON file named after today's date. */
+  /** Downloads all data as one JSON file named after today's date; trophies come with the progress. */
   readonly exportAll: (includeProgress: boolean) => void;
   /** Downloads one set as CSV for Excel. Does nothing for an unknown id. */
   readonly exportCsv: (setId: string) => void;
@@ -55,6 +58,7 @@ export interface DataExchange {
   readonly commitImport: (
     bundles: readonly SetBundle[],
     choices: ReadonlyMap<string, ConflictChoice>,
+    trophies?: readonly TrophyRecord[],
   ) => Promise<number | null>;
   /** Deletes all sets and their data and clears the active set (FR-IO-4). */
   readonly resetAll: () => Promise<boolean>;
@@ -76,13 +80,24 @@ export function useDataExchange(): DataExchange {
   const { db, reportStorageError } = useDatabase();
   const { settings, updateSettings } = useSettings();
   const library = useLibrary();
-  const { sets, pairs, progress, activity, reload } = library;
+  const { sets, pairs, progress, activity, trophies, reload } = library;
   const activeSetId = settings.activeSetId;
 
   const downloadJson = useCallback(
-    (setIds: readonly string[], includeProgress: boolean, fileName: string) => {
+    (
+      setIds: readonly string[],
+      includeProgress: boolean,
+      fileName: string,
+      includeTrophies: boolean,
+    ) => {
       const file = buildExport(
-        { sets, pairs, progress, activity },
+        {
+          sets,
+          pairs,
+          progress,
+          activity,
+          ...(includeTrophies ? { trophies } : {}),
+        },
         setIds,
         includeProgress,
         Date.now(),
@@ -93,14 +108,19 @@ export function useDataExchange(): DataExchange {
         "application/json",
       );
     },
-    [sets, pairs, progress, activity],
+    [sets, pairs, progress, activity, trophies],
   );
 
   const exportSet = useCallback(
     (setId: string, includeProgress: boolean) => {
       const set = sets.find((candidate) => candidate.id === setId);
       if (set !== undefined) {
-        downloadJson([setId], includeProgress, `${fileSlug(set.name)}.json`);
+        downloadJson(
+          [setId],
+          includeProgress,
+          `${fileSlug(set.name)}.json`,
+          false,
+        );
       }
     },
     [sets, downloadJson],
@@ -112,6 +132,7 @@ export function useDataExchange(): DataExchange {
         sets.map((set) => set.id),
         includeProgress,
         `lovesamazingwordgame-backup-${localDateKey(Date.now())}.json`,
+        true,
       );
     },
     [downloadJson, sets],
@@ -154,12 +175,14 @@ export function useDataExchange(): DataExchange {
         };
       }
       let bundles: readonly SetBundle[];
+      let importedTrophies: readonly TrophyRecord[] | undefined;
       if (looksLikeJson(text)) {
         const parsed = parseExport(text);
         if (!parsed.ok) {
           return parsed;
         }
         bundles = parsed.bundles;
+        importedTrophies = parsed.trophies;
       } else {
         const parsed = parseCsv(text);
         if (!parsed.ok) {
@@ -171,7 +194,14 @@ export function useDataExchange(): DataExchange {
           ),
         ];
       }
-      return { ok: true, bundles, conflicts: findConflicts(bundles, sets) };
+      return {
+        ok: true,
+        bundles,
+        conflicts: findConflicts(bundles, sets),
+        ...(importedTrophies === undefined
+          ? {}
+          : { trophies: importedTrophies }),
+      };
     },
     [sets],
   );
@@ -180,6 +210,7 @@ export function useDataExchange(): DataExchange {
     async (
       bundles: readonly SetBundle[],
       choices: ReadonlyMap<string, ConflictChoice>,
+      importedTrophies: readonly TrophyRecord[] = [],
     ): Promise<number | null> => {
       if (db === null) {
         return null;
@@ -188,7 +219,7 @@ export function useDataExchange(): DataExchange {
         crypto.randomUUID(),
       );
       try {
-        await applyImportPlan(db, plan);
+        await applyImportPlan(db, plan, importedTrophies);
         await reload();
       } catch (error) {
         console.error("Failed to import", error);
