@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { formatDuration } from "../../core/activity";
 import {
   mistakePairs,
@@ -14,6 +15,8 @@ interface SessionResultProps {
   readonly durationMs: number;
   readonly onPractiseMistakes: () => void;
   readonly onPractiseAgain: () => void;
+  /** Extra content shown above the actions, e.g. the mini-game offer (NH-11). */
+  readonly children?: ReactNode;
 }
 
 /** End screen of a session: score, time, words to review and next steps (FR-TRN-5). */
@@ -22,6 +25,7 @@ export function SessionResult({
   durationMs,
   onPractiseMistakes,
   onPractiseAgain,
+  children,
 }: SessionResultProps) {
   const { t } = useI18n();
   const score = sessionScore(session);
@@ -58,6 +62,7 @@ export function SessionResult({
           </ul>
         </section>
       )}
+      {children}
       <div className="session-actions">
         {mistakes.length > 0 && (
           <button type="button" className="button" onClick={onPractiseMistakes}>

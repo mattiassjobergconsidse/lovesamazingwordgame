@@ -2,9 +2,11 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
+import { GameOffer } from "../games/GameOffer";
 import { isModalOpen } from "../common/modalOpen";
 import { useAnswerFeedback } from "../../hooks/useAnswerFeedback";
 import { useActiveSet } from "../../hooks/useActiveSet";
+import { useGameUnlockOffer } from "../../hooks/useGameUnlockOffer";
 import { useTrophyCelebration } from "../../hooks/useTrophyCelebration";
 import {
   useTrainingSession,
@@ -95,6 +97,7 @@ function ActiveSession({
   } = useTrainingSession(set.id, undefined, focus);
   const giveFeedback = useAnswerFeedback();
   useTrophyCelebration(view, mode);
+  const earnedGame = useGameUnlockOffer(view, mode);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
   const running = view.status === "running";
@@ -135,7 +138,9 @@ function ActiveSession({
           durationMs={view.durationMs}
           onPractiseMistakes={practiseMistakes}
           onPractiseAgain={start}
-        />
+        >
+          {earnedGame && <GameOffer />}
+        </SessionResult>
       </div>
     );
   }
@@ -219,9 +224,9 @@ function ActiveSession({
               terms,
               pool,
               rng,
-              onAnswer: (result) => {
+              onAnswer: (result, options) => {
                 giveFeedback(result);
-                answer(result);
+                answer(result, options);
               },
             })
           )}

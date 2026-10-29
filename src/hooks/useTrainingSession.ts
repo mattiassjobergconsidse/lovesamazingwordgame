@@ -27,12 +27,21 @@ export type TrainingView =
       /** Direction of the current card, chosen once per card (FR-TRN-3). */
       readonly direction: Direction;
       readonly startedAt: number;
+      /** Wrong verdicts the user overrode with "I was right" (NH-11). */
+      readonly overrides: number;
     }
   | {
       readonly status: "finished";
       readonly session: SessionState;
       readonly durationMs: number;
+      readonly overrides: number;
     };
+
+/** Extra facts about an answer that do not change its result. */
+export interface AnswerOptions {
+  /** The user overrode a wrong verdict, so the session is not unaided (NH-11). */
+  readonly overridden?: boolean;
+}
 
 /** Injectable time and randomness, so the session is deterministic in tests. */
 export interface TrainingEnvironment {
@@ -69,7 +78,7 @@ export interface TrainingSession {
    * Answers the current card. The first answer to a word updates its progress
    * and is written to storage right away (FR-TRN-4); repeats do not.
    */
-  readonly answer: (result: AnswerResult) => void;
+  readonly answer: (result: AnswerResult, options?: AnswerOptions) => void;
   /**
    * Answers every word of a round at once (Matching, FR-MT-3): each first answer
    * updates progress like {@link TrainingSession.answer}, but nothing is re-queued.
@@ -125,6 +134,7 @@ export function useTrainingSession(
         session: startSession(queue),
         direction: pickDirection(directionMode, rng),
         startedAt: now(),
+        overrides: 0,
       });
     },
     [directionMode, now, rng],
@@ -147,7 +157,7 @@ export function useTrainingSession(
   }, [begin, view]);
 
   const answer = useCallback(
-    (result: AnswerResult) => {
+    (result: AnswerResult, options: AnswerOptions = {}) => {
       if (view.status !== "running") {
         return;
       }
@@ -160,17 +170,20 @@ export function useTrainingSession(
         recordAnswer(card.pair, result, timestamp);
       }
       const next = answerCard(view.session, result);
+      const overrides = view.overrides + (options.overridden === true ? 1 : 0);
       setView(
         isFinished(next)
           ? {
               status: "finished",
               session: next,
               durationMs: timestamp - view.startedAt,
+              overrides,
             }
           : {
               ...view,
               session: next,
               direction: pickDirection(directionMode, rng),
+              overrides,
             },
       );
     },
@@ -198,6 +211,7 @@ export function useTrainingSession(
               status: "finished",
               session: next,
               durationMs: timestamp - view.startedAt,
+              overrides: view.overrides,
             }
           : {
               ...view,
