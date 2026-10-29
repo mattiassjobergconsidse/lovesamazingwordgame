@@ -4,7 +4,7 @@
 
 Love's Amazing Word Game is a language-independent web app for learning vocabulary ("glosor") from word pairs
 (e.g. Swedish ↔ English, but any two languages work). Users create multiple named word sets (e.g. one per week),
-choose the active set and practise it in four modes: flashcards, quiz, matching and writing. Spaced repetition
+choose the active set and practise it in five modes: flashcards, quiz, matching, writing and hangman. Spaced repetition
 (Leitner) decides which words to practise; the direction (A→B or B→A) is random per card.
 
 It solves a real problem: typical vocabulary apps are ad-heavy, require accounts or are not flexible enough for
@@ -25,7 +25,7 @@ Must have (details in SPEC.md section 6):
 
 - Multiple word sets with mandatory, editable name and language labels; add/edit/remove word pairs
 - Active set selection before any training
-- Four training modes: flashcards, quiz, matching, writing
+- Five training modes: flashcards, quiz, matching, writing, hangman
 - Spaced repetition ordering, random direction per card (can be forced in settings)
 - Statistics per set
 - Import/export (JSON, CSV)

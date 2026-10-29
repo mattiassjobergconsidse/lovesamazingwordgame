@@ -26,6 +26,7 @@ describe("parseRoute", () => {
     ["#/train/quiz", { name: "trainMode", mode: "quiz" }],
     ["#/train/matching", { name: "trainMode", mode: "matching" }],
     ["#/train/writing", { name: "trainMode", mode: "writing" }],
+    ["#/train/hangman", { name: "trainMode", mode: "hangman" }],
     [
       "#/train/flashcards/hardest",
       { name: "trainMode", mode: "flashcards", focus: "hardest" },

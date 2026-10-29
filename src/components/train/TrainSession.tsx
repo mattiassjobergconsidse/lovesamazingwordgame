@@ -16,6 +16,7 @@ import "../common/common.css";
 import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
+import { HangmanCard } from "./HangmanCard";
 import { MatchingBoard } from "./MatchingBoard";
 import { MODE_ICONS } from "./modeIcons";
 import { QuizCard } from "./QuizCard";
@@ -51,7 +52,11 @@ function renderWritingCard(props: ModeCardProps): ReactNode {
   return <WritingCard {...props} />;
 }
 
-/** Modes without their own card yet fall back to the generic card. */
+function renderHangmanCard(props: ModeCardProps): ReactNode {
+  return <HangmanCard {...props} />;
+}
+
+/** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
   switch (mode) {
     case "flashcards":
@@ -60,6 +65,8 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderWritingCard;
     case "quiz":
       return renderQuizCard;
+    case "hangman":
+      return renderHangmanCard;
     case "matching":
       return defaultRenderCard;
   }

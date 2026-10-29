@@ -20,6 +20,7 @@
   --mode-color: var(--color-primary);
 }
 [data-mode="writing"],
+[data-mode="hangman"],
 [data-mode="matching"] {
   --mode-color: var(--color-accent);
 }
@@ -274,6 +275,84 @@
   .match-item,
   .match-item[data-state="wrong"] {
     transition: none;
+    animation: none;
+  }
+}
+.hangman-card {
+  align-items: center;
+}
+.hangman-figure {
+  inline-size: 8rem;
+  block-size: auto;
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.hangman-gallows {
+  stroke: var(--color-text-muted);
+}
+.hangman-person {
+  stroke: var(--mode-color);
+}
+.hangman-word {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+.hangman-slot {
+  min-inline-size: 1.5rem;
+  min-block-size: 2.25rem;
+  text-align: center;
+  border-block-end: 3px solid var(--color-text);
+}
+.hangman-slot[data-hidden="false"]:not([data-missed="true"]) {
+  animation: writing-pop 200ms ease;
+}
+.hangman-slot[data-missed="true"] {
+  color: var(--color-wrong);
+}
+.hangman-slot[data-letter="false"] {
+  border-block-end-color: transparent;
+}
+.hangman-lives {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.hangman-keys {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hangman-key {
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  justify-content: center;
+  padding-inline: var(--space-2);
+}
+.hangman-key[aria-disabled="true"] {
+  cursor: default;
+}
+.hangman-key[data-state="correct"] {
+  color: var(--color-on-primary);
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+}
+.hangman-key[data-state="wrong"] {
+  color: var(--color-on-primary);
+  background: var(--color-wrong);
+  border-color: var(--color-wrong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hangman-slot[data-hidden="false"] {
     animation: none;
   }
 }

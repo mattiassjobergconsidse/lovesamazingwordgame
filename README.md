@@ -9,7 +9,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 ## Features
 
 - Multiple named word sets with language labels; add, edit and remove word pairs (bulk add supported)
-- Four training modes: flashcards, quiz, matching and writing
+- Five training modes: flashcards, quiz, matching, writing and hangman
 - Spaced repetition (Leitner) with a random direction per card (can be forced in settings)
 - Statistics per set, including the hardest words
 - Import and export as JSON or CSV

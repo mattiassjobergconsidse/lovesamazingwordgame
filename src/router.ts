@@ -1,12 +1,14 @@
 import { useSyncExternalStore } from "react";
 
-export type TrainMode = "flashcards" | "quiz" | "matching" | "writing";
+export type TrainMode =
+  "flashcards" | "quiz" | "matching" | "writing" | "hangman";
 
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
   "quiz",
   "matching",
   "writing",
+  "hangman",
 ];
 
 /** A screen the app can show. */
