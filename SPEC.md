@@ -346,7 +346,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 8. **Kid-friendly look** (`NH-8`, done): make the overall layout suit a 10-year-old: more emojis, illustrations/images, rounded shapes, playful colours and
    small animations. Keep usability and accessibility (contrast, labels, keyboard) intact; the goal is to balance function with a less dull appearance.
    AC: home, training modes and stats screens show friendly visuals (e.g. emoji per mode, mascot/illustrations) in both themes; no regression in a11y tests.
-9. **Hangman practice mode** (`NH-9`): a fifth training mode "Hangman" next to flashcards, writing, quiz and matching. A word from the session is
+9. **Hangman practice mode** (`NH-9`, done): a fifth training mode "Hangman" next to flashcards, writing, quiz and matching. A word from the session is
    hidden as blanks (prompt shown in the other language); the user guesses letters (on-screen keyboard and physical keys, including å/ä/ö), with a
    limited number of wrong guesses (e.g. 6) drawn as a progressive figure. Solved = `correct`, out of guesses = `wrong` (SR result as in section 7).
    Follows the shared session rules (FR-TRN) and eligibility rules (FR-ACT-1).
@@ -366,6 +366,47 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       (a skipped unlock is kept until used or until the next perfect session, whichever comes first; unlocks do not accumulate).
     - Games are short (about 1-2 minutes), need no backend, work with touch and keyboard, and are not tied to the word data.
     - Unlock state is stored locally; the unlock rule is a pure function in `core/` with unit tests.
+12. **Selectable and talkative mascots** (`NH-12`): the user can choose which mascot is used, and mascots stand out more wherever they are shown.
+    - **Choice**: a mascot picker in Settings with a preview of each mascot from the pool in `/docs/mascots` (Volt, Blaze, Foxel, Glosa, Bubo, Umbra, ...).
+      The mascot SVGs are imported as modules (FR-BP-3). The choice is persisted in settings; adding it changes the settings format, so keep the field optional with a default (Volt) so older stored settings still load.
+    - **Talk bubbles**: wherever the mascot is shown (home greeting, mode picker, training modes, session end screen, trophies) it "says" things in a speech bubble
+      next to it, and is drawn larger and with a small idle/reaction animation so it stands out.
+    - **Reactions**: the mascot reacts to correct/wrong answers, streaks, trophies, the home greeting and mode selection. Each event type has a pool of 3-5 phrases
+      per mascot (`sv` and `en`) in one constants file; one is picked at random (injected rng) each time, and each mascot has its own personality/phrases.
+    - **Optional and non-intrusive**: a setting turns the talk bubbles/reactions off. Bubbles never block the UI or interfere with training, appear in a corner,
+      fade out after a few seconds, are announced politely to screen readers (`aria-live="polite"`) without stealing focus, and respect `prefers-reduced-motion`.
+    - Bubble text uses i18n dictionaries; the pure phrase-picking logic lives in `core/` with unit tests.
+13. **Word Scramble mode** (`NH-13`): a training mode where the answer's letters are shuffled into tiles and the user taps (or types) them in order.
+    - The prompt is shown in one language; the answer is built in the other. Direction follows FR-TRN-3.
+    - Tiles can be tapped or typed on the physical keyboard (including å/ä/ö); Backspace or tapping a placed tile removes it.
+    - Hint places the next correct letter and gives result `assisted`. Solved without hint = `correct`; "Give up" reveals the answer = `wrong`.
+    - Multi-word answers keep the word boundaries visible (spaces are not shuffled).
+    - Shuffle is pure in `core/` with injected rng and never returns the original order when the answer has 2+ distinct letters.
+    - Follows FR-TRN and FR-ACT-1 (minimum 1 word). Needs no schema change.
+14. **Listening mode** (`NH-14`): the app speaks the term (via `storage/speech.ts`, NH-2) and the user picks the written word (Quiz-style options) or types it.
+    - Only available when speech is supported and the answer language has a voice/language code; otherwise the mode button is disabled with a clear message.
+    - A replay button and a key (`R`) repeat the audio. Typed answers reuse `core/checkAnswer.ts`; choice answers reuse `core/quiz.ts`.
+    - Hearing the word again or revealing the text counts as `assisted`.
+    - Follows FR-TRN and FR-ACT-1 (minimum 1 word for typing, 2 for choices). Needs no schema change.
+15. **Boss Battle mode** (`NH-15`): a game-style mode where the words the user got wrong become a boss with a health bar.
+    - The boss pool is the hardest words (FR-ST-2) or the wrong answers of the last session; the mode needs at least 3 such words, else it is disabled with a message.
+    - Each correct answer damages the boss; a wrong answer heals it a little. The boss is defeated when all words are answered correctly.
+    - Questions use Quiz or Writing input. The boss uses one of the mascots in `/docs/mascots` and reacts (NH-12 reaction pools).
+    - SR results follow section 7 and FR-TRN-4. Damage and healing rules are pure functions in `core/` with unit tests. Needs no schema change.
+16. **Speed Round mode** (`NH-16`): a 60-second sprint of quiz-style cards with a combo multiplier.
+    - Words still come from the SR queue (FR-TRN-2); the first answer per word updates progress (FR-TRN-4). The timer is injected in `core/`, never read from the clock directly.
+    - Correct answers raise the combo (score multiplier); a wrong answer resets it. The round ends when time runs out.
+    - A best score per set is shown on the end screen. **Storing best scores needs a new IndexedDB store or field: this requires a migration and user approval before implementation.**
+    - Honours `prefers-reduced-motion` and offers a "no timer" practice variant for accessibility.
+17. **True or False mode** (`NH-17`): a prompt and a proposed translation are shown; the user judges whether it is right.
+    - About half of the proposals are the real translation, the rest are distractors from `core/quiz.ts` (never equal to the correct answer or its alternatives).
+    - Answer by buttons, swipe right/left, or keys `Right`/`Left` (or `T`/`F`).
+    - Right judgement = `correct`, wrong judgement = `wrong`. Follows FR-TRN and FR-ACT-1 (minimum 2 words). Needs no schema change.
+    - Proposal building is pure in `core/` with injected rng and unit tests.
+
+Common requirements for NH-13 to NH-17: each mode is its own PR; it appears in the mode picker, home mode cards and keyboard shortcut help (NH-6);
+it has an error boundary (FR-BP-2), translated labels in `sv`/`en`, friendly visuals (NH-8), tests linked to requirement IDs in
+`tests/TRACEABILITY.md`, axe checks, and a keyboard-only flow. Completing a session in each new mode may be added as trophies (NH-10).
 
 ## 8b. Language and encoding conventions (`FR-LANG`)
 

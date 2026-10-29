@@ -88,6 +88,7 @@ describe("home screen (SPEC 7, #/)", () => {
       ["Writing", "writing"],
       ["Quiz", "quiz"],
       ["Matching", "matching"],
+      ["Hangman", "hangman"],
     ] as const) {
       expect(
         within(modes).getByRole("link", { name: new RegExp(name) }),

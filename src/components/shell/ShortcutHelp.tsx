@@ -43,6 +43,13 @@ const GROUPS: readonly ShortcutGroup[] = [
       { keys: ["A–Z"], label: "shortcuts.matchRight" },
     ],
   },
+  {
+    heading: "shortcuts.hangman",
+    items: [
+      { keys: ["A–Z", "å", "ä", "ö"], label: "shortcuts.guessLetter" },
+      { keys: ["Enter"], label: "shortcuts.hangmanNext" },
+    ],
+  },
 ];
 
 /** Header button plus the `?` key: opens an overlay that lists the keyboard shortcuts. */
