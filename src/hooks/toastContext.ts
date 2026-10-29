@@ -7,6 +7,8 @@ export interface ToastOptions {
   readonly onAction?: () => void;
   /** Time before it disappears; defaults to 5 s. */
   readonly durationMs?: number;
+  /** Adds a short pop animation, for celebrations such as a trophy (NH-10). */
+  readonly celebrate?: boolean;
 }
 
 export const DEFAULT_TOAST_MS = 5000;

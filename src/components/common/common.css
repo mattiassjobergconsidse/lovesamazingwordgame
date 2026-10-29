@@ -149,6 +149,23 @@
   border-radius: var(--radius);
   pointer-events: auto;
 }
+.toast-celebrate {
+  border-color: var(--color-accent);
+  border-width: 2px;
+  font-weight: 700;
+  animation: toast-celebrate 600ms var(--ease-bounce) 1;
+}
+@keyframes toast-celebrate {
+  0% {
+    transform: scale(0.7) rotate(-3deg);
+  }
+  60% {
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
 .toast-action {
   min-block-size: var(--tap-size);
   padding-inline: var(--space-3);

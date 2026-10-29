@@ -24,6 +24,7 @@ export type Route =
       readonly focus?: "hardest";
     }
   | { readonly name: "stats" }
+  | { readonly name: "trophies" }
   | { readonly name: "settings" }
   /** A set shared via link; `payload` is the encoded set (NH-5). */
   | { readonly name: "share"; readonly payload: string };
@@ -62,6 +63,8 @@ export function parseRoute(hash: string): Route {
       return parseTrainMode(second, third);
     case "stats":
       return second === undefined ? { name: "stats" } : HOME;
+    case "trophies":
+      return second === undefined ? { name: "trophies" } : HOME;
     case "settings":
       return second === undefined ? { name: "settings" } : HOME;
     case "share":
@@ -113,6 +116,8 @@ export function routeToHash(route: Route): string {
         : `#/train/${route.mode}/${route.focus}`;
     case "stats":
       return "#/stats";
+    case "trophies":
+      return "#/trophies";
     case "settings":
       return "#/settings";
     case "share":

@@ -6,6 +6,8 @@ import type {
   WordSet,
 } from "../types";
 import { LANGUAGE_LABEL_MAX, SET_NAME_MAX } from "./setValidation";
+import { mergeTrophies } from "./trophies";
+import { isTrophyId, type TrophyRecord } from "./trophyDefinitions";
 
 /** Version written to and required from JSON files (FR-IO-1, FR-IO-2). */
 export const FORMAT_VERSION = 1;
@@ -26,9 +28,14 @@ export interface ExportSource {
   readonly pairs: readonly WordPair[];
   readonly progress: readonly WordProgress[];
   readonly activity: readonly DailyActivity[];
+  /** Unlocked trophies (NH-10); they belong to the user, not to a set. */
+  readonly trophies?: readonly TrophyRecord[];
 }
 
-/** The JSON file format. `progress` and `activity` are left out when not exported. */
+/**
+ * The JSON file format. `progress`, `activity` and `trophies` are left out when
+ * not exported; files without `trophies` (older versions) stay valid.
+ */
 export interface ExportFile {
   readonly formatVersion: typeof FORMAT_VERSION;
   readonly exportedAt: number;
@@ -36,6 +43,7 @@ export interface ExportFile {
   readonly pairs: readonly WordPair[];
   readonly progress?: readonly WordProgress[];
   readonly activity?: readonly DailyActivity[];
+  readonly trophies?: readonly TrophyRecord[];
 }
 
 export type ProblemReason =
@@ -61,7 +69,12 @@ export interface ImportProblem {
 
 /** Outcome of reading a file: data, or every problem found (never a partial result). */
 export type ParseOutcome =
-  | { readonly ok: true; readonly bundles: readonly SetBundle[] }
+  | {
+      readonly ok: true;
+      readonly bundles: readonly SetBundle[];
+      /** Known trophies found in the file; absent when there are none. */
+      readonly trophies?: readonly TrophyRecord[];
+    }
   | { readonly ok: false; readonly problems: readonly ImportProblem[] };
 
 /**
@@ -94,6 +107,7 @@ export function buildExport(
     ...base,
     progress: source.progress.filter((record) => included.has(record.setId)),
     activity: source.activity.filter((day) => included.has(day.setId)),
+    ...(source.trophies === undefined ? {} : { trophies: source.trophies }),
   };
 }
 
@@ -410,6 +424,33 @@ function readActivity(raw: unknown, path: string, report: Report) {
   return day;
 }
 
+function readTrophy(
+  raw: unknown,
+  path: string,
+  report: Report,
+): { readonly id: string; readonly unlockedAt: number } | undefined {
+  if (!isRecord(raw)) {
+    report(path, "notAnObject");
+    return undefined;
+  }
+  const id = readText(raw, "id", path, report);
+  const unlockedAt = readNumber(raw, "unlockedAt", path, report, { min: 0 });
+  return id === undefined || unlockedAt === undefined
+    ? undefined
+    : { id, unlockedAt };
+}
+
+/** Keeps the trophies this version knows; ids from newer versions are skipped, not rejected. */
+function readTrophies(
+  items: readonly unknown[] | undefined,
+  report: Report,
+): readonly TrophyRecord[] {
+  const known = readEach(items, "trophies", readTrophy, report).flatMap(
+    ({ id, unlockedAt }) => (isTrophyId(id) ? [{ id, unlockedAt }] : []),
+  );
+  return mergeTrophies(known, []);
+}
+
 function readEach<T>(
   items: readonly unknown[] | undefined,
   name: string,
@@ -536,6 +577,10 @@ export function parseExport(text: string): ParseOutcome {
     readActivity,
     report,
   );
+  const trophies = readTrophies(
+    readList(root, "trophies", false, report),
+    report,
+  );
   checkUnique(sets, (set) => set.id, "sets", "duplicateId", report);
   if (sets.length === 0 && Array.isArray(root.sets) && root.sets.length === 0) {
     report("sets", "empty");
@@ -558,5 +603,10 @@ export function parseExport(text: string): ParseOutcome {
   checkUnique(activity, (day) => day.id, "activity", "duplicateId", report);
   const bundles = bundleSets(sets, pairs, progress, activity, report);
 
-  return problems.length > 0 ? { ok: false, problems } : { ok: true, bundles };
+  if (problems.length > 0) {
+    return { ok: false, problems };
+  }
+  return trophies.length > 0
+    ? { ok: true, bundles, trophies }
+    : { ok: true, bundles };
 }

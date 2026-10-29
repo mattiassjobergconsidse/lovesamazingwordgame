@@ -1,6 +1,8 @@
 import { openAppDb } from "../src/storage/db";
+import { loadTrophies } from "../src/storage/trophiesRepo";
 import { saveSettings } from "../src/storage/settingsRepo";
 import { loadLibrary } from "../src/storage/setsRepo";
+import type { TrophyRecord } from "../src/core/trophyDefinitions";
 import type {
   DailyActivity,
   Settings,
@@ -16,6 +18,7 @@ export interface StoredData {
   readonly pairs?: readonly WordPair[];
   readonly progress?: readonly WordProgress[];
   readonly activity?: readonly DailyActivity[];
+  readonly trophies?: readonly TrophyRecord[];
   readonly settings?: Settings;
 }
 
@@ -38,7 +41,20 @@ export async function seedDatabase(data: StoredData): Promise<void> {
   for (const day of data.activity ?? []) {
     await db.put("activity", day);
   }
+  for (const record of data.trophies ?? []) {
+    await db.put("trophies", record);
+  }
   db.close();
+}
+
+/** Reads all unlocked trophies straight from IndexedDB. */
+export async function readTrophies() {
+  const db = await openAppDb();
+  try {
+    return await loadTrophies(db);
+  } finally {
+    db.close();
+  }
 }
 
 /** Reads all sets, pairs, progress and activity straight from IndexedDB. */

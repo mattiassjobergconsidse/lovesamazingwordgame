@@ -5,6 +5,7 @@ import { AppErrorBoundary } from "../common/AppErrorBoundary";
 import { isModalOpen } from "../common/modalOpen";
 import { useAnswerFeedback } from "../../hooks/useAnswerFeedback";
 import { useActiveSet } from "../../hooks/useActiveSet";
+import { useTrophyCelebration } from "../../hooks/useTrophyCelebration";
 import {
   useTrainingSession,
   type TrainingFocus,
@@ -93,6 +94,7 @@ function ActiveSession({
     answerRound,
   } = useTrainingSession(set.id, undefined, focus);
   const giveFeedback = useAnswerFeedback();
+  useTrophyCelebration(view, mode);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
   const running = view.status === "running";

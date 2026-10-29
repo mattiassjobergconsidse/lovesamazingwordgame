@@ -1,7 +1,7 @@
 import { act, waitFor } from "@testing-library/react";
 import { openDB } from "idb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DB_NAME, openAppDb } from "../storage/db";
+import { DB_NAME, DB_VERSION, openAppDb } from "../storage/db";
 import { THEME_MIRROR_KEY } from "../storage/preferenceMirror";
 import { loadSettings, saveSettings } from "../storage/settingsRepo";
 import { deleteAppDatabase, makeSettings } from "../../tests/factories";
@@ -129,7 +129,7 @@ describe("useSettingsStore", () => {
       expect(await readStoredSettings()).not.toBeNull();
     });
 
-    const upgraded = await openDB(DB_NAME, 2);
+    const upgraded = await openDB(DB_NAME, DB_VERSION + 1);
     upgraded.close();
 
     expect(result.current.storageError).toBeNull();

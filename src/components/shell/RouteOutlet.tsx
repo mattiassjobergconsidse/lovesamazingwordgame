@@ -8,6 +8,7 @@ import { SetEditorScreen } from "../sets/SetEditorScreen";
 import { SetsScreen } from "../sets/SetsScreen";
 import { SettingsScreen } from "../settings/SettingsScreen";
 import { StatsScreen } from "../stats/StatsScreen";
+import { TrophyScreen } from "../trophies/TrophyScreen";
 import { TrainGate } from "../train/TrainGate";
 import { TrainScreen } from "../train/TrainScreen";
 import { TrainSession } from "../train/TrainSession";
@@ -39,6 +40,8 @@ function renderScreen(route: Route) {
       );
     case "stats":
       return <StatsScreen />;
+    case "trophies":
+      return <TrophyScreen />;
     case "settings":
       return <SettingsScreen />;
     case "share":
@@ -61,6 +64,8 @@ function titleFor(route: Route): MessageKey {
       return `route.train.${route.mode}`;
     case "stats":
       return "nav.stats";
+    case "trophies":
+      return "nav.trophies";
     case "settings":
       return "nav.settings";
     case "share":
