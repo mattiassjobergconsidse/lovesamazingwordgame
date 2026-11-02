@@ -6,6 +6,7 @@ import {
   type SessionState,
 } from "../../core/session";
 import { useI18n } from "../../i18n";
+import type { MascotSpeech } from "../../hooks/useMascotSpeech";
 import { routeToHash } from "../../router";
 import "../common/common.css";
 import { Mascot } from "../common/Mascot";
@@ -15,6 +16,8 @@ interface SessionResultProps {
   readonly durationMs: number;
   readonly onPractiseMistakes: () => void;
   readonly onPractiseAgain: () => void;
+  /** What the mascot says about the session (NH-12). */
+  readonly speech?: MascotSpeech;
   /** Extra content shown above the actions, e.g. the mini-game offer (NH-11). */
   readonly children?: ReactNode;
 }
@@ -25,6 +28,7 @@ export function SessionResult({
   durationMs,
   onPractiseMistakes,
   onPractiseAgain,
+  speech,
   children,
 }: SessionResultProps) {
   const { t } = useI18n();
@@ -35,7 +39,7 @@ export function SessionResult({
   return (
     <div className="session-result">
       <div className="session-result-hero">
-        <Mascot cheer={perfect} />
+        <Mascot speech={speech} mood={perfect ? "cheer" : undefined} />
         <span className="session-result-emoji" aria-hidden="true">
           {perfect ? "🎉" : "💪"}
         </span>

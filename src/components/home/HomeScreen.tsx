@@ -1,9 +1,10 @@
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { dayPeriod, homeSummary } from "../../core/home";
 import { hardestWords } from "../../core/stats";
 import { MIN_WORDS } from "../../core/trainingEligibility";
 import { useActiveSet } from "../../hooks/useActiveSet";
 import { useLibrary } from "../../hooks/useLibrary";
+import { useMascotSpeech } from "../../hooks/useMascotSpeech";
 import { useSettings } from "../../hooks/useSettings";
 import { useI18n } from "../../i18n";
 import { routeToHash } from "../../router";
@@ -176,17 +177,23 @@ export function HomeScreen() {
   const { activeSet, ready } = useActiveSet();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [hour] = useState(() => new Date().getHours());
+  const speech = useMascotSpeech();
+  const { say } = speech;
+
+  useEffect(() => {
+    say("greeting");
+  }, [say]);
 
   return (
     <div className="home-screen">
       <div className="home-hero">
-        <Mascot />
         <div>
           <h1 tabIndex={-1}>{t("nav.home")}</h1>
           <p className="home-greeting">
             {t(`home.greeting.${dayPeriod(hour)}`)}
           </p>
         </div>
+        <Mascot speech={speech} />
       </div>
       {!ready ? null : activeSet === null ? (
         <>

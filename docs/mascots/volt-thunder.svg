@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Volt, a cheerful thunder cub">
+  <defs>
+    <radialGradient id="vb" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></radialGradient>
+  </defs>
+  <g stroke="#1e3a8a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- lightning tail -->
+    <path d="M138 158 L162 128 L148 124 L182 76 L176 108 L194 112 L150 166 Z" fill="#facc15" stroke="#a16207"/>
+    <!-- body -->
+    <ellipse cx="100" cy="148" rx="40" ry="34" fill="url(#vb)"/>
+    <ellipse cx="100" cy="156" rx="23" ry="21" fill="#dbeafe" stroke="none"/>
+    <!-- arms and feet -->
+    <ellipse cx="62" cy="150" rx="9" ry="12" fill="#2563eb"/>
+    <ellipse cx="138" cy="150" rx="9" ry="12" fill="#2563eb"/>
+    <ellipse cx="80" cy="182" rx="14" ry="8" fill="#1d4ed8"/>
+    <ellipse cx="120" cy="182" rx="14" ry="8" fill="#1d4ed8"/>
+    <!-- ears -->
+    <path d="M56 72 L34 22 L82 52 Z" fill="url(#vb)"/>
+    <path d="M144 72 L166 22 L118 52 Z" fill="url(#vb)"/>
+    <path d="M43 40 L34 22 L54 34 Z" fill="#facc15" stroke="#a16207"/>
+    <path d="M157 40 L166 22 L146 34 Z" fill="#facc15" stroke="#a16207"/>
+    <!-- head -->
+    <ellipse cx="100" cy="92" rx="52" ry="44" fill="url(#vb)"/>
+    <!-- forehead bolt -->
+    <path d="M102 44 L88 66 L100 62 L92 80 L116 54 L103 58 Z" fill="#facc15" stroke="#a16207" stroke-width="2.5"/>
+    <!-- cheeks -->
+    <circle cx="62" cy="108" r="10" fill="#fde047" stroke="#a16207" stroke-width="2"/>
+    <circle cx="138" cy="108" r="10" fill="#fde047" stroke="#a16207" stroke-width="2"/>
+    <!-- eyes -->
+    <ellipse cx="78" cy="96" rx="10" ry="13" fill="#0f172a" stroke="none"/>
+    <ellipse cx="122" cy="96" rx="10" ry="13" fill="#0f172a" stroke="none"/>
+    <circle cx="81" cy="91" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="125" cy="91" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="75" cy="101" r="2" fill="#fff" stroke="none"/>
+    <circle cx="119" cy="101" r="2" fill="#fff" stroke="none"/>
+    <!-- nose and smile -->
+    <ellipse cx="100" cy="108" rx="3.5" ry="2.5" fill="#0f172a" stroke="none"/>
+    <path d="M90 115 Q100 125 110 115" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  </g>
+</svg>
+

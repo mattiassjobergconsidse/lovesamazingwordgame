@@ -2,11 +2,14 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
+import { Mascot } from "../common/Mascot";
 import { GameOffer } from "../games/GameOffer";
 import { isModalOpen } from "../common/modalOpen";
 import { useAnswerFeedback } from "../../hooks/useAnswerFeedback";
 import { useActiveSet } from "../../hooks/useActiveSet";
 import { useGameUnlockOffer } from "../../hooks/useGameUnlockOffer";
+import { useMascotReactions } from "../../hooks/useMascotReactions";
+import { useMascotSpeech } from "../../hooks/useMascotSpeech";
 import { useTrophyCelebration } from "../../hooks/useTrophyCelebration";
 import {
   useTrainingSession,
@@ -96,11 +99,27 @@ function ActiveSession({
     answerRound,
   } = useTrainingSession(set.id, undefined, focus);
   const giveFeedback = useAnswerFeedback();
-  useTrophyCelebration(view, mode);
+  const speech = useMascotSpeech();
+  const { say, clear } = speech;
+  const reactToResult = useMascotReactions(speech);
+  useTrophyCelebration(view, mode, ({ perfect, unlockedCount }) => {
+    say(
+      unlockedCount > 0 ? "trophy" : perfect ? "sessionPerfect" : "sessionDone",
+    );
+  });
   const earnedGame = useGameUnlockOffer(view, mode);
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStatus = useRef(view.status);
   const running = view.status === "running";
+
+  useEffect(() => {
+    // The start panel greets the chosen mode; a running session only reacts to answers.
+    if (view.status === "idle") {
+      say("modeSelect");
+    } else if (view.status === "running") {
+      clear();
+    }
+  }, [view.status, say, clear]);
 
   useEffect(() => {
     // Keyboard and screen reader users land on the new phase's heading.
@@ -138,6 +157,7 @@ function ActiveSession({
           durationMs={view.durationMs}
           onPractiseMistakes={practiseMistakes}
           onPractiseAgain={start}
+          speech={speech}
         >
           {earnedGame && <GameOffer />}
         </SessionResult>
@@ -164,6 +184,7 @@ function ActiveSession({
             {t("train.session.start")}
           </button>
         )}
+        <Mascot speech={speech} />
       </div>
     );
   }
@@ -213,6 +234,7 @@ function ActiveSession({
               rng={rng}
               onComplete={(results) => {
                 giveFeedback(results.values());
+                reactToResult(results.values());
                 answerRound(results);
               }}
             />
@@ -226,12 +248,14 @@ function ActiveSession({
               rng,
               onAnswer: (result, options) => {
                 giveFeedback(result);
+                reactToResult(result);
                 answer(result, options);
               },
             })
           )}
         </div>
       </AppErrorBoundary>
+      <Mascot placement="corner" speech={speech} />
     </div>
   );
 }

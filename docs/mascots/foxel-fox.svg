@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Foxel, a cheerful fox">
+  <defs>
+    <radialGradient id="fb" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#fdba74"/><stop offset="1" stop-color="#f97316"/></radialGradient>
+  </defs>
+  <g stroke="#9a3412" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- tail -->
+    <path d="M140 162 C200 170 206 98 168 88 C176 120 154 132 132 136 Z" fill="url(#fb)"/>
+    <path d="M168 88 C186 92 198 108 192 124 C186 112 178 106 166 106 Z" fill="#fff7ed"/>
+    <!-- body -->
+    <ellipse cx="100" cy="148" rx="38" ry="35" fill="url(#fb)"/>
+    <ellipse cx="100" cy="156" rx="22" ry="23" fill="#fff7ed" stroke="none"/>
+    <ellipse cx="80" cy="182" rx="13" ry="8" fill="#7c2d12"/>
+    <ellipse cx="120" cy="182" rx="13" ry="8" fill="#7c2d12"/>
+    <!-- ears -->
+    <path d="M44 74 C38 40 44 22 52 14 C68 22 84 34 92 50 Z" fill="url(#fb)"/>
+    <path d="M156 74 C162 40 156 22 148 14 C132 22 116 34 108 50 Z" fill="url(#fb)"/>
+    <path d="M54 52 C54 40 56 32 58 28 C66 32 72 38 76 46 Z" fill="#7c2d12" stroke="none"/>
+    <path d="M146 52 C146 40 144 32 142 28 C134 32 128 38 124 46 Z" fill="#7c2d12" stroke="none"/>
+    <!-- head -->
+    <path d="M38 88 C38 46 162 46 162 88 C162 122 130 130 100 130 C70 130 38 122 38 88 Z" fill="url(#fb)"/>
+    <!-- cheeks -->
+    <path d="M40 92 C56 88 82 102 100 120 C84 130 54 126 40 92 Z" fill="#fff7ed" stroke="none"/>
+    <path d="M160 92 C144 88 118 102 100 120 C116 130 146 126 160 92 Z" fill="#fff7ed" stroke="none"/>
+    <!-- eyes -->
+    <ellipse cx="76" cy="86" rx="10" ry="13" fill="#1e293b" stroke="none"/>
+    <ellipse cx="124" cy="86" rx="10" ry="13" fill="#1e293b" stroke="none"/>
+    <circle cx="79" cy="81" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="127" cy="81" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="73" cy="91" r="2" fill="#fff" stroke="none"/>
+    <circle cx="121" cy="91" r="2" fill="#fff" stroke="none"/>
+    <!-- blush -->
+    <circle cx="58" cy="104" r="6" fill="#fb7185" stroke="none" opacity="0.6"/>
+    <circle cx="142" cy="104" r="6" fill="#fb7185" stroke="none" opacity="0.6"/>
+    <!-- nose and mouth -->
+    <ellipse cx="100" cy="108" rx="5" ry="3.5" fill="#1e293b" stroke="none"/>
+    <path d="M90 116 Q100 124 110 116" fill="none" stroke="#1e293b" stroke-width="2.5"/>
+    <!-- star mark -->
+    <path d="M100 56 l3 7 l8 1 l-6 5 l2 8 l-7 -4 l-7 4 l2 -8 l-6 -5 l8 -1 z" fill="#facc15" stroke="#a16207" stroke-width="2"/>
+  </g>
+</svg>
+

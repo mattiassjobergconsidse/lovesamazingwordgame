@@ -93,5 +93,3 @@ export interface TrophyRecord {
 export function isTrophyId(value: string): value is TrophyId {
   return TROPHY_DEFINITIONS.some((definition) => definition.id === value);
 }
-
-

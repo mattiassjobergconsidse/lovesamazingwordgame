@@ -1,12 +1,14 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   TROPHY_DEFINITIONS,
   type TrophyDefinition,
   type TrophyId,
 } from "../../core/trophyDefinitions";
 import { useLibrary } from "../../hooks/useLibrary";
+import { useMascotSpeech } from "../../hooks/useMascotSpeech";
 import { useI18n } from "../../i18n";
 import "../common/common.css";
+import { Mascot } from "../common/Mascot";
 import "./trophies.css";
 
 type Translate = ReturnType<typeof useI18n>["t"];
@@ -47,6 +49,13 @@ export function TrophyScreen() {
     [language],
   );
 
+  const speech = useMascotSpeech();
+  const { say } = speech;
+
+  useEffect(() => {
+    say("trophy");
+  }, [say]);
+
   return (
     <div className="trophies-screen">
       <h1 tabIndex={-1}>{t("nav.trophies")}</h1>
@@ -56,6 +65,7 @@ export function TrophyScreen() {
           total: TROPHY_DEFINITIONS.length,
         })}
       </p>
+      <Mascot speech={speech} />
       <ul className="trophy-grid" aria-label={t("trophies.list")}>
         {TROPHY_DEFINITIONS.map((trophy) => {
           const when = unlockedAt.get(trophy.id);

@@ -371,7 +371,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       (a skipped unlock is kept until used or until the next perfect session, whichever comes first; unlocks do not accumulate).
     - Games are short (about 1-2 minutes), need no backend, work with touch and keyboard, and are not tied to the word data.
     - Unlock state is stored locally; the unlock rule is a pure function in `core/` with unit tests.
-12. **Selectable and talkative mascots** (`NH-12`): the user can choose which mascot is used, and mascots stand out more wherever they are shown.
+12. **Selectable and talkative mascots** (`NH-12`, done): the user can choose which mascot is used, and mascots stand out more wherever they are shown.
     - **Choice**: a mascot picker in Settings with a preview of each mascot from the pool in `/docs/mascots` (Volt, Blaze, Foxel, Glosa, Bubo, Umbra, ...).
       The mascot SVGs are imported as modules (FR-BP-3). The choice is persisted in settings; adding it changes the settings format, so keep the field optional with a default (Volt) so older stored settings still load.
     - **Talk bubbles**: wherever the mascot is shown (home greeting, mode picker, training modes, session end screen, trophies) it "says" things in a speech bubble

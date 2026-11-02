@@ -92,6 +92,8 @@ describe("openAppDb", () => {
         soundEnabled: false,
         hapticsEnabled: false,
         dailyGoal: 10,
+        mascot: "volt",
+        mascotTalk: true,
       },
       "settings",
     );

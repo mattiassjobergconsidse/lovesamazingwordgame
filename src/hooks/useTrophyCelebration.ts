@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { isPerfectSession } from "../core/trophies";
 import { TROPHY_DEFINITIONS } from "../core/trophyDefinitions";
 import { useI18n } from "../i18n";
@@ -9,31 +9,41 @@ import { useToast } from "./useToast";
 
 const CELEBRATION_MS = 6000;
 
+/** What the trophy check found when a session finished. */
+export interface SessionOutcome {
+  readonly perfect: boolean;
+  readonly unlockedCount: number;
+}
+
 /**
  * Checks the trophy rules once when a training session finishes and celebrates
  * new unlocks with a toast (NH-10).
  *
  * @param view The training view; only the `finished` state triggers a check.
  * @param mode The mode being practised.
+ * @param onChecked Called once per finished session with its outcome, e.g. so the mascot can comment (NH-12).
  * @throws If used outside the library, toast and i18n providers.
  */
 export function useTrophyCelebration(
   view: TrainingView,
   mode: TrainMode,
+  onChecked?: (outcome: SessionOutcome) => void,
 ): void {
   const { completeSession } = useLibrary();
   const { showToast } = useToast();
   const { t } = useI18n();
   const finishedSession = view.status === "finished" ? view.session : null;
+  const reportOutcome = useEffectEvent((outcome: SessionOutcome) => {
+    onChecked?.(outcome);
+  });
 
   useEffect(() => {
     if (finishedSession === null) {
       return;
     }
-    const unlocked = completeSession(
-      { mode, perfect: isPerfectSession(finishedSession) },
-      Date.now(),
-    );
+    const perfect = isPerfectSession(finishedSession);
+    const unlocked = completeSession({ mode, perfect }, Date.now());
+    reportOutcome({ perfect, unlockedCount: unlocked.length });
     if (unlocked.length === 0) {
       return;
     }

@@ -58,6 +58,8 @@ export type Theme = "light" | "dark" | "system" | FunTheme;
 export type ResolvedTheme = Exclude<Theme, "system">;
 export type DirectionMode = "random" | Direction;
 export type SessionSize = 10 | 20 | 50 | "all";
+/** Mascots the user can choose between (NH-12). */
+export type MascotId = "volt" | "blaze" | "foxel" | "glosa" | "bubo" | "umbra";
 /** Answers per day that fill the daily goal ring on the home screen. */
 export type DailyGoal = 5 | 10 | 15 | 20 | 30 | 50;
 
@@ -77,6 +79,10 @@ export interface Settings {
   readonly hapticsEnabled: boolean;
   /** Answers per day the home screen counts towards the daily goal. Default 10. */
   readonly dailyGoal: DailyGoal;
+  /** The mascot shown across the app (NH-12). Default Volt. */
+  readonly mascot: MascotId;
+  /** Whether the mascot talks in speech bubbles (NH-12). On by default. */
+  readonly mascotTalk: boolean;
 }
 
 /** One record per set and local calendar day, used for streaks and the 14-day chart. */
