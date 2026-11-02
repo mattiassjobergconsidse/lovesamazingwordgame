@@ -60,6 +60,7 @@ describe("evaluateTrophies", () => {
       ["matching", "modeMatching"],
       ["writing", "modeWriting"],
       ["hangman", "modeHangman"],
+      ["scramble", "modeScramble"],
     ] as const;
 
     for (const [mode, trophy] of modes) {

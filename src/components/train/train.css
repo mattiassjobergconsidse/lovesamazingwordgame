@@ -21,6 +21,7 @@
 }
 [data-mode="writing"],
 [data-mode="hangman"],
+[data-mode="scramble"],
 [data-mode="matching"] {
   --mode-color: var(--color-accent);
 }

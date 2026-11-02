@@ -7,4 +7,5 @@ export const MODE_ICONS: Readonly<Record<TrainMode, string>> = {
   quiz: "❓",
   matching: "🧩",
   hangman: "🔤",
+  scramble: "🔀",
 };
