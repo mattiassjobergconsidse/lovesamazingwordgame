@@ -26,6 +26,7 @@ import { HangmanCard } from "./HangmanCard";
 import { MatchingBoard } from "./MatchingBoard";
 import { MODE_ICONS } from "./modeIcons";
 import { QuizCard } from "./QuizCard";
+import { ScrambleCard } from "./ScrambleCard";
 import { SessionResult } from "./SessionResult";
 import { WritingCard } from "./WritingCard";
 import "./train.css";
@@ -62,6 +63,10 @@ function renderHangmanCard(props: ModeCardProps): ReactNode {
   return <HangmanCard {...props} />;
 }
 
+function renderScrambleCard(props: ModeCardProps): ReactNode {
+  return <ScrambleCard {...props} />;
+}
+
 /** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
   switch (mode) {
@@ -73,6 +78,8 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderQuizCard;
     case "hangman":
       return renderHangmanCard;
+    case "scramble":
+      return renderScrambleCard;
     case "matching":
       return defaultRenderCard;
   }

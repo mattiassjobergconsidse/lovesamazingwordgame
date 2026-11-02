@@ -1,12 +1,18 @@
 /** The training modes. Kept here so `core/` does not depend on the router. */
 export type EligibilityMode =
-  "flashcards" | "quiz" | "matching" | "writing" | "hangman";
+  | "flashcards"
+  | "quiz"
+  | "matching"
+  | "writing"
+  | "hangman"
+  | "scramble";
 
-/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9). */
+/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13). */
 export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
   flashcards: 1,
   writing: 1,
   hangman: 1,
+  scramble: 1,
   quiz: 2,
   matching: 2,
 };

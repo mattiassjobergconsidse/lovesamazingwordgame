@@ -2,7 +2,12 @@ import { useSyncExternalStore } from "react";
 import { isGameId, type GameId } from "./core/gameUnlock";
 
 export type TrainMode =
-  "flashcards" | "quiz" | "matching" | "writing" | "hangman";
+  | "flashcards"
+  | "quiz"
+  | "matching"
+  | "writing"
+  | "hangman"
+  | "scramble";
 
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
@@ -10,6 +15,7 @@ export const TRAIN_MODES: readonly TrainMode[] = [
   "matching",
   "writing",
   "hangman",
+  "scramble",
 ];
 
 /** A screen the app can show. */

@@ -1,6 +1,11 @@
 /** Training modes that can earn a "first session" trophy; mirrors the router's `TrainMode`. */
 export type TrophyMode =
-  "flashcards" | "quiz" | "matching" | "writing" | "hangman";
+  | "flashcards"
+  | "quiz"
+  | "matching"
+  | "writing"
+  | "hangman"
+  | "scramble";
 
 /** The condition that unlocks a trophy (NH-10). */
 export type TrophyRule =
@@ -63,6 +68,11 @@ export const TROPHY_DEFINITIONS = [
     id: "modeHangman",
     emoji: "🔤",
     rule: { kind: "modeSession", mode: "hangman" },
+  },
+  {
+    id: "modeScramble",
+    emoji: "🔀",
+    rule: { kind: "modeSession", mode: "scramble" },
   },
   {
     id: "correct100",

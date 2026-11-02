@@ -50,6 +50,14 @@ const GROUPS: readonly ShortcutGroup[] = [
       { keys: ["Enter"], label: "shortcuts.hangmanNext" },
     ],
   },
+  {
+    heading: "shortcuts.scramble",
+    items: [
+      { keys: ["A–Z", "å", "ä", "ö"], label: "shortcuts.scrambleType" },
+      { keys: ["Backspace"], label: "shortcuts.scrambleRemove" },
+      { keys: ["Enter"], label: "shortcuts.scrambleNext" },
+    ],
+  },
 ];
 
 /** Header button plus the `?` key: opens an overlay that lists the keyboard shortcuts. */

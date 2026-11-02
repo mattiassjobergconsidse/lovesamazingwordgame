@@ -381,7 +381,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - **Optional and non-intrusive**: a setting turns the talk bubbles/reactions off. Bubbles never block the UI or interfere with training, appear in a corner,
       fade out after a few seconds, are announced politely to screen readers (`aria-live="polite"`) without stealing focus, and respect `prefers-reduced-motion`.
     - Bubble text uses i18n dictionaries; the pure phrase-picking logic lives in `core/` with unit tests.
-13. **Word Scramble mode** (`NH-13`): a training mode where the answer's letters are shuffled into tiles and the user taps (or types) them in order.
+13. **Word Scramble mode** (`NH-13`, done): a training mode where the answer's letters are shuffled into tiles and the user taps (or types) them in order.
     - The prompt is shown in one language; the answer is built in the other. Direction follows FR-TRN-3.
     - Tiles can be tapped or typed on the physical keyboard (including å/ä/ö); Backspace or tapping a placed tile removes it.
     - Hint places the next correct letter and gives result `assisted`. Solved without hint = `correct`; "Give up" reveals the answer = `wrong`.
