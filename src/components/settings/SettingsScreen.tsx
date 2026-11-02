@@ -4,6 +4,7 @@ import { ImportPanel } from "../data/ImportPanel";
 import { ResetPanel } from "../data/ResetPanel";
 import { FeedbackSettings } from "./FeedbackSettings";
 import { GoalSettings } from "./GoalSettings";
+import { MascotSettings } from "./MascotSettings";
 import { SpeechSettings } from "./SpeechSettings";
 import { ThemeSelector } from "./ThemeSelector";
 import "./settings.css";
@@ -19,6 +20,7 @@ export function SettingsScreen() {
     <div className="settings-screen">
       <h1 tabIndex={-1}>{t("nav.settings")}</h1>
       <ThemeSelector />
+      <MascotSettings />
       <GoalSettings />
       <SpeechSettings />
       <FeedbackSettings />

@@ -5,6 +5,7 @@ import type {
   Theme,
   UiLanguage,
 } from "../types";
+import { DEFAULT_MASCOT, isMascotId } from "./mascots";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -87,6 +88,8 @@ export function createDefaultSettings(
     soundEnabled: false,
     hapticsEnabled: false,
     dailyGoal: DEFAULT_DAILY_GOAL,
+    mascot: DEFAULT_MASCOT,
+    mascotTalk: true,
   };
 }
 
@@ -111,6 +114,8 @@ export function parseSettings(value: unknown): Settings | null {
     soundEnabled = false,
     hapticsEnabled = false,
     dailyGoal = DEFAULT_DAILY_GOAL,
+    mascot = DEFAULT_MASCOT,
+    mascotTalk = true,
   } = value;
   if (
     !isUiLanguage(uiLanguage) ||
@@ -127,7 +132,9 @@ export function parseSettings(value: unknown): Settings | null {
     typeof speechEnabled !== "boolean" ||
     typeof soundEnabled !== "boolean" ||
     typeof hapticsEnabled !== "boolean" ||
-    !isDailyGoal(dailyGoal)
+    !isDailyGoal(dailyGoal) ||
+    !isMascotId(mascot) ||
+    typeof mascotTalk !== "boolean"
   ) {
     return null;
   }
@@ -142,6 +149,8 @@ export function parseSettings(value: unknown): Settings | null {
     soundEnabled,
     hapticsEnabled,
     dailyGoal,
+    mascot,
+    mascotTalk,
   };
 }
 

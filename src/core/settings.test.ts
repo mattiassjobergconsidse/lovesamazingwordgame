@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MASCOT_IDS } from "./mascots";
 import {
   DAILY_GOALS,
   THEMES,
@@ -42,6 +43,8 @@ describe("createDefaultSettings", () => {
       soundEnabled: false,
       hapticsEnabled: false,
       dailyGoal: 10,
+      mascot: "volt",
+      mascotTalk: true,
     });
   });
 });
@@ -85,8 +88,30 @@ describe("parseSettings", () => {
     ["a non-boolean hapticsEnabled", { ...valid, hapticsEnabled: "yes" }],
     ["an unknown daily goal", { ...valid, dailyGoal: 7 }],
     ["a non-numeric daily goal", { ...valid, dailyGoal: "10" }],
+    ["NH-12: an unknown mascot", { ...valid, mascot: "dino" }],
+    ["NH-12: a non-string mascot", { ...valid, mascot: 3 }],
+    ["NH-12: a non-boolean mascotTalk", { ...valid, mascotTalk: "yes" }],
   ])("rejects %s", (_label, value) => {
     expect(parseSettings(value)).toBeNull();
+  });
+
+  it("NH-12: treats missing mascot fields of older records as Volt with talking on, and accepts every mascot", () => {
+    const older = Object.fromEntries(
+      Object.entries(valid).filter(
+        ([key]) => key !== "mascot" && key !== "mascotTalk",
+      ),
+    );
+    expect(parseSettings(older)).toEqual({
+      ...valid,
+      mascot: "volt",
+      mascotTalk: true,
+    });
+    for (const mascot of MASCOT_IDS) {
+      expect(parseSettings({ ...valid, mascot })?.mascot).toBe(mascot);
+    }
+    expect(parseSettings({ ...valid, mascotTalk: false })?.mascotTalk).toBe(
+      false,
+    );
   });
 
   it("NH-4: treats missing sound and haptics fields of older records as off", () => {

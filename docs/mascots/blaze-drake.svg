@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Blaze, a fiery baby drake">
+  <defs>
+    <radialGradient id="rb" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#dc2626"/></radialGradient>
+  </defs>
+  <g stroke="#7f1d1d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- tail with flame -->
+    <path d="M140 160 C175 165 188 135 172 118 C170 140 156 144 138 142 Z" fill="#ef4444"/>
+    <path d="M172 118 C160 104 170 92 176 80 C186 96 192 108 182 124 Z" fill="#fb923c" stroke="#9a3412"/>
+    <path d="M176 100 C172 108 176 114 180 116 C184 110 182 104 176 100 Z" fill="#fde047" stroke="none"/>
+    <!-- wings -->
+    <path d="M58 112 C28 84 20 112 30 132 C38 122 48 122 60 126 Z" fill="#fb923c" stroke="#9a3412"/>
+    <path d="M142 112 C172 84 180 112 170 132 C162 122 152 122 140 126 Z" fill="#fb923c" stroke="#9a3412"/>
+    <!-- body -->
+    <ellipse cx="100" cy="143" rx="42" ry="38" fill="url(#rb)"/>
+    <ellipse cx="100" cy="152" rx="25" ry="24" fill="#fed7aa" stroke="none"/>
+    <path d="M82 144 H118 M80 154 H120 M84 164 H116" stroke="#fdba74" stroke-width="2.5" fill="none"/>
+    <!-- feet -->
+    <ellipse cx="78" cy="180" rx="14" ry="8" fill="#b91c1c"/>
+    <ellipse cx="122" cy="180" rx="14" ry="8" fill="#b91c1c"/>
+    <!-- horns -->
+    <path d="M66 54 L52 18 L86 44 Z" fill="#fde68a" stroke="#92400e"/>
+    <path d="M134 54 L148 18 L114 44 Z" fill="#fde68a" stroke="#92400e"/>
+    <!-- head -->
+    <ellipse cx="100" cy="84" rx="50" ry="44" fill="url(#rb)"/>
+    <!-- snout -->
+    <ellipse cx="100" cy="106" rx="24" ry="16" fill="#fca5a5" stroke="#991b1b"/>
+    <circle cx="92" cy="102" r="2.5" fill="#7f1d1d" stroke="none"/>
+    <circle cx="108" cy="102" r="2.5" fill="#7f1d1d" stroke="none"/>
+    <path d="M88 112 Q100 120 112 112" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
+    <path d="M90 113 L93 121 L97 115 Z M110 113 L107 121 L103 115 Z" fill="#fff" stroke-width="1.5"/>
+    <!-- cheeks -->
+    <circle cx="58" cy="100" r="8" fill="#fb923c" stroke="none" opacity="0.85"/>
+    <circle cx="142" cy="100" r="8" fill="#fb923c" stroke="none" opacity="0.85"/>
+    <!-- eyes -->
+    <ellipse cx="76" cy="82" rx="10" ry="13" fill="#0f172a" stroke="none"/>
+    <ellipse cx="124" cy="82" rx="10" ry="13" fill="#0f172a" stroke="none"/>
+    <circle cx="79" cy="77" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="127" cy="77" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="73" cy="87" r="2" fill="#fde047" stroke="none"/>
+    <circle cx="121" cy="87" r="2" fill="#fde047" stroke="none"/>
+    <!-- brows -->
+    <path d="M64 64 L88 70 M136 64 L112 70" fill="none" stroke="#7f1d1d" stroke-width="4"/>
+  </g>
+</svg>
+

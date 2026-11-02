@@ -1,0 +1,176 @@
+/* Mascot and speech bubble (NH-8, NH-12). Colours only from theme tokens. */
+.mascot-stage {
+  display: flex;
+  gap: var(--space-2);
+  /* The bubble tail sticks out 0.8rem into the gap; keep some air between it and the mascot. */
+  column-gap: calc(0.8rem + var(--space-2));
+  align-items: center;
+}
+.mascot-stage-hero {
+  flex-wrap: wrap;
+  margin-block-end: var(--space-4);
+}
+.home-hero > .mascot-stage-hero {
+  margin-block-end: 0;
+}
+/* Themed surface and accent ring keep the fixed-colour art readable on every theme. */
+.mascot {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 7.5rem;
+  block-size: 7.5rem;
+  padding: var(--space-1);
+  background: var(--color-surface);
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  animation: mascot-pop var(--duration-slow) var(--ease-bounce) 1;
+}
+.mascot img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+}
+/* A slow bob keeps the mascot alive without drawing the eye away from the task. */
+.mascot-idle img {
+  animation: mascot-bob 3s ease-in-out infinite;
+}
+.mascot-cheer {
+  animation: mascot-cheer 600ms var(--ease-bounce) 1;
+}
+.mascot-oops {
+  animation: mascot-oops 500ms ease-in-out 1;
+}
+.mascot-bubble-slot {
+  flex: 1 1 12rem;
+  min-inline-size: 0;
+}
+.mascot-bubble {
+  position: relative;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  /* Keep the duration in step with MASCOT_BUBBLE_MS in useMascotSpeech. */
+  animation: mascot-bubble 5s ease-in-out 1 both;
+}
+/* The little tail points at the mascot: an accent triangle with a smaller surface triangle on top,
+   its base reaching past the bubble border so the join has no gap. */
+.mascot-bubble::before,
+.mascot-bubble::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+.mascot-bubble::before {
+  inset-inline-start: calc(-0.8rem - 2px);
+  inline-size: calc(0.8rem + 2px);
+  block-size: 1.3rem;
+  background: var(--color-accent);
+}
+.mascot-bubble::after {
+  inset-inline-start: calc(-0.8rem + 2px);
+  inline-size: calc(0.8rem + 2px);
+  block-size: calc(1.3rem - 6px);
+  background: var(--color-surface);
+}
+/* In the corner the bubble sits left of the mascot, so it never covers the controls above. */
+.mascot-stage-corner {
+  position: fixed;
+  inset-block-end: var(--space-2);
+  inset-inline: var(--space-2);
+  z-index: 5;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+.mascot-stage-corner .mascot {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+}
+.mascot-stage-corner .mascot-bubble-slot {
+  flex: 0 1 18rem;
+}
+.mascot-stage-corner .mascot-bubble::before,
+.mascot-stage-corner .mascot-bubble::after {
+  inset-inline-start: auto;
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+}
+.mascot-stage-corner .mascot-bubble::before {
+  inset-inline-end: calc(-0.8rem - 2px);
+}
+.mascot-stage-corner .mascot-bubble::after {
+  inset-inline-end: calc(-0.8rem + 2px);
+}
+@keyframes mascot-pop {
+  from {
+    transform: scale(0.6) rotate(-8deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes mascot-cheer {
+  0% {
+    transform: scale(0.6) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(8deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes mascot-oops {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes mascot-bubble {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  6%,
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+/* No motion: the bubble simply stays until it is removed. */
+@media (prefers-reduced-motion: reduce) {
+  .mascot,
+  .mascot img,
+  .mascot-bubble {
+    animation: none;
+  }
+}
