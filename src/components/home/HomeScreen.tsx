@@ -103,7 +103,7 @@ function SetHome({ set }: { readonly set: WordSet }) {
           </span>
           {t("home.modes.heading")}
         </h2>
-        <ModeCards wordCount={wordCount} labelledBy="home-modes" />
+        <ModeCards set={set} wordCount={wordCount} labelledBy="home-modes" />
       </section>
 
       <div className="home-columns">

@@ -388,8 +388,9 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - Multi-word answers keep the word boundaries visible (spaces are not shuffled).
     - Shuffle is pure in `core/` with injected rng and never returns the original order when the answer has 2+ distinct letters.
     - Follows FR-TRN and FR-ACT-1 (minimum 1 word). Needs no schema change.
-14. **Listening mode** (`NH-14`): the app speaks the term (via `storage/speech.ts`, NH-2) and the user picks the written word (Quiz-style options) or types it.
-    - Only available when speech is supported and the answer language has a voice/language code; otherwise the mode button is disabled with a clear message.
+14. **Listening mode** (`NH-14`, done): the app speaks the term (via `storage/speech.ts`, NH-2) and the user picks the written word (Quiz-style options) or types it.
+    - The spoken term is the answer side; it is spoken on every card regardless of the auto-play setting. The prompt translation is shown only after answering.
+    - Only available when speech is supported and the set has a voice language code for every direction that can occur (both with random direction, only the answer side when the direction is forced); otherwise the mode button is disabled with a clear message.
     - A replay button and a key (`R`) repeat the audio. Typed answers reuse `core/checkAnswer.ts`; choice answers reuse `core/quiz.ts`.
     - Hearing the word again or revealing the text counts as `assisted`.
     - Follows FR-TRN and FR-ACT-1 (minimum 1 word for typing, 2 for choices). Needs no schema change.

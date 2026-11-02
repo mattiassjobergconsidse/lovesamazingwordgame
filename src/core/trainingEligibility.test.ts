@@ -15,6 +15,8 @@ describe("isModeAvailable", () => {
     ["hangman", 1, true],
     ["scramble", 0, false],
     ["scramble", 1, true],
+    ["listening", 0, false],
+    ["listening", 1, true],
   ] as const)("FR-ACT-1: %s with %i words is %s", (mode, count, expected) => {
     expect(isModeAvailable(mode, count)).toBe(expected);
   });

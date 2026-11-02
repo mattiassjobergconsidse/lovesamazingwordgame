@@ -23,6 +23,7 @@ import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
 import { FlashCard } from "./FlashCard";
 import { HangmanCard } from "./HangmanCard";
+import { ListeningCard } from "./ListeningCard";
 import { MatchingBoard } from "./MatchingBoard";
 import { MODE_ICONS } from "./modeIcons";
 import { QuizCard } from "./QuizCard";
@@ -67,6 +68,10 @@ function renderScrambleCard(props: ModeCardProps): ReactNode {
   return <ScrambleCard {...props} />;
 }
 
+function renderListeningCard(props: ModeCardProps): ReactNode {
+  return <ListeningCard {...props} />;
+}
+
 /** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
   switch (mode) {
@@ -80,6 +85,8 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderHangmanCard;
     case "scramble":
       return renderScrambleCard;
+    case "listening":
+      return renderListeningCard;
     case "matching":
       return defaultRenderCard;
   }

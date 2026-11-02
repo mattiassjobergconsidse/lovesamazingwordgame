@@ -7,7 +7,8 @@ export type TrainMode =
   | "matching"
   | "writing"
   | "hangman"
-  | "scramble";
+  | "scramble"
+  | "listening";
 
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
@@ -16,6 +17,7 @@ export const TRAIN_MODES: readonly TrainMode[] = [
   "writing",
   "hangman",
   "scramble",
+  "listening",
 ];
 
 /** A screen the app can show. */

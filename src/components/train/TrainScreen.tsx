@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { isModeAvailable } from "../../core/trainingEligibility";
 import { routeToHash, TRAIN_MODES } from "../../router";
 import { useActiveSet } from "../../hooks/useActiveSet";
+import { useListeningAvailability } from "../../hooks/useListeningAvailability";
 import { useMascotSpeech } from "../../hooks/useMascotSpeech";
 import "../common/common.css";
 import { Mascot } from "../common/Mascot";
@@ -13,6 +14,7 @@ import { ModeCards } from "./ModeCards";
 export function TrainScreen() {
   const { t } = useI18n();
   const { activeSet, wordCount } = useActiveSet();
+  const listening = useListeningAvailability(activeSet);
   const speech = useMascotSpeech();
   const { say } = speech;
 
@@ -23,9 +25,10 @@ export function TrainScreen() {
   if (activeSet === null) {
     return <h1 tabIndex={-1}>{t("nav.train")}</h1>;
   }
-  const anyDisabled = TRAIN_MODES.some(
-    (mode) => !isModeAvailable(mode, wordCount),
-  );
+  // The set editor is where words are added and voice languages are picked.
+  const anyDisabled =
+    listening === "noVoice" ||
+    TRAIN_MODES.some((mode) => !isModeAvailable(mode, wordCount));
 
   return (
     <>
@@ -33,7 +36,11 @@ export function TrainScreen() {
         {t("nav.train")}
       </h1>
       <Mascot speech={speech} />
-      <ModeCards wordCount={wordCount} labelledBy="train-heading" />
+      <ModeCards
+        set={activeSet}
+        wordCount={wordCount}
+        labelledBy="train-heading"
+      />
       {anyDisabled && (
         <a href={routeToHash({ name: "setEditor", id: activeSet.id })}>
           {t("train.addWords")}

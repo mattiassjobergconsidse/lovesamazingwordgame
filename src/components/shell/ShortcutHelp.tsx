@@ -58,6 +58,14 @@ const GROUPS: readonly ShortcutGroup[] = [
       { keys: ["Enter"], label: "shortcuts.scrambleNext" },
     ],
   },
+  {
+    heading: "shortcuts.listening",
+    items: [
+      { keys: ["R"], label: "shortcuts.listeningReplay" },
+      { keys: ["1–9"], label: "shortcuts.listeningChoose" },
+      { keys: ["Enter"], label: "shortcuts.listeningNext" },
+    ],
+  },
 ];
 
 /** Header button plus the `?` key: opens an overlay that lists the keyboard shortcuts. */

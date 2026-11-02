@@ -44,7 +44,7 @@ describe("trophy screen", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: "Trophies" }),
     ).toBeVisible();
-    expect(screen.getByText("0 of 17 trophies unlocked")).toBeVisible();
+    expect(screen.getByText("0 of 18 trophies unlocked")).toBeVisible();
     const list = screen.getByRole("list", { name: "Trophy list" });
     expect(within(list).getAllByRole("listitem")).toHaveLength(
       TROPHY_DEFINITIONS.length,
@@ -67,7 +67,7 @@ describe("trophy screen", () => {
     });
     render(<App />);
 
-    expect(await screen.findByText("1 of 17 trophies unlocked")).toBeVisible();
+    expect(await screen.findByText("1 of 18 trophies unlocked")).toBeVisible();
     const first = screen.getByTestId("trophy-firstSession");
     expect(within(first).getByText(/^Unlocked on .*2026$/)).toBeVisible();
     expect(within(first).queryByText("Locked")).toBeNull();
@@ -87,7 +87,7 @@ describe("trophy screen", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: "Troféer" }),
     ).toBeVisible();
-    expect(screen.getByText("0 av 17 troféer upplåsta")).toBeVisible();
+    expect(screen.getByText("0 av 18 troféer upplåsta")).toBeVisible();
     expect(
       within(screen.getByTestId("trophy-streak3")).getByText("Låst"),
     ).toBeVisible();
@@ -111,7 +111,7 @@ describe("trophy screen", () => {
       trophies: [{ id: "firstSession", unlockedAt: 1000 }],
     });
     const { container } = render(<App />);
-    await screen.findByText("1 of 17 trophies unlocked");
+    await screen.findByText("1 of 18 trophies unlocked");
 
     expect(await axe(container)).toHaveNoViolations();
   });
@@ -148,7 +148,7 @@ describe("unlocking trophies", () => {
 
     await user.click(screen.getByRole("link", { name: "Trophies" }));
 
-    expect(await screen.findByText("2 of 17 trophies unlocked")).toBeVisible();
+    expect(await screen.findByText("2 of 18 trophies unlocked")).toBeVisible();
     expect(
       within(screen.getByTestId("trophy-modeFlashcards")).queryByText("Locked"),
     ).toBeNull();
