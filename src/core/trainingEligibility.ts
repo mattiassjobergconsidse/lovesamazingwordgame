@@ -5,14 +5,17 @@ export type EligibilityMode =
   | "matching"
   | "writing"
   | "hangman"
-  | "scramble";
+  | "scramble"
+  | "listening";
 
-/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13). */
+/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13, NH-14). */
 export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
   flashcards: 1,
   writing: 1,
   hangman: 1,
   scramble: 1,
+  // Choices need 2 words; a single word is practised by typing.
+  listening: 1,
   quiz: 2,
   matching: 2,
 };

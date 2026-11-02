@@ -28,6 +28,7 @@ describe("parseRoute", () => {
     ["#/train/writing", { name: "trainMode", mode: "writing" }],
     ["#/train/hangman", { name: "trainMode", mode: "hangman" }],
     ["#/train/scramble", { name: "trainMode", mode: "scramble" }],
+    ["#/train/listening", { name: "trainMode", mode: "listening" }],
     [
       "#/train/flashcards/hardest",
       { name: "trainMode", mode: "flashcards", focus: "hardest" },

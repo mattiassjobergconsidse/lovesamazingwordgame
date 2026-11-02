@@ -1,28 +1,36 @@
 import { useId } from "react";
 import { isModeAvailable, MIN_WORDS } from "../../core/trainingEligibility";
+import { useListeningAvailability } from "../../hooks/useListeningAvailability";
 import { useI18n } from "../../i18n";
 import { routeToHash, TRAIN_MODES } from "../../router";
+import type { WordSet } from "../../types";
 import "../common/common.css";
 import "../home/home.css";
 import { MODE_ICONS } from "./modeIcons";
 
 interface ModeCardsProps {
+  /** The active set; its voice languages decide whether Listening is available. */
+  readonly set: WordSet;
   /** Number of words in the active set; modes it is too small for are disabled. */
   readonly wordCount: number;
   /** Id of the heading that names the list. */
   readonly labelledBy: string;
 }
 
-/** Big cards for the four training modes, shared by the home and training screens. */
-export function ModeCards({ wordCount, labelledBy }: ModeCardsProps) {
+/** Big cards for the training modes, shared by the home and training screens. */
+export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
   const { t, tp } = useI18n();
   const prefix = useId();
+  const listening = useListeningAvailability(set);
 
   return (
     <ul className="home-modes" aria-labelledby={labelledBy}>
       {TRAIN_MODES.map((mode) => {
         const titleId = `${prefix}-${mode}`;
         const noteId = `${prefix}-${mode}-note`;
+        const tooSmall = !isModeAvailable(mode, wordCount);
+        const listeningBlocked =
+          mode === "listening" && listening !== "available";
         const content = (
           <>
             <span className="home-mode-icon" aria-hidden="true">
@@ -36,7 +44,7 @@ export function ModeCards({ wordCount, labelledBy }: ModeCardsProps) {
         );
         return (
           <li key={mode}>
-            {isModeAvailable(mode, wordCount) ? (
+            {!tooSmall && !listeningBlocked ? (
               <a
                 className="home-mode card"
                 data-mode={mode}
@@ -58,7 +66,11 @@ export function ModeCards({ wordCount, labelledBy }: ModeCardsProps) {
                   {content}
                 </button>
                 <span id={noteId} className="mode-note">
-                  {tp("train.needs", MIN_WORDS[mode])}
+                  {tooSmall
+                    ? tp("train.needs", MIN_WORDS[mode])
+                    : listening === "noSpeech"
+                      ? t("train.listening.noSpeech")
+                      : t("train.listening.noVoice")}
                 </span>
               </>
             )}

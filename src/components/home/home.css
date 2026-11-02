@@ -29,6 +29,20 @@
   padding: 0;
   list-style: none;
 }
+.home-modes > li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.home-modes > li > .home-mode {
+  flex: 1;
+  block-size: auto;
+}
+.home-modes .mode-note {
+  margin: 0;
+  padding-inline: var(--space-1);
+  font-size: 0.875rem;
+}
 .home-mode {
   display: flex;
   flex-direction: column;
@@ -75,6 +89,7 @@ button.home-mode:disabled {
 .home-mode[data-mode="writing"] .home-mode-icon,
 .home-mode[data-mode="hangman"] .home-mode-icon,
 .home-mode[data-mode="scramble"] .home-mode-icon,
+.home-mode[data-mode="listening"] .home-mode-icon,
 .home-mode[data-mode="matching"] .home-mode-icon {
   background: color-mix(in srgb, var(--color-accent) 30%, var(--color-surface));
 }
