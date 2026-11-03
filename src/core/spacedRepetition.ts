@@ -85,6 +85,7 @@ export function applyResult(
     wrong: progress.wrong + (result === "wrong" ? 1 : 0),
     lastSeenAt: now,
     streak: result === "correct" ? progress.streak + 1 : 0,
+    lastResult: result,
   };
 }
 

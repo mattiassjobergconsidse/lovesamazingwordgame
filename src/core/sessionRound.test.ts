@@ -121,3 +121,17 @@ describe("roundAt", () => {
     expect(roundAt(pairs, 9)).toEqual([]);
   });
 });
+
+describe("answerRound answers (NH-15)", () => {
+  it("NH-15: adds the results of the round to the answer history", () => {
+    const pairs = [makePair(), makePair()];
+    const results = new Map<string, AnswerResult>([
+      [pairs[0]?.id ?? "", "wrong"],
+      [pairs[1]?.id ?? "", "correct"],
+    ]);
+
+    const { state } = answerRound(startSession(pairs), results);
+
+    expect(state.answers).toEqual(["wrong", "correct"]);
+  });
+});

@@ -225,3 +225,48 @@ describe("session state", () => {
     expect(mistakePairs(state)).toEqual([]);
   });
 });
+
+describe("retryUntilCorrect (NH-15)", () => {
+  const [first, second] = [makePair(), makePair()];
+
+  it("NH-15: keeps re-queuing a word until it is not wrong", () => {
+    let state = startSession([first, second], { retryUntilCorrect: true });
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "correct");
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "wrong");
+    expect(isFinished(state)).toBe(false);
+    expect(currentCard(state)).toEqual({ pair: first, isRepeat: true });
+
+    state = answerCard(state, "assisted");
+
+    expect(isFinished(state)).toBe(true);
+    expect(state.queue).toHaveLength(5);
+  });
+
+  it("NH-15: repeats still never replace the first result", () => {
+    let state = startSession([first], { retryUntilCorrect: true });
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "correct");
+
+    expect(state.firstResults.get(first.id)).toBe("wrong");
+    expect(sessionProgress(state)).toEqual({ answered: 1, total: 1 });
+  });
+
+  it("FR-TRN-7: without the option a repeat is final", () => {
+    let state = startSession([first]);
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "wrong");
+
+    expect(isFinished(state)).toBe(true);
+  });
+
+  it("NH-15: records every answer in order, repeats included", () => {
+    let state = startSession([first], { retryUntilCorrect: true });
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "wrong");
+    state = answerCard(state, "correct");
+
+    expect(state.answers).toEqual(["wrong", "wrong", "correct"]);
+  });
+});

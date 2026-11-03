@@ -1,4 +1,9 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  bossAfterAnswers,
+  MAX_BOSS_WORDS,
+  pickBossMascot,
+} from "../../core/bossBattle";
 import { termsFor } from "../../core/direction";
 import { sessionProgress } from "../../core/session";
 import { AppErrorBoundary } from "../common/AppErrorBoundary";
@@ -7,9 +12,11 @@ import { GameOffer } from "../games/GameOffer";
 import { isModalOpen } from "../common/modalOpen";
 import { useAnswerFeedback } from "../../hooks/useAnswerFeedback";
 import { useActiveSet } from "../../hooks/useActiveSet";
+import { useBossPool } from "../../hooks/useBossPool";
 import { useGameUnlockOffer } from "../../hooks/useGameUnlockOffer";
 import { useMascotReactions } from "../../hooks/useMascotReactions";
 import { useMascotSpeech } from "../../hooks/useMascotSpeech";
+import { useSettings } from "../../hooks/useSettings";
 import { useTrophyCelebration } from "../../hooks/useTrophyCelebration";
 import {
   useTrainingSession,
@@ -21,6 +28,10 @@ import type { WordSet } from "../../types";
 import "../common/common.css";
 import { roundAt } from "../../core/matching";
 import { BasicCard, type ModeCardProps } from "./BasicCard";
+import { BossCard } from "./BossCard";
+import { BossHud } from "./BossHud";
+import { BossIntro } from "./BossIntro";
+import { BossVictory } from "./BossVictory";
 import { FlashCard } from "./FlashCard";
 import { HangmanCard } from "./HangmanCard";
 import { ListeningCard } from "./ListeningCard";
@@ -71,6 +82,9 @@ function renderScrambleCard(props: ModeCardProps): ReactNode {
 function renderListeningCard(props: ModeCardProps): ReactNode {
   return <ListeningCard {...props} />;
 }
+function renderBossCard(props: ModeCardProps): ReactNode {
+  return <BossCard {...props} />;
+}
 
 /** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
@@ -87,11 +101,15 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderScrambleCard;
     case "listening":
       return renderListeningCard;
+    case "boss":
+      return renderBossCard;
     case "matching":
       return defaultRenderCard;
   }
 }
 
+/** A wrong boss word comes back until it is solved, and a boss has a bounded number of words (NH-15). */
+const BOSS_OPTIONS = { retryUntilCorrect: true, maxWords: MAX_BOSS_WORDS };
 function ActiveSession({
   set,
   title,
@@ -100,6 +118,10 @@ function ActiveSession({
   renderCard = cardRendererFor(mode),
 }: ActiveSessionProps) {
   const { t, tp } = useI18n();
+  const { settings } = useSettings();
+  const isBoss = mode === "boss";
+  // Decided once, so a running fight keeps its pool while answers change the progress.
+  const bossPool = useBossPool(set.id, focus === "all" ? undefined : focus);
   const {
     view,
     plannedCount,
@@ -111,7 +133,13 @@ function ActiveSession({
     practiseMistakes,
     answer,
     answerRound,
-  } = useTrainingSession(set.id, undefined, focus);
+  } = useTrainingSession(
+    set.id,
+    undefined,
+    isBoss ? (bossPool ?? "hardest") : focus,
+    isBoss ? BOSS_OPTIONS : undefined,
+  );
+  const [bossMascot] = useState(() => pickBossMascot(settings.mascot, rng));
   const giveFeedback = useAnswerFeedback();
   const speech = useMascotSpeech();
   const { say, clear } = speech;
@@ -174,6 +202,7 @@ function ActiveSession({
           speech={speech}
         >
           {earnedGame && <GameOffer />}
+          {isBoss && <BossVictory mascot={bossMascot} />}
         </SessionResult>
       </div>
     );
@@ -191,8 +220,15 @@ function ActiveSession({
         <p>{set.name}</p>
         <p>{tp("train.session.size", plannedCount)}</p>
         {extraPractice && <p>{t("train.session.extra")}</p>}
+        {isBoss && bossPool !== null && (
+          <BossIntro setId={set.id} pool={bossPool} />
+        )}
         {plannedCount === 0 ? (
-          <p>{t("train.session.noHardWords")}</p>
+          <p>
+            {focus === "mistakes"
+              ? t("train.session.noMistakes")
+              : t("train.session.noHardWords")}
+          </p>
         ) : (
           <button type="button" className="button" onClick={start}>
             {t("train.session.start")}
@@ -235,6 +271,14 @@ function ActiveSession({
           <span className="session-repeat">{t("train.session.repeat")}</span>
         )}
       </div>
+      {isBoss && (
+        <BossHud
+          boss={bossAfterAnswers(total, view.session.answers)}
+          mascot={bossMascot}
+          lastResult={view.session.answers.at(-1) ?? null}
+          answerCount={view.session.answers.length}
+        />
+      )}
       <AppErrorBoundary>
         <div key={view.session.position} data-mode={mode}>
           {mode === "matching" ? (

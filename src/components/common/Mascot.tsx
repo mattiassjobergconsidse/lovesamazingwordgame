@@ -3,6 +3,7 @@ import type { MascotSpeech } from "../../hooks/useMascotSpeech";
 import { useSettings } from "../../hooks/useSettings";
 import "./common.css";
 import "./mascot.css";
+import type { MascotId } from "../../types";
 import { MASCOT_IMAGES } from "./mascotImages";
 
 interface MascotProps {
@@ -15,6 +16,8 @@ interface MascotProps {
    * training and only appears while it has something to say.
    */
   readonly placement?: "hero" | "corner";
+  /** Shows this mascot instead of the user's choice, e.g. the boss of a Boss Battle (NH-15). */
+  readonly mascot?: MascotId;
 }
 
 /**
@@ -26,8 +29,10 @@ export function Mascot({
   speech,
   mood: forcedMood,
   placement = "hero",
+  mascot,
 }: MascotProps) {
   const { settings } = useSettings();
+  const shown = mascot ?? settings.mascot;
   const message = speech?.message ?? null;
   const mood = forcedMood ?? speech?.mood ?? "idle";
   const showArtwork = placement === "hero" || message !== null;
@@ -38,10 +43,10 @@ export function Mascot({
         <span
           className={`mascot mascot-${mood}`}
           data-testid="mascot"
-          data-mascot={settings.mascot}
+          data-mascot={shown}
           aria-hidden="true"
         >
-          <img src={MASCOT_IMAGES[settings.mascot]} alt="" draggable={false} />
+          <img src={MASCOT_IMAGES[shown]} alt="" draggable={false} />
         </span>
       )}
       <div className="mascot-bubble-slot" aria-live="polite" aria-atomic="true">

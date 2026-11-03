@@ -386,6 +386,7 @@ describe("training gate", () => {
     const { set, pairs } = setWithPairs("Week 1", [
       ["hus", "house"],
       ["bil", "car"],
+      ["hund", "dog"],
     ]);
     await seedDatabase({
       sets: [set],

@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { makePair, makeProgress } from "../../tests/factories";
-import type { DailyActivity } from "../types";
+import type { AnswerResult, DailyActivity, WordPair } from "../types";
 import {
   computeSetStats,
   hardestWords,
+  lastSessionMistakes,
   practiceStreak,
   recentActivity,
+  SESSION_GAP_MS,
   shiftDateKey,
 } from "./stats";
 
@@ -156,5 +158,71 @@ describe("recentActivity", () => {
 
   it("FR-ST-3: defaults to 14 days", () => {
     expect(recentActivity([], NOW)).toHaveLength(14);
+  });
+});
+
+describe("lastSessionMistakes", () => {
+  const [a, b, c, d] = [makePair(), makePair(), makePair(), makePair()];
+  const pairs = [a, b, c, d];
+
+  function seen(pair: WordPair, lastSeenAt: number, lastResult?: AnswerResult) {
+    return makeProgress({
+      pairId: pair.id,
+      lastSeenAt,
+      ...(lastResult === undefined ? {} : { lastResult }),
+    });
+  }
+
+  it("NH-15: is empty without answers", () => {
+    expect(lastSessionMistakes(pairs, [])).toEqual([]);
+  });
+
+  it("NH-15: lists the words whose latest answer was wrong, in the order they were made", () => {
+    const progress = [
+      seen(a, NOW, "wrong"),
+      seen(b, NOW - 60_000, "correct"),
+      seen(c, NOW - 120_000, "wrong"),
+      seen(d, NOW - 30_000, "assisted"),
+    ];
+
+    expect(lastSessionMistakes(pairs, progress)).toEqual([c, a]);
+  });
+
+  it("NH-15: ignores mistakes from an earlier session", () => {
+    const progress = [
+      seen(a, NOW, "wrong"),
+      seen(b, NOW - SESSION_GAP_MS - 1, "wrong"),
+      seen(c, NOW - SESSION_GAP_MS - 60_000, "wrong"),
+    ];
+
+    expect(lastSessionMistakes(pairs, progress)).toEqual([a]);
+  });
+
+  it("NH-15: a chain of answers with small gaps is one session", () => {
+    const step = SESSION_GAP_MS - 1;
+    const progress = [
+      seen(a, NOW, "wrong"),
+      seen(b, NOW - step, "wrong"),
+      seen(c, NOW - 2 * step, "wrong"),
+    ];
+
+    expect(lastSessionMistakes(pairs, progress)).toEqual([c, b, a]);
+  });
+
+  it("NH-15: records without a last result or last seen time never count", () => {
+    const progress = [
+      seen(a, NOW),
+      makeProgress({ pairId: b.id, lastSeenAt: null, lastResult: "wrong" }),
+    ];
+
+    expect(lastSessionMistakes(pairs, progress)).toEqual([]);
+  });
+
+  it("NH-15: only looks at the given pairs", () => {
+    const stranger = makePair();
+
+    expect(
+      lastSessionMistakes([a], [seen(stranger, NOW, "wrong"), seen(a, NOW)]),
+    ).toEqual([]);
   });
 });

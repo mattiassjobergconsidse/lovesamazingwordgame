@@ -6,7 +6,8 @@ export type TrophyMode =
   | "writing"
   | "hangman"
   | "scramble"
-  | "listening";
+  | "listening"
+  | "boss";
 
 /** The condition that unlocks a trophy (NH-10). */
 export type TrophyRule =
@@ -79,6 +80,11 @@ export const TROPHY_DEFINITIONS = [
     id: "modeListening",
     emoji: "🎧",
     rule: { kind: "modeSession", mode: "listening" },
+  },
+  {
+    id: "modeBoss",
+    emoji: "🐉",
+    rule: { kind: "modeSession", mode: "boss" },
   },
   {
     id: "correct100",
