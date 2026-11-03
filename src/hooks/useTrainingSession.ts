@@ -13,7 +13,7 @@ import {
   type SessionState,
 } from "../core/session";
 import type { Rng } from "../core/shuffle";
-import { hardestWords } from "../core/stats";
+import { hardestWords, lastSessionMistakes } from "../core/stats";
 import type { AnswerResult, Direction, WordPair, WordProgress } from "../types";
 import { useLibrary } from "./useLibrary";
 import { useSettings } from "./useSettings";
@@ -54,8 +54,18 @@ const DEFAULT_ENVIRONMENT: TrainingEnvironment = {
   rng: () => Math.random(),
 };
 
-/** Which words a session draws from: the whole set or only its hardest words (FR-ST-2). */
-export type TrainingFocus = "all" | "hardest";
+/**
+ * Which words a session draws from: the whole set, its hardest words (FR-ST-2)
+ * or the mistakes of the last session (NH-15).
+ */
+export type TrainingFocus = "all" | "hardest" | "mistakes";
+/** Extra rules of a session that only some modes use. */
+export interface TrainingOptions {
+  /** A wrong word comes back until it is solved, as in the Boss Battle (NH-15). */
+  readonly retryUntilCorrect?: boolean;
+  /** At most this many words, e.g. so a boss stays beatable. */
+  readonly maxWords?: number;
+}
 
 /** State and actions of one training session of the active set. */
 export interface TrainingSession {
@@ -91,14 +101,17 @@ export interface TrainingSession {
  *
  * @param setId The set to practise; all of its words take part.
  * @param environment Clock and random source; defaults to the real ones.
- * @param focus "hardest" limits sessions to the set's hardest words.
+ * @param focus Limits sessions to the set's hardest words or last-session mistakes.
+ * @param options Extra rules such as retrying wrong words.
  * @throws If used outside the settings and library providers.
  */
 export function useTrainingSession(
   setId: string,
   environment: TrainingEnvironment = DEFAULT_ENVIRONMENT,
   focus: TrainingFocus = "all",
+  options: TrainingOptions = {},
 ): TrainingSession {
+  const { retryUntilCorrect = false, maxWords } = options;
   const { now, rng } = environment;
   const { pairs, progress, recordAnswer } = useLibrary();
   const { settings } = useSettings();
@@ -112,13 +125,15 @@ export function useTrainingSession(
     () => pairs.filter((pair) => pair.setId === setId),
     [pairs, setId],
   );
-  const sessionPairs = useMemo(
-    () =>
+  const sessionPairs = useMemo(() => {
+    const focused =
       focus === "hardest"
         ? hardestWords(setPairs, progress).map((hard) => hard.pair)
-        : setPairs,
-    [focus, setPairs, progress],
-  );
+        : focus === "mistakes"
+          ? lastSessionMistakes(setPairs, progress)
+          : setPairs;
+    return maxWords === undefined ? focused : focused.slice(0, maxWords);
+  }, [focus, maxWords, setPairs, progress]);
   const progressByPair = useMemo(
     () =>
       new Map<string, WordProgress>(
@@ -131,13 +146,13 @@ export function useTrainingSession(
     (queue: readonly WordPair[]) => {
       setView({
         status: "running",
-        session: startSession(queue),
+        session: startSession(queue, { retryUntilCorrect }),
         direction: pickDirection(directionMode, rng),
         startedAt: now(),
         overrides: 0,
       });
     },
-    [directionMode, now, rng],
+    [directionMode, now, rng, retryUntilCorrect],
   );
 
   const start = useCallback(() => {

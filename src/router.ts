@@ -8,7 +8,8 @@ export type TrainMode =
   | "writing"
   | "hangman"
   | "scramble"
-  | "listening";
+  | "listening"
+  | "boss";
 
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
@@ -18,7 +19,13 @@ export const TRAIN_MODES: readonly TrainMode[] = [
   "hangman",
   "scramble",
   "listening",
+  "boss",
 ];
+/** Which words a session is limited to: the hardest ones (FR-ST-2) or the last session's mistakes (NH-15). */
+export type TrainFocus = "hardest" | "mistakes";
+function isTrainFocus(value: string | undefined): value is TrainFocus {
+  return value === "hardest" || value === "mistakes";
+}
 
 /** A screen the app can show. */
 export type Route =
@@ -29,8 +36,8 @@ export type Route =
   | {
       readonly name: "trainMode";
       readonly mode: TrainMode;
-      /** Practise only the hardest words of the set (FR-ST-2). */
-      readonly focus?: "hardest";
+      /** Practise only some of the words of the set (FR-ST-2, NH-15). */
+      readonly focus?: TrainFocus;
     }
   | { readonly name: "stats" }
   | { readonly name: "trophies" }
@@ -95,12 +102,13 @@ function parseTrainMode(
   mode: string | undefined,
   focus: string | undefined,
 ): Route {
-  if (!isTrainMode(mode) || (focus !== undefined && focus !== "hardest")) {
+  if (!isTrainMode(mode)) {
     return HOME;
   }
-  return focus === undefined
-    ? { name: "trainMode", mode }
-    : { name: "trainMode", mode, focus };
+  if (focus === undefined) {
+    return { name: "trainMode", mode };
+  }
+  return isTrainFocus(focus) ? { name: "trainMode", mode, focus } : HOME;
 }
 
 function parseSetEditor(encodedId: string): Route {

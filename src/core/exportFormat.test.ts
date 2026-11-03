@@ -523,3 +523,77 @@ describe("trophies in the export file", () => {
     });
   });
 });
+
+describe("last result in the export file (NH-15)", () => {
+  function fileWithProgress(extra: Record<string, unknown>) {
+    return JSON.stringify({
+      formatVersion: 1,
+      sets: [
+        {
+          id: "s1",
+          name: "A",
+          langA: "a",
+          langB: "b",
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      pairs: [
+        {
+          id: "p1",
+          setId: "s1",
+          a: "x",
+          b: "y",
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      progress: [
+        {
+          pairId: "p1",
+          setId: "s1",
+          box: 1,
+          dueAt: 0,
+          correct: 0,
+          wrong: 1,
+          lastSeenAt: 5,
+          streak: 0,
+          ...extra,
+        },
+      ],
+    });
+  }
+
+  it("NH-15: round-trips a progress record with a last result", () => {
+    const source: ExportSource = {
+      sets: [makeSet({ id: "s1", name: "A" })],
+      pairs: [makePair({ id: "p1", setId: "s1" })],
+      progress: [
+        makeProgress({ pairId: "p1", setId: "s1", lastResult: "wrong" }),
+      ],
+      activity: [],
+    };
+
+    const result = parseExport(
+      JSON.stringify(buildExport(source, ["s1"], true, 1)),
+    );
+
+    expect(result.ok && result.bundles[0]?.progress).toEqual(source.progress);
+  });
+
+  it("NH-15: files from before the field existed still load without it", () => {
+    const result = parseExport(fileWithProgress({}));
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.bundles[0]?.progress[0]).not.toHaveProperty(
+      "lastResult",
+    );
+  });
+
+  it("NH-15: rejects an unknown last result", () => {
+    expect(parseExport(fileWithProgress({ lastResult: "maybe" }))).toEqual({
+      ok: false,
+      problems: [{ path: "progress[0].lastResult", reason: "wrongType" }],
+    });
+  });
+});

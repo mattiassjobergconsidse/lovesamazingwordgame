@@ -164,7 +164,46 @@ export function hardestWords(
     )
     .slice(0, limit);
 }
+/** Longest pause between answers that still belongs to the same session (NH-15). */
+export const SESSION_GAP_MS = 30 * 60_000;
+/**
+ * Finds the words answered wrongly in the most recent session.
+ *
+ * Sessions are not stored, so the latest session is the run of answers around the
+ * newest `lastSeenAt` in which no two neighbours are more than {@link SESSION_GAP_MS}
+ * apart. A word counts when its latest first answer was wrong.
+ *
+ * @param pairs Pairs of the set.
+ * @param progress Progress records of the set.
+ * @returns The mistakes in the order they were made.
+ */
+export function lastSessionMistakes(
+  pairs: readonly WordPair[],
+  progress: readonly WordProgress[],
+): readonly WordPair[] {
+  const byPair = new Map(progress.map((record) => [record.pairId, record]));
+  const seen: { pair: WordPair; record: WordProgress; at: number }[] = [];
+  for (const pair of pairs) {
+    const record = byPair.get(pair.id);
+    if (record?.lastSeenAt !== null && record?.lastSeenAt !== undefined) {
+      seen.push({ pair, record, at: record.lastSeenAt });
+    }
+  }
+  seen.sort((left, right) => right.at - left.at);
 
+  const session: typeof seen = [];
+  for (const entry of seen) {
+    const previous = session.at(-1);
+    if (previous !== undefined && previous.at - entry.at > SESSION_GAP_MS) {
+      break;
+    }
+    session.push(entry);
+  }
+  return session
+    .filter(({ record }) => record.lastResult === "wrong")
+    .reverse()
+    .map(({ pair }) => pair);
+}
 /**
  * Builds the last days of activity, oldest first, with zeros for idle days.
  *

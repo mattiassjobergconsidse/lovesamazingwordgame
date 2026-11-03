@@ -30,7 +30,11 @@ function renderScreen(route: Route) {
       );
     case "trainMode":
       return (
-        <TrainGate title={titleFor(route)} mode={route.mode}>
+        <TrainGate
+          title={titleFor(route)}
+          mode={route.mode}
+          focus={route.focus}
+        >
           <AppErrorBoundary key={routeToHash(route)}>
             <TrainSession
               title={titleFor(route)}

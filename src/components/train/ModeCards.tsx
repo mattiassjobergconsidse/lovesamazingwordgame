@@ -1,5 +1,7 @@
 import { useId } from "react";
+import { resolveBossPool } from "../../core/bossBattle";
 import { isModeAvailable, MIN_WORDS } from "../../core/trainingEligibility";
+import { useBossPoolCounts } from "../../hooks/useBossPool";
 import { useListeningAvailability } from "../../hooks/useListeningAvailability";
 import { useI18n } from "../../i18n";
 import { routeToHash, TRAIN_MODES } from "../../router";
@@ -22,6 +24,7 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
   const { t, tp } = useI18n();
   const prefix = useId();
   const listening = useListeningAvailability(set);
+  const bossBlocked = resolveBossPool(useBossPoolCounts(set.id)) === null;
 
   return (
     <ul className="home-modes" aria-labelledby={labelledBy}>
@@ -31,6 +34,7 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
         const tooSmall = !isModeAvailable(mode, wordCount);
         const listeningBlocked =
           mode === "listening" && listening !== "available";
+        const needsPool = mode === "boss" && bossBlocked;
         const content = (
           <>
             <span className="home-mode-icon" aria-hidden="true">
@@ -44,7 +48,7 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
         );
         return (
           <li key={mode}>
-            {!tooSmall && !listeningBlocked ? (
+            {!tooSmall && !listeningBlocked && !needsPool ? (
               <a
                 className="home-mode card"
                 data-mode={mode}
@@ -68,9 +72,11 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
                 <span id={noteId} className="mode-note">
                   {tooSmall
                     ? tp("train.needs", MIN_WORDS[mode])
-                    : listening === "noSpeech"
-                      ? t("train.listening.noSpeech")
-                      : t("train.listening.noVoice")}
+                    : needsPool
+                      ? t("train.boss.noPool")
+                      : listening === "noSpeech"
+                        ? t("train.listening.noSpeech")
+                        : t("train.listening.noVoice")}
                 </span>
               </>
             )}

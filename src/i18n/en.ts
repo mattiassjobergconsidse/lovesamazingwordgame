@@ -1,4 +1,4 @@
-﻿/** English dictionary. It defines the set of keys; `sv.ts` must provide every one of them. */
+/** English dictionary. It defines the set of keys; `sv.ts` must provide every one of them. */
 export const en = {
   "app.title": "Love's Amazing Word Game",
   "a11y.skipToContent": "Skip to main content",
@@ -17,6 +17,7 @@ export const en = {
   "route.train.writing": "Writing",
   "route.train.hangman": "Hangman",
   "route.train.scramble": "Word Scramble",
+  "route.train.boss": "Boss Battle",
   "route.train.listening": "Listening",
   "home.greeting.morning": "Good morning!",
   "home.greeting.afternoon": "Good afternoon!",
@@ -39,6 +40,7 @@ export const en = {
   "home.mode.matching": "Match the pairs",
   "home.mode.hangman": "Guess the word letter by letter",
   "home.mode.scramble": "Put the shuffled letters in order",
+  "home.mode.boss": "Defeat a boss made of your trickiest words",
   "home.mode.listening": "Listen and pick or type the word",
   "home.goal.heading": "Today's goal",
   "home.goal.progress": "{done} of {goal} answers today",
@@ -48,6 +50,7 @@ export const en = {
   "home.snapshot.masteredValue": "{mastered} of {total}",
   "home.snapshot.accuracy": "Accuracy, last 7 days",
   "home.snapshot.more": "See all statistics",
+  "home.mistakes": "Practise last session's mistakes",
   "home.hardest": "Practise your hardest words",
   "header.switchLanguage": "Switch language",
   "header.switchLanguage.target": "SV",
@@ -75,6 +78,8 @@ export const en = {
   "shortcuts.scrambleType": "Place a letter (including å, ä, ö)",
   "shortcuts.scrambleRemove": "Take back the last letter",
   "shortcuts.scrambleNext": "Next word once the word is finished",
+  "shortcuts.boss": "Boss Battle",
+  "shortcuts.bossWrite": "Type the answer, then Enter to check it",
   "shortcuts.listening": "Listening",
   "shortcuts.listeningReplay": "Hear the word again (counts as help)",
   "shortcuts.listeningChoose": "Choose that word",
@@ -257,6 +262,26 @@ export const en = {
   "train.result.practiseMistakes": "Practise mistakes",
   "train.result.again": "Practise again",
   "train.result.home": "Back to home",
+  "train.session.noMistakes":
+    "There are no mistakes from your last session to practise.",
+  "train.boss.noPool":
+    "Boss Battle needs at least 3 hard words or mistakes from your last session. Practise a bit more first.",
+  "train.boss.toTraining": "Back to the training modes",
+  "train.boss.intro":
+    "A boss made of your trickiest words appears! Every right answer hurts it and every wrong answer heals it. Defeat it by getting all the words right.",
+  "train.boss.pool.mistakes": "Made from your last session's mistakes",
+  "train.boss.pool.hardest": "Made from your hardest words",
+  "train.boss.switchMistakes":
+    "Fight a boss made of your last session's mistakes instead",
+  "train.boss.switchHardest": "Fight a boss made of your hardest words instead",
+  "train.boss.bossName": "Boss {name}",
+  "train.boss.health": "Boss health",
+  "train.boss.healthValue": "{hp} of {max} health left",
+  "train.boss.hit": "Direct hit!",
+  "train.boss.healed": "The boss healed a little.",
+  "train.boss.defeated": "Boss defeated!",
+  "train.boss.defeatedText": "{name} is down. You got every word right!",
+  "train.boss.retry": "You missed this one. Type it to land the hit!",
   "train.session.noHardWords": "There are no hard words to practise yet.",
   "stats.noSet": "Choose a set to see its statistics.",
   "stats.overview": "Overview",
@@ -382,6 +407,7 @@ export const en = {
   "trophy.modeHangman.name": "Letter hunter",
   "trophy.modeScramble.name": "Scramble solver",
   "trophy.modeListening.name": "Sharp ears",
+  "trophy.modeBoss.name": "Boss slayer",
   "trophy.correct100.name": "Hundred hits",
   "trophy.correct500.name": "Answer ace",
   "nav.games": "Games",

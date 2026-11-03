@@ -88,6 +88,7 @@ interface WordProgress {
   wrong: number;
   lastSeenAt: number | null;
   streak: number; // consecutive correct answers
+  lastResult?: "correct" | "wrong" | "assisted"; // latest first answer (NH-15); optional so older data still loads
 }
 
 interface Settings {
@@ -394,11 +395,18 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - A replay button and a key (`R`) repeat the audio. Typed answers reuse `core/checkAnswer.ts`; choice answers reuse `core/quiz.ts`.
     - Hearing the word again or revealing the text counts as `assisted`.
     - Follows FR-TRN and FR-ACT-1 (minimum 1 word for typing, 2 for choices). Needs no schema change.
-15. **Boss Battle mode** (`NH-15`): a game-style mode where the words the user got wrong become a boss with a health bar.
+15. **Boss Battle mode** (`NH-15`, done): a game-style mode where the words the user got wrong become a boss with a health bar.
     - The boss pool is the hardest words (FR-ST-2) or the wrong answers of the last session; the mode needs at least 3 such words, else it is disabled with a message.
     - Each correct answer damages the boss; a wrong answer heals it a little. The boss is defeated when all words are answered correctly.
     - Questions use Quiz or Writing input. The boss uses one of the mascots in `/docs/mascots` and reacts (NH-12 reaction pools).
-    - SR results follow section 7 and FR-TRN-4. Damage and healing rules are pure functions in `core/` with unit tests. Needs no schema change.
+    - SR results follow section 7 and FR-TRN-4. Damage and healing rules are pure functions in `core/` with unit tests.
+    - Decisions (2026-11-03):
+      - Needs one **approved schema change**: `WordProgress.lastResult` (optional, so older stored data and export files still load; `applyResult` sets it). The last session's mistakes are the words whose `lastResult` is `wrong` among the answers around the newest `lastSeenAt`, where answers more than 30 minutes apart belong to different sessions (`core/stats.ts`, `lastSessionMistakes`). `FORMAT_VERSION` stays 1.
+      - Pool: `#/train/boss` uses the last session's mistakes when there are at least 3, else the hardest words; `#/train/boss/mistakes` and `#/train/boss/hardest` force one. At most 10 words. The home screen offers "Practise last session's mistakes" (`#/train/flashcards/mistakes`) next to "Practise your hardest words".
+      - A word answered wrongly comes back until it is answered correctly (`retryUntilCorrect`). The first try is a Quiz question, a returning word is a Writing question. Only first answers change progress (FR-TRN-4).
+      - Health: 10 per word. A correct or assisted answer deals `floor(hp / remaining words)` damage, so the bar reaches 0 exactly when the last word is solved; a wrong answer heals 3 (capped at full health).
+      - The boss is a random mascot other than the user's own. It reacts with a flinch (hit) or a grin (heal) and a polite status line; the user's own mascot keeps reacting through the NH-12 pools.
+      - Completing a boss fight unlocks the "Boss slayer" trophy.
 16. **Speed Round mode** (`NH-16`): a 60-second sprint of quiz-style cards with a combo multiplier.
     - Words still come from the SR queue (FR-TRN-2); the first answer per word updates progress (FR-TRN-4). The timer is injected in `core/`, never read from the clock directly.
     - Correct answers raise the combo (score multiplier); a wrong answer resets it. The round ends when time runs out.

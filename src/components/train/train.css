@@ -23,6 +23,7 @@
 [data-mode="hangman"],
 [data-mode="scramble"],
 [data-mode="listening"],
+[data-mode="boss"],
 [data-mode="matching"] {
   --mode-color: var(--color-accent);
 }
@@ -359,17 +360,67 @@
     animation: none;
   }
 }
-
-/* Listening (NH-14): label on its own line, input and button side by side with room between them. */
-.listening-form {
+/* Boss Battle (NH-15): the boss and its health bar sit above the question. */
+.boss-hud {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
 }
-.listening-form label {
-  flex: 1 0 100%;
+.boss-hud .mascot-stage {
+  margin: 0;
 }
-.listening-form .writing-input {
-  flex: 1 1 12rem;
+.boss-bars {
+  flex: 1 1 14rem;
+  min-inline-size: 0;
+}
+.boss-name {
+  margin: 0;
+  font-weight: 700;
+}
+.boss-health {
+  display: block;
+  inline-size: 100%;
+  block-size: 1.5rem;
+  accent-color: var(--color-wrong);
+}
+.boss-health-text,
+.boss-status {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+.boss-status {
+  min-block-size: 1.5em;
+  font-weight: 600;
+}
+.boss-retry {
+  margin-block-end: var(--space-2);
+  font-weight: 600;
+}
+.boss-victory {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+.boss-victory h2 {
+  margin: 0;
+}
+.boss-victory-art {
+  flex: none;
+  inline-size: 5rem;
+  block-size: 5rem;
+  object-fit: contain;
+  /* A defeated boss lies flat and faded. */
+  opacity: 0.7;
+  transform: rotate(-90deg);
 }

@@ -119,3 +119,18 @@ describe("isDue and countDue", () => {
     expect(countDue([], NOW)).toBe(0);
   });
 });
+
+describe("applyResult lastResult (NH-15)", () => {
+  it.each(["correct", "wrong", "assisted"] as const)(
+    "NH-15: remembers a %s answer as the last result",
+    (result) => {
+      expect(applyResult(makeProgress(), result, NOW).lastResult).toBe(result);
+    },
+  );
+
+  it("NH-15: a later answer replaces the last result", () => {
+    const wrong = applyResult(makeProgress(), "wrong", NOW);
+
+    expect(applyResult(wrong, "correct", NOW + 1).lastResult).toBe("correct");
+  });
+});

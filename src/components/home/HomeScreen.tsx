@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { dayPeriod, homeSummary } from "../../core/home";
-import { hardestWords } from "../../core/stats";
+import { hardestWords, lastSessionMistakes } from "../../core/stats";
 import { MIN_WORDS } from "../../core/trainingEligibility";
 import { useActiveSet } from "../../hooks/useActiveSet";
 import { useLibrary } from "../../hooks/useLibrary";
@@ -32,9 +32,10 @@ function SetHome({ set }: { readonly set: WordSet }) {
       wordCount: setPairs.length,
       summary: homeSummary(setPairs, setProgress, setActivity, now, dailyGoal),
       hasHardWords: hardestWords(setPairs, setProgress, 1).length > 0,
+      hasMistakes: lastSessionMistakes(setPairs, setProgress).length > 0,
     };
   }, [pairs, progress, activity, set.id, now, dailyGoal]);
-  const { wordCount, summary, hasHardWords } = view;
+  const { wordCount, summary, hasHardWords, hasMistakes } = view;
   const { stats } = summary;
 
   if (wordCount === 0) {
@@ -91,6 +92,18 @@ function SetHome({ set }: { readonly set: WordSet }) {
               })}
             >
               {t("home.hardest")}
+            </a>
+          )}
+          {hasMistakes && (
+            <a
+              className="button button-secondary button-link"
+              href={routeToHash({
+                name: "trainMode",
+                mode: "flashcards",
+                focus: "mistakes",
+              })}
+            >
+              {t("home.mistakes")}
             </a>
           )}
         </div>

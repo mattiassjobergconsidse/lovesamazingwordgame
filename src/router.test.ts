@@ -29,6 +29,15 @@ describe("parseRoute", () => {
     ["#/train/hangman", { name: "trainMode", mode: "hangman" }],
     ["#/train/scramble", { name: "trainMode", mode: "scramble" }],
     ["#/train/listening", { name: "trainMode", mode: "listening" }],
+    ["#/train/boss", { name: "trainMode", mode: "boss" }],
+    [
+      "#/train/boss/mistakes",
+      { name: "trainMode", mode: "boss", focus: "mistakes" },
+    ],
+    [
+      "#/train/flashcards/mistakes",
+      { name: "trainMode", mode: "flashcards", focus: "mistakes" },
+    ],
     [
       "#/train/flashcards/hardest",
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
@@ -72,6 +81,8 @@ describe("routeToHash", () => {
       { name: "train" },
       { name: "trainMode", mode: "writing" },
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
+      { name: "trainMode", mode: "boss" },
+      { name: "trainMode", mode: "boss", focus: "mistakes" },
       { name: "stats" },
       { name: "games" },
       { name: "game", game: "simon" },

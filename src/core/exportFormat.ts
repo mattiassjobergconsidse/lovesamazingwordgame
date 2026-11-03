@@ -1,4 +1,5 @@
 import type {
+  AnswerResult,
   Box,
   DailyActivity,
   WordPair,
@@ -361,6 +362,7 @@ function readProgress(raw: unknown, path: string, report: Report) {
   if (boxNumber !== undefined && box === undefined) {
     report(`${path}.box`, "outOfRange");
   }
+  const lastResult = readLastResult(raw, path, report);
   if (
     pairId === undefined ||
     setId === undefined ||
@@ -369,7 +371,8 @@ function readProgress(raw: unknown, path: string, report: Report) {
     correct === undefined ||
     wrong === undefined ||
     streak === undefined ||
-    lastSeenAt === undefined
+    lastSeenAt === undefined ||
+    !lastResult.valid
   ) {
     return undefined;
   }
@@ -382,8 +385,26 @@ function readProgress(raw: unknown, path: string, report: Report) {
     wrong,
     lastSeenAt,
     streak,
+    ...(lastResult.value === undefined ? {} : { lastResult: lastResult.value }),
   };
   return progress;
+}
+
+/** Reads the optional `lastResult` (NH-15); files from before it existed simply lack it. */
+function readLastResult(
+  raw: Record<string, unknown>,
+  path: string,
+  report: Report,
+): { readonly valid: boolean; readonly value?: AnswerResult } {
+  const value = raw.lastResult;
+  if (value === undefined) {
+    return { valid: true };
+  }
+  if (value === "correct" || value === "wrong" || value === "assisted") {
+    return { valid: true, value };
+  }
+  report(`${path}.lastResult`, "wrongType");
+  return { valid: false };
 }
 
 const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;

@@ -86,15 +86,30 @@ export interface SessionState {
   readonly total: number;
   /** First answer per pair ID; only these change progress (FR-TRN-4). */
   readonly firstResults: ReadonlyMap<string, AnswerResult>;
+  /** Every answer in order, repeats included; the Boss Battle derives its health from it (NH-15). */
+  readonly answers: readonly AnswerResult[];
+  /** When true a wrong answer re-queues the word again until it is solved (NH-15). */
+  readonly retryUntilCorrect: boolean;
+}
+
+/** Options of {@link startSession}. */
+export interface StartSessionOptions {
+  /** Keep re-queuing a word until it is answered without a mistake; default is once (FR-TRN-7). */
+  readonly retryUntilCorrect?: boolean;
 }
 
 /** Starts a session that presents `pairs` in the given order. */
-export function startSession(pairs: readonly WordPair[]): SessionState {
+export function startSession(
+  pairs: readonly WordPair[],
+  options: StartSessionOptions = {},
+): SessionState {
   return {
     queue: pairs.map((pair) => ({ pair, isRepeat: false })),
     position: 0,
     total: pairs.length,
     firstResults: new Map(),
+    answers: [],
+    retryUntilCorrect: options.retryUntilCorrect ?? false,
   };
 }
 
@@ -124,15 +139,19 @@ export function answerCard(
   if (card === null) {
     return state;
   }
+  const answers = [...state.answers, result];
+  const requeue =
+    result === "wrong" && (!card.isRepeat || state.retryUntilCorrect);
+  const queue = requeue
+    ? [...state.queue, { pair: card.pair, isRepeat: true }]
+    : state.queue;
   if (card.isRepeat) {
-    return { ...state, position: state.position + 1 };
+    return { ...state, queue, answers, position: state.position + 1 };
   }
   return {
     ...state,
-    queue:
-      result === "wrong"
-        ? [...state.queue, { pair: card.pair, isRepeat: true }]
-        : state.queue,
+    queue,
+    answers,
     position: state.position + 1,
     firstResults: new Map(state.firstResults).set(card.pair.id, result),
   };
@@ -187,6 +206,7 @@ export function answerRound(
   results: ReadonlyMap<string, AnswerResult>,
 ): { readonly state: SessionState; readonly answered: AnsweredCard[] } {
   const answered: AnsweredCard[] = [];
+  const answers = [...state.answers];
   const firstResults = new Map(state.firstResults);
   let position = state.position;
   for (;;) {
@@ -196,10 +216,11 @@ export function answerRound(
       break;
     }
     answered.push({ card, result });
+    answers.push(result);
     if (!card.isRepeat) {
       firstResults.set(card.pair.id, result);
     }
     position += 1;
   }
-  return { state: { ...state, position, firstResults }, answered };
+  return { state: { ...state, position, firstResults, answers }, answered };
 }

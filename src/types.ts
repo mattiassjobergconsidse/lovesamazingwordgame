@@ -46,6 +46,11 @@ export interface WordProgress {
   readonly lastSeenAt: number | null;
   /** Consecutive correct answers. */
   readonly streak: number;
+  /**
+   * Result of the latest first answer (NH-15). Optional so records stored before it
+   * existed still load; they simply count as having no known last result.
+   */
+  readonly lastResult?: AnswerResult;
 }
 
 export type UiLanguage = "sv" | "en";
