@@ -445,7 +445,7 @@ describe("last session mistakes on the home screen and in other modes", () => {
     ).toHaveAttribute("href", "#/train/flashcards/mistakes");
   });
 
-  it("NH-15: the home screen has no mistakes link when the last session was clean", async () => {
+  it("NH-15: the home screen disables the mistakes button when the last session was clean", async () => {
     window.location.hash = "#/";
     await seedBoss({});
     render(<App />);
@@ -454,6 +454,9 @@ describe("last session mistakes on the home screen and in other modes", () => {
     expect(
       screen.queryByRole("link", { name: "Practise last session's mistakes" }),
     ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Practise last session's mistakes" }),
+    ).toBeDisabled();
   });
 
   it("NH-15: a mistakes session contains only the mistakes of the last session", async () => {

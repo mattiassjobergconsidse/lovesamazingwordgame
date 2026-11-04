@@ -2,14 +2,20 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_MASCOT, MASCOT_IDS, isMascotId } from "./mascots";
 
 describe("mascots", () => {
-  it("NH-12: offers the six mascots with Volt first and as default", () => {
+  it("NH-12: offers the twelve mascots with Volt first and as default", () => {
     expect(MASCOT_IDS).toEqual([
       "volt",
-      "blaze",
-      "foxel",
-      "glosa",
-      "bubo",
-      "umbra",
+      "pyro",
+      "luna",
+      "scout",
+      "twinkle",
+      "shadow",
+      "sprout",
+      "raptor",
+      "jelly",
+      "golem",
+      "drake",
+      "amber",
     ]);
     expect(DEFAULT_MASCOT).toBe("volt");
   });

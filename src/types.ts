@@ -64,7 +64,19 @@ export type ResolvedTheme = Exclude<Theme, "system">;
 export type DirectionMode = "random" | Direction;
 export type SessionSize = 10 | 20 | 50 | "all";
 /** Mascots the user can choose between (NH-12). */
-export type MascotId = "volt" | "blaze" | "foxel" | "glosa" | "bubo" | "umbra";
+export type MascotId =
+  | "volt"
+  | "pyro"
+  | "luna"
+  | "scout"
+  | "twinkle"
+  | "shadow"
+  | "sprout"
+  | "raptor"
+  | "jelly"
+  | "golem"
+  | "drake"
+  | "amber";
 /** Answers per day that fill the daily goal ring on the home screen. */
 export type DailyGoal = 5 | 10 | 15 | 20 | 30 | 50;
 

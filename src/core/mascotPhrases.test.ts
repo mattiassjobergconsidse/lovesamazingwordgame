@@ -12,8 +12,8 @@ import {
 
 describe("mascotPhraseKey", () => {
   it("NH-12: builds the dictionary key from mascot, event and index", () => {
-    expect(mascotPhraseKey("foxel", "correct", 2)).toBe(
-      "mascot.foxel.correct.2",
+    expect(mascotPhraseKey("twinkle", "correct", 2)).toBe(
+      "mascot.twinkle.correct.2",
     );
   });
 });
@@ -30,8 +30,8 @@ describe("pickMascotPhrase", () => {
   });
 
   it("NH-12: is deterministic for the same rng seed", () => {
-    const first = pickMascotPhrase("bubo", "greeting", makeRng(7));
-    const second = pickMascotPhrase("bubo", "greeting", makeRng(7));
+    const first = pickMascotPhrase("luna", "greeting", makeRng(7));
+    const second = pickMascotPhrase("luna", "greeting", makeRng(7));
     expect(first).toEqual(second);
   });
 
@@ -39,7 +39,7 @@ describe("pickMascotPhrase", () => {
     for (const previous of [1, 2, 3] as const) {
       for (const value of [0, 0.3, 0.6, 0.99]) {
         const { index } = pickMascotPhrase(
-          "glosa",
+          "jelly",
           "streak",
           () => value,
           previous,
@@ -50,8 +50,8 @@ describe("pickMascotPhrase", () => {
   });
 
   it("NH-12: returns the key matching the picked index", () => {
-    const { key, index } = pickMascotPhrase("umbra", "trophy", () => 0.5);
-    expect(key).toBe(`mascot.umbra.trophy.${String(index)}`);
+    const { key, index } = pickMascotPhrase("shadow", "trophy", () => 0.5);
+    expect(key).toBe(`mascot.shadow.trophy.${String(index)}`);
   });
 
   it("NH-12: defines every event once", () => {

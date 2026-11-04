@@ -130,6 +130,9 @@ describe("home screen (SPEC 7, #/)", () => {
     expect(
       screen.queryByRole("link", { name: "Practise your hardest words" }),
     ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Practise your hardest words" }),
+    ).toBeDisabled();
     expect(screen.getByText("No answers yet")).toBeInTheDocument();
   });
 

@@ -82,7 +82,7 @@ function SetHome({ set }: { readonly set: WordSet }) {
           >
             {readyToPractise ? t("home.due.start") : t("home.due.anyway")}
           </a>
-          {hasHardWords && (
+          {hasHardWords ? (
             <a
               className="button button-secondary button-link"
               href={routeToHash({
@@ -93,8 +93,19 @@ function SetHome({ set }: { readonly set: WordSet }) {
             >
               {t("home.hardest")}
             </a>
+          ) : (
+            <span className="home-action-tip" title={t("home.hardest.empty")}>
+              <button
+                type="button"
+                className="button button-secondary"
+                disabled
+                title={t("home.hardest.empty")}
+              >
+                {t("home.hardest")}
+              </button>
+            </span>
           )}
-          {hasMistakes && (
+          {hasMistakes ? (
             <a
               className="button button-secondary button-link"
               href={routeToHash({
@@ -105,6 +116,17 @@ function SetHome({ set }: { readonly set: WordSet }) {
             >
               {t("home.mistakes")}
             </a>
+          ) : (
+            <span className="home-action-tip" title={t("home.mistakes.empty")}>
+              <button
+                type="button"
+                className="button button-secondary"
+                disabled
+                title={t("home.mistakes.empty")}
+              >
+                {t("home.mistakes")}
+              </button>
+            </span>
           )}
         </div>
       </section>

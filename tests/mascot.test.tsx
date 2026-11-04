@@ -19,7 +19,20 @@ afterEach(async () => {
   await deleteAppDatabase();
 });
 
-const MASCOTS = ["Volt", "Blaze", "Foxel", "Glosa", "Bubo", "Umbra"] as const;
+const MASCOTS = [
+  "Volt",
+  "Pyro",
+  "Luna",
+  "Scout",
+  "Twinkle",
+  "Shadow",
+  "Sprout",
+  "Raptor",
+  "Jelly",
+  "Golem",
+  "Drake",
+  "Amber",
+] as const;
 
 function pool(
   mascot: MascotId,
@@ -99,11 +112,11 @@ describe("mascot picker (settings)", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(await screen.findByRole("radio", { name: /^Foxel/ }));
+    await user.click(await screen.findByRole("radio", { name: /^Twinkle/ }));
 
-    expect(screen.getByRole("radio", { name: /^Foxel/ })).toBeChecked();
+    expect(screen.getByRole("radio", { name: /^Twinkle/ })).toBeChecked();
     await waitFor(async () => {
-      expect((await readStoredSettings())?.mascot).toBe("foxel");
+      expect((await readStoredSettings())?.mascot).toBe("twinkle");
     });
   });
 
@@ -116,9 +129,9 @@ describe("mascot picker (settings)", () => {
     volt.focus();
     await user.keyboard("{ArrowDown}");
 
-    expect(screen.getByRole("radio", { name: /^Blaze/ })).toBeChecked();
+    expect(screen.getByRole("radio", { name: /^Pyro/ })).toBeChecked();
     await waitFor(async () => {
-      expect((await readStoredSettings())?.mascot).toBe("blaze");
+      expect((await readStoredSettings())?.mascot).toBe("pyro");
     });
   });
 
@@ -188,12 +201,12 @@ describe("talking mascot on the home screen", () => {
   });
 
   it("NH-12: greets with a phrase of the chosen mascot in a polite live region", async () => {
-    await seedWeek(3, { mascot: "umbra" });
+    await seedWeek(3, { mascot: "shadow" });
     render(<App />);
 
     const text = await bubbleText();
 
-    expect(pool("umbra", "greeting")).toContain(text);
+    expect(pool("shadow", "greeting")).toContain(text);
     const bubble = screen.getByText(text);
     expect(bubble.closest("[aria-live]")).toHaveAttribute(
       "aria-live",
@@ -203,15 +216,15 @@ describe("talking mascot on the home screen", () => {
     expect(document.activeElement).not.toBe(bubble);
     expect(screen.getByTestId("mascot")).toHaveAttribute(
       "data-mascot",
-      "umbra",
+      "shadow",
     );
   });
 
   it("NH-12: greets in Swedish when the UI is Swedish", async () => {
-    await seedWeek(3, { uiLanguage: "sv", mascot: "glosa" });
+    await seedWeek(3, { uiLanguage: "sv", mascot: "jelly" });
     render(<App />);
 
-    expect(pool("glosa", "greeting", sv)).toContain(await bubbleText());
+    expect(pool("jelly", "greeting", sv)).toContain(await bubbleText());
   });
 
   it("NH-12: stays silent but still shows the mascot when talking is off", async () => {
@@ -267,14 +280,14 @@ describe("talking mascot in a session", () => {
   }
 
   it("NH-12: welcomes the user on the start panel", async () => {
-    await seedWeek(3, { mascot: "blaze" });
+    await seedWeek(3, { mascot: "pyro" });
     render(<App />);
 
-    expect(pool("blaze", "modeSelect")).toContain(await bubbleText());
+    expect(pool("pyro", "modeSelect")).toContain(await bubbleText());
   });
 
   it("NH-12: stays quiet until the first answer, then reacts to a correct one", async () => {
-    await seedWeek(5, { mascot: "foxel" });
+    await seedWeek(5, { mascot: "twinkle" });
     const user = userEvent.setup();
     render(<App />);
     await start(user);
@@ -282,18 +295,18 @@ describe("talking mascot in a session", () => {
     expect(document.querySelector(".mascot-bubble")).toBeNull();
     await answer(user, "I knew it");
 
-    expect(pool("foxel", "correct")).toContain(await bubbleText());
+    expect(pool("twinkle", "correct")).toContain(await bubbleText());
   });
 
   it("NH-12: reacts to a wrong answer", async () => {
-    await seedWeek(5, { mascot: "bubo" });
+    await seedWeek(5, { mascot: "luna" });
     const user = userEvent.setup();
     render(<App />);
     await start(user);
 
     await answer(user, "Not yet");
 
-    expect(pool("bubo", "wrong")).toContain(await bubbleText());
+    expect(pool("luna", "wrong")).toContain(await bubbleText());
   });
 
   it("NH-12: cheers about a streak of three correct answers", async () => {
@@ -354,7 +367,7 @@ describe("talking mascot in a session", () => {
   });
 
   it("NH-12: celebrates the first trophy at the end of the session", async () => {
-    await seedWeek(1, { mascot: "glosa" });
+    await seedWeek(1, { mascot: "jelly" });
     const user = userEvent.setup();
     render(<App />);
     await start(user);
@@ -364,11 +377,11 @@ describe("talking mascot in a session", () => {
     expect(
       await screen.findByRole("heading", { name: "Session complete" }),
     ).toBeVisible();
-    expect(pool("glosa", "trophy")).toContain(await bubbleText());
+    expect(pool("jelly", "trophy")).toContain(await bubbleText());
   });
 
   it("NH-12: comments on a session with mistakes when no trophy was won", async () => {
-    await seedWeek(2, { mascot: "umbra" });
+    await seedWeek(2, { mascot: "shadow" });
     const user = userEvent.setup();
     render(<App />);
     await start(user);
@@ -385,16 +398,16 @@ describe("talking mascot in a session", () => {
     expect(
       await screen.findByRole("button", { name: "Practise mistakes" }),
     ).toBeVisible();
-    expect(pool("umbra", "sessionDone")).toContain(await bubbleText());
+    expect(pool("shadow", "sessionDone")).toContain(await bubbleText());
   });
 });
 
 describe("talking mascot on the trophy screen", () => {
   it("NH-12: congratulates on the trophy screen", async () => {
     window.location.hash = "#/trophies";
-    await seedWeek(3, { mascot: "bubo" });
+    await seedWeek(3, { mascot: "luna" });
     render(<App />);
 
-    expect(pool("bubo", "trophy")).toContain(await bubbleText());
+    expect(pool("luna", "trophy")).toContain(await bubbleText());
   });
 });
