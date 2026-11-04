@@ -373,8 +373,8 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - Games are short (about 1-2 minutes), need no backend, work with touch and keyboard, and are not tied to the word data.
     - Unlock state is stored locally; the unlock rule is a pure function in `core/` with unit tests.
 12. **Selectable and talkative mascots** (`NH-12`, done): the user can choose which mascot is used, and mascots stand out more wherever they are shown.
-    - **Choice**: a mascot picker in Settings with a preview of each mascot from the pool in `/docs/mascots` (Volt, Blaze, Foxel, Glosa, Bubo, Umbra, ...).
-      The mascot SVGs are imported as modules (FR-BP-3). The choice is persisted in settings; adding it changes the settings format, so keep the field optional with a default (Volt) so older stored settings still load.
+    - **Choice**: a mascot picker in Settings with a preview of each mascot from the pool in `/docs/mascots` (Volt, Pyro, Luna, Scout, Twinkle, Shadow, Sprout, Raptor, Jelly, Golem, Drake, Amber).
+      The mascot PNGs are imported as modules (FR-BP-3). The choice is persisted in settings; adding it changes the settings format, so keep the field optional with a default (Volt) so older stored settings still load.
     - **Talk bubbles**: wherever the mascot is shown (home greeting, mode picker, training modes, session end screen, trophies) it "says" things in a speech bubble
       next to it, and is drawn larger and with a small idle/reaction animation so it stands out.
     - **Reactions**: the mascot reacts to correct/wrong answers, streaks, trophies, the home greeting and mode selection. Each event type has a pool of 3-5 phrases
@@ -417,6 +417,41 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - Answer by buttons, swipe right/left, or keys `Right`/`Left` (or `T`/`F`).
     - Right judgement = `correct`, wrong judgement = `wrong`. Follows FR-TRN and FR-ACT-1 (minimum 2 words). Needs no schema change.
     - Proposal building is pure in `core/` with injected rng and unit tests.
+18. **Final quality gate** (`NH-18`): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
+    Results are written to the existing `codereview_*.md` files (or one new file per area) with findings ranked by severity.
+    Each finding is fixed (with a failing regression test first, FR-TEST-3) or tracked as an issue; nothing is silently ignored. Fixes follow one focused PR each and need no new dependencies unless approved.
+    - **Security analysis** (`codereview_security.md`):
+      - Dependencies: `npm audit` (or the CVE check) on production and dev dependencies; fix or document every finding; confirm the lockfile is committed.
+      - Untrusted input: JSON/CSV/bulk-paste import and the share-link hash (NH-5) are strictly validated with type guards; size limits and protection against decompression bombs, prototype pollution and huge or malformed data; no partial import (FR-IO-2).
+      - XSS and injection: no `dangerouslySetInnerHTML`, `eval` or dynamic script/URL construction from user data; user text is always rendered as text; CSV export guards against formula injection (cells starting with `=`, `+`, `-`, `@`).
+      - Browser hardening: Content-Security-Policy (meta tag, as GitHub Pages has no headers), no third-party requests, no tracking, no secrets in the repo or bundle.
+      - Service worker (NH-1): scope, cache versioning and cleanup of old caches, no caching of unexpected origins, safe update flow.
+      - Storage: data read from IndexedDB and `localStorage` is validated as `unknown` before use; quota and corruption errors are handled.
+      - CI/CD: least-privilege `permissions`, pinned action versions, no secrets exposed to pull requests from forks (FR-BP-9).
+    - **Code quality analysis** (`codereview_code_quality.md`, `codereview_architecture.md`):
+      - Lint, format, typecheck and build pass with zero warnings; no `any`, `!`, unjustified `as` or `eslint-disable` (FR-BP-1, FR-BP-8).
+      - Architecture rules hold: dependency direction `components -> hooks -> storage | core`, `core/` pure (no `Date.now()`, `Math.random()`, browser APIs), no direct IndexedDB access in components.
+      - Maintainability: oversized components, hooks and functions are split; duplicated logic across the training modes is extracted; dead code, unused exports and stale files are removed; names are clear.
+      - Error handling: every external call (storage, speech, clipboard, file download, audio, vibration) handles failure and surfaces a translated message; every mode has an error boundary.
+      - Docs: TSDoc on exported symbols in `core/`, `storage/`, `hooks/` (FR-BP-7); `README.md`, `CLAUDE.md` and this file match the actual behaviour and structure.
+      - Language rules: grep confirms no Swedish outside `src/i18n/sv.ts` and `src/data/`; all files UTF-8 without BOM with LF endings (FR-LANG-*).
+    - **Test coverage and relevance analysis** (`tests/TRACEABILITY.md`):
+      - `npm run test:coverage` meets all thresholds in section 10.3; no files excluded just to reach a target.
+      - Relevance, not only numbers: review tests for meaningful assertions, behaviour over implementation details (FR-BP-6), and one behaviour per test; remove or rewrite tests that only execute code.
+      - Spot-check critical logic (spaced repetition, answer checking, session queue, import validation, boss/health rules) by deliberately breaking it and confirming a test fails (manual mutation check).
+      - Traceability: every `FR-*` and `NH-*` requirement maps to at least one test; gaps and orphan tests are listed and closed.
+      - Edge cases from FR-TEST-4 are covered for every mode; the suite is deterministic, independent and fast (FR-TEST-5, FR-TEST-6), checked by running it several times in random order.
+    - **Anything else relevant**:
+      - Accessibility: `vitest-axe` on every screen and mode, a manual keyboard-only pass of every flow, screen reader spot-check of live regions, contrast in every theme (FR-THEME-2) and reduced-motion behaviour.
+      - Performance: `npm run build` size against the budget in section 9, no layout shift, responsiveness under load (large sets of 500+ words).
+      - Data safety: export/import round-trip and backward compatibility with data from older versions, `formatVersion` handling, schema migration test from the previous schema version, "Reset all data" really clears everything including caches.
+      - Cross-browser and device: latest 2 versions of Chrome, Edge, Firefox and Safari (iOS 16+), 360 px width, offline use after first load, installable PWA, IndexedDB unavailable (private mode) message.
+      - i18n: `sv` and `en` complete and consistent, correct plurals and number formatting, no text overflow in either language.
+      - Privacy and legal: confirm no analytics or tracking, licences of dependencies and bundled assets (mascots, emoji, sounds) are compatible with `LICENSE`.
+      - Release readiness: Pages deploy verified from a clean checkout (`npm ci`), `base` path and asset URLs correct, SPEC phase checklist and `tests/TRACEABILITY.md` up to date.
+    - Done when: all areas above are reviewed, critical and high findings are fixed, the remaining ones have issues, and the summary of findings and fixes is added to the PR description.
+
+```
 
 Common requirements for NH-13 to NH-17: each mode is its own PR; it appears in the mode picker, home mode cards and keyboard shortcut help (NH-6);
 it has an error boundary (FR-BP-2), translated labels in `sv`/`en`, friendly visuals (NH-8), tests linked to requirement IDs in
@@ -581,3 +616,4 @@ Open questions (ask the user, do not guess):
 ## 14. Out of scope
 
 Accounts, cloud sync, backend, multiplayer/leaderboards, AI-generated words, analytics/tracking, native apps, images/audio per word.
+```

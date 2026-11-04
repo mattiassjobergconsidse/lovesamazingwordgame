@@ -40,14 +40,14 @@ describe("useMascotSpeech", () => {
 
   it("NH-12: says a phrase of the chosen mascot picked with the injected rng", () => {
     const { result } = renderHook(() => useMascotSpeech(() => 0), {
-      wrapper: wrapperFor(makeSettings({ mascot: "bubo" })),
+      wrapper: wrapperFor(makeSettings({ mascot: "luna" })),
     });
 
     act(() => {
       result.current.say("correct");
     });
 
-    expect(result.current.message).toBe(en["mascot.bubo.correct.1"]);
+    expect(result.current.message).toBe(en["mascot.luna.correct.1"]);
     expect(result.current.mood).toBe("cheer");
   });
 
