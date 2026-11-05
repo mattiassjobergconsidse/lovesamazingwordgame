@@ -1,6 +1,7 @@
 /** The unlockable mini-games (NH-11). */
 export const GAME_IDS = ["memory", "catch", "simon"] as const;
 
+/** Identifier of one mini-game. */
 export type GameId = (typeof GAME_IDS)[number];
 
 /** Emoji shown next to each game. */
@@ -69,10 +70,10 @@ export function grantUnlock(earnedAt: number): GameUnlock {
  * @returns The unlock, or `null` when the value is missing or malformed.
  */
 export function parseGameUnlock(value: unknown): GameUnlock | null {
-  if (typeof value !== "object" || value === null) {
+  if (typeof value !== "object" || value === null || !("earnedAt" in value)) {
     return null;
   }
-  const earnedAt = (value as Record<string, unknown>).earnedAt;
+  const earnedAt = value.earnedAt;
   return typeof earnedAt === "number" && Number.isFinite(earnedAt)
     ? { earnedAt }
     : null;

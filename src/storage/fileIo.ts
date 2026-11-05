@@ -2,11 +2,18 @@
 export const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 
 /**
+ * Time the object URL stays valid after the click. Revoking at once can cancel
+ * the download in some browsers, which start it asynchronously.
+ */
+export const OBJECT_URL_REVOKE_DELAY_MS = 10_000;
+
+/**
  * Offers text as a file download.
  *
  * @param fileName Suggested name of the saved file.
  * @param content File content.
  * @param mimeType Media type, e.g. `application/json`.
+ * @throws If the browser refuses to create or click the link; the temporary link is removed first.
  */
 export function downloadTextFile(
   fileName: string,
@@ -15,12 +22,17 @@ export function downloadTextFile(
 ): void {
   const url = URL.createObjectURL(new Blob([content], { type: mimeType }));
   const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  try {
+    link.href = url;
+    link.download = fileName;
+    document.body.append(link);
+    link.click();
+  } finally {
+    link.remove();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, OBJECT_URL_REVOKE_DELAY_MS);
+  }
 }
 
 /**

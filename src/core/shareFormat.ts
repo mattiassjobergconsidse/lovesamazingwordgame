@@ -5,7 +5,10 @@ import { FORMAT_VERSION, parseExport, type ParseOutcome } from "./exportFormat";
 export const SHARE_VERSION = 1;
 
 /** Largest payload text accepted when opening a link, so a crafted link cannot exhaust memory. */
-export const SHARE_MAX_CHARS = 2_000_000;
+export const SHARE_MAX_CHARS = 200_000;
+
+/** Largest size a payload may inflate to; stops decompression bombs (a tiny link that expands to gigabytes). */
+export const SHARE_MAX_INFLATED_BYTES = 2 * 1024 * 1024;
 
 /** Link length above which some browsers and chat apps may cut the link. */
 export const SHARE_LONG_LINK_CHARS = 8000;

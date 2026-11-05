@@ -1,7 +1,7 @@
 import { useId } from "react";
+import { useSpeech } from "../../hooks/useSpeech";
 import { useVoiceLanguages } from "../../hooks/useVoiceLanguages";
 import { useI18n } from "../../i18n";
-import { isSpeechSupported } from "../../storage/speech";
 import type { WordSet } from "../../types";
 
 interface SpeechLanguageFieldsProps {
@@ -60,8 +60,9 @@ export function SpeechLanguageFields({
 }: SpeechLanguageFieldsProps) {
   const { t } = useI18n();
   const voices = useVoiceLanguages();
+  const { supported } = useSpeech();
 
-  if (!isSpeechSupported()) {
+  if (!supported) {
     return null;
   }
 

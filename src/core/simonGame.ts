@@ -1,7 +1,9 @@
 import type { Rng } from "./shuffle";
 
+/** One of the four coloured pads, numbered like the keys 1 to 4 (minus one). */
 export type Pad = 0 | 1 | 2 | 3;
 
+/** All pads in display order. */
 export const PADS: readonly Pad[] = [0, 1, 2, 3];
 
 /** Reaching this many rounds wins, which keeps a game at about two minutes. */

@@ -1,4 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makePair, makeSet } from "../../tests/factories";
+import {
+  buildSharePayload,
+  SHARE_MAX_CHARS,
+  SHARE_MAX_INFLATED_BYTES,
+} from "../core/shareFormat";
 import {
   buildShareLink,
   decodeSharePayload,
@@ -51,8 +57,28 @@ describe("share link encoding", () => {
 
   it("NH-5: rejects a payload that is too large", async () => {
     await expect(
-      decodeSharePayload(`r${"A".repeat(2_000_001)}`),
+      decodeSharePayload(`r${"A".repeat(SHARE_MAX_CHARS)}`),
     ).rejects.toThrow();
+  });
+
+  it("NH-19: rejects a tiny payload that inflates beyond the size limit", async () => {
+    const bomb = await encodeSharePayload(
+      JSON.stringify({ p: "x".repeat(SHARE_MAX_INFLATED_BYTES + 1) }),
+    );
+
+    expect(bomb.length).toBeLessThan(SHARE_MAX_CHARS);
+    await expect(decodeSharePayload(bomb)).rejects.toThrow(/too large/i);
+  });
+
+  it("NH-19: still accepts a large but legitimate set", async () => {
+    const json = buildSharePayload(
+      makeSet(),
+      Array.from({ length: 2000 }, (_, index) =>
+        makePair({ a: `word ${String(index)}`, b: `ord ${String(index)}` }),
+      ),
+    );
+
+    expect(await decodeSharePayload(await encodeSharePayload(json))).toBe(json);
   });
 
   it("NH-5: builds a link that keeps the page address and uses the share route", () => {

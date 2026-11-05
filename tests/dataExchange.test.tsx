@@ -1,6 +1,14 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type MockInstance,
+} from "vitest";
 import { axe } from "vitest-axe";
 import { App } from "../src/App";
 import { buildExport } from "../src/core/exportFormat";
@@ -21,6 +29,7 @@ interface Download {
 }
 
 let downloads: Download[];
+let clickSpy: MockInstance<() => void>;
 
 beforeEach(() => {
   downloads = [];
@@ -32,19 +41,18 @@ beforeEach(() => {
     }),
     revokeObjectURL: vi.fn(),
   });
-  vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
-    this: HTMLAnchorElement,
-  ) {
-    if (pendingBlob !== undefined) {
-      downloads.push({ fileName: this.download, blob: pendingBlob });
-    }
-  });
+  clickSpy = vi
+    .spyOn(HTMLAnchorElement.prototype, "click")
+    .mockImplementation(function (this: HTMLAnchorElement) {
+      if (pendingBlob !== undefined) {
+        downloads.push({ fileName: this.download, blob: pendingBlob });
+      }
+    });
 });
 
 afterEach(async () => {
   vi.restoreAllMocks();
-  Reflect.deleteProperty(URL, "createObjectURL");
-  Reflect.deleteProperty(URL, "revokeObjectURL");
+  // The stubs stay: the delayed revoke in downloadTextFile may fire after a test has ended.
   localStorage.clear();
   document.documentElement.removeAttribute("data-theme");
   await deleteAppDatabase();
@@ -190,6 +198,24 @@ describe("export", () => {
     );
 
     expect(downloads[0]?.fileName).toBe("week-1.json");
+  });
+
+  it("NH-19: tells the user in plain words when the browser refuses the download", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { set } = await seedWeek();
+    window.location.hash = `#/sets/${set.id}`;
+    const user = userEvent.setup();
+    await renderApp();
+    clickSpy.mockImplementation(() => {
+      throw new Error("blocked");
+    });
+
+    await user.click(
+      await screen.findByRole("button", { name: "Export as JSON" }),
+    );
+
+    expect(await screen.findByText(/could not be downloaded/i)).toBeVisible();
+    expect(downloads).toHaveLength(0);
   });
 
   it("FR-IO-3: exports one set as CSV with a header and a byte order mark", async () => {

@@ -389,8 +389,8 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - Multi-word answers keep the word boundaries visible (spaces are not shuffled).
     - Shuffle is pure in `core/` with injected rng and never returns the original order when the answer has 2+ distinct letters.
     - Follows FR-TRN and FR-ACT-1 (minimum 1 word). Needs no schema change.
-14. **Listening mode** (`NH-14`, done): the app speaks the term (via `storage/speech.ts`, NH-2) and the user picks the written word (Quiz-style options) or types it.
-    - The spoken term is the answer side; it is spoken on every card regardless of the auto-play setting. The prompt translation is shown only after answering.
+14. **Listening mode** (`NH-14`, done): the app speaks the prompt-side term (via `storage/speech.ts`, NH-2) and the user picks its translation in the other language (Quiz-style options) or types it. Only the spoken (prompt) side needs a voice language.
+    - The spoken term is the prompt side; it is spoken on every card regardless of the auto-play setting. Its text is shown only after answering (or via "Show the word", which counts as help).
     - Only available when speech is supported and the set has a voice language code for every direction that can occur (both with random direction, only the answer side when the direction is forced); otherwise the mode button is disabled with a clear message.
     - A replay button and a key (`R`) repeat the audio. Typed answers reuse `core/checkAnswer.ts`; choice answers reuse `core/quiz.ts`.
     - Hearing the word again or revealing the text counts as `assisted`.
@@ -433,7 +433,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
 18. **Order modes** (`NH-18`, done): the modes are ranked from easiest to hardest for a 10-year-old. The mode picker and home screen show them in this order (`TRAIN_MODES` in `router.ts`).
     - Order: Flashcards, True or False, Matching, Quiz, Word Scramble, Hangman, Listening, Speed Round, Writing, Boss Battle.
     - Groups if space is tight: easy (Flashcards, True or False, Matching, Quiz), medium (Scramble, Hangman, Listening, Speed Round), hard (Writing, Boss Battle).
-19. **Final quality gate** (`NH-19`): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
+19. **Final quality gate** (`NH-19`, done): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
     Results are written to the existing `codereview_*.md` files (or one new file per area) with findings ranked by severity.
     Each finding is fixed (with a failing regression test first, FR-TEST-3) or tracked as an issue; nothing is silently ignored. Fixes follow one focused PR each and need no new dependencies unless approved.
     - **Security analysis** (`codereview_security.md`):
@@ -465,6 +465,12 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       - i18n: `sv` and `en` complete and consistent, correct plurals and number formatting, no text overflow in either language.
       - Privacy and legal: confirm no analytics or tracking, licences of dependencies and bundled assets (mascots, emoji, sounds) are compatible with `LICENSE`.
       - Release readiness: Pages deploy verified from a clean checkout (`npm ci`), `base` path and asset URLs correct, SPEC phase checklist and `tests/TRACEABILITY.md` up to date.
+    - **Course assignment checks** (Hemuppgift 4, step 3 and 4): extra items for the polish pass; record them in the `codereview_*.md` files.
+      - Every finding lists file, line and a concrete action. Categories: (1) missing error handling for external calls (storage, file reads, speech, clipboard), (2) unclear error messages that do not help the user, (3) unhandled edge cases (empty lists, null values, invalid input), (4) missing documentation in complex code, (5) hardcoded values that should be configurable or named constants (limits, timeouts, 10 MB, 60 s, 30 min session gap).
+      - Secrets check before every deploy: no hardcoded secrets, API keys, passwords or connection strings; list every place that reads environment variables (expected: only `import.meta.env.PROD` and `BASE_URL` in `src/main.tsx`) and confirm missing values are handled. Confirm no sensitive files are tracked (`git ls-files`; `.env*`, `coverage/` and `dist/` stay ignored).
+      - At least three findings are fixed and committed (suggested: CSV formula injection #1, Content-Security-Policy #4, `downloadTextFile` try/finally and delayed revoke #8 in `codereview_security.md`).
+      - CI/CD: the workflow runs on push and pull requests to `main`, has named steps, separate build and deploy jobs (deploy needs build), lint/format/tests/audit/build gates, and no secrets. Verify once by pushing a change to `main` and confirming the deploy.
+      - Packaging: `README.md` follows the course template (what it does, requirements, install, configuration, run, architecture, tech stack, limitations, built with, CI badge); the repo is public; the CV line and demo outline in `docs/DELIVERY.md` are up to date.
     - Done when: all areas above are reviewed, critical and high findings are fixed, the remaining ones have issues, and the summary of findings and fixes is added to the PR description.
 
 ```

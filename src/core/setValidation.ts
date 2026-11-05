@@ -1,5 +1,6 @@
 /** Limits from the domain model (SPEC.md section 3). */
 export const SET_NAME_MAX = 60;
+/** Longest language label (FR-SET-1). */
 export const LANGUAGE_LABEL_MAX = 30;
 
 /** The editable text fields of a set. */
@@ -9,6 +10,7 @@ export interface SetFields {
   readonly langB: string;
 }
 
+/** Why a set field is invalid: empty, over its length limit, or a name already in use. */
 export type FieldError = "required" | "tooLong" | "duplicate";
 
 /** Per-field problems; a missing key means the field is valid. */

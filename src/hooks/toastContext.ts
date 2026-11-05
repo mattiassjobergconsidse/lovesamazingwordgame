@@ -11,11 +11,14 @@ export interface ToastOptions {
   readonly celebrate?: boolean;
 }
 
+/** Default time a toast stays on screen, in ms. */
 export const DEFAULT_TOAST_MS = 5000;
 
+/** What components can do with toasts. */
 export interface ToastApi {
   /** Shows a toast, replacing the one on screen. */
   readonly showToast: (options: ToastOptions) => void;
 }
 
+/** Context holding the toast API; read it with `useToast`. */
 export const ToastContext = createContext<ToastApi | null>(null);

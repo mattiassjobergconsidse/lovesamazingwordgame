@@ -1,7 +1,7 @@
 import { useEffect, type MouseEvent } from "react";
 import { useSettings } from "../../hooks/useSettings";
+import { useSpeech } from "../../hooks/useSpeech";
 import { useI18n } from "../../i18n";
-import { isSpeechSupported, speak, stopSpeaking } from "../../storage/speech";
 
 interface SpeakButtonProps {
   readonly text: string;
@@ -22,7 +22,7 @@ export function SpeakButton({
 }: SpeakButtonProps) {
   const { t } = useI18n();
   const { settings } = useSettings();
-  const supported = isSpeechSupported();
+  const { supported, speak, stop } = useSpeech();
   const playOnShow = supported && autoPlay && settings.speechEnabled;
 
   useEffect(() => {
@@ -30,9 +30,9 @@ export function SpeakButton({
       speak(text, lang);
     }
     return () => {
-      stopSpeaking();
+      stop();
     };
-  }, [playOnShow, text, lang]);
+  }, [playOnShow, text, lang, speak, stop]);
 
   if (!supported || lang === undefined) {
     return null;

@@ -1,6 +1,7 @@
 import { parseGameUnlock, type GameUnlock } from "../core/gameUnlock";
 import { getLocalStorage } from "./preferenceMirror";
 
+/** localStorage key of the earned mini-game play (NH-11); it is small, local-only state. */
 export const GAME_UNLOCK_KEY = "lovesamazingwordgame.gameUnlock";
 
 /**

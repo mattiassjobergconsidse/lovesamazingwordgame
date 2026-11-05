@@ -3,6 +3,7 @@ import type { Settings } from "../types";
 
 /** Keys shared with the inline script in `index.html`; keep both in sync. */
 export const THEME_MIRROR_KEY = "lovesamazingwordgame.theme";
+/** localStorage key of the UI language mirror; `index.html` reads the same key before first paint. */
 export const LANGUAGE_MIRROR_KEY = "lovesamazingwordgame.uiLanguage";
 
 /** The settings mirrored to localStorage so the page can paint correctly before IndexedDB loads. */

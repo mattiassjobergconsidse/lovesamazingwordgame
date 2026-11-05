@@ -19,6 +19,7 @@ export const MEMORY_EMOJIS = [
 /** Pairs on the board; 6 pairs make a 4x3 grid that takes about a minute. */
 export const MEMORY_PAIRS = 6;
 
+/** One card on the board; `matched` cards stay face up. */
 export interface MemoryCard {
   readonly emoji: string;
   readonly matched: boolean;

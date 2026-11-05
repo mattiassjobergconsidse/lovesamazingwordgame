@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDataExchange } from "../../hooks/useDataExchange";
+import { useToast } from "../../hooks/useToast";
 import { useI18n } from "../../i18n";
 import "../common/common.css";
 import "./data.css";
@@ -12,9 +13,16 @@ interface ExportPanelProps {
 /** Buttons that download a set or all data as JSON or CSV (FR-IO-1, FR-IO-3). */
 export function ExportPanel({ setId }: ExportPanelProps) {
   const { t } = useI18n();
+  const { showToast } = useToast();
   const { ready, exportSet, exportAll, exportCsv } = useDataExchange();
   const [includeProgress, setIncludeProgress] = useState(true);
   const headingId = setId === undefined ? "export-all" : "export-set";
+
+  const report = (downloaded: boolean) => {
+    if (!downloaded) {
+      showToast({ message: t("data.export.failed") });
+    }
+  };
 
   return (
     <section aria-labelledby={headingId} className="data-panel">
@@ -36,7 +44,7 @@ export function ExportPanel({ setId }: ExportPanelProps) {
             className="button"
             disabled={!ready}
             onClick={() => {
-              exportAll(includeProgress);
+              report(exportAll(includeProgress));
             }}
           >
             {t("data.export.all")}
@@ -48,7 +56,7 @@ export function ExportPanel({ setId }: ExportPanelProps) {
               className="button"
               disabled={!ready}
               onClick={() => {
-                exportSet(setId, includeProgress);
+                report(exportSet(setId, includeProgress));
               }}
             >
               {t("data.export.json")}
@@ -58,7 +66,7 @@ export function ExportPanel({ setId }: ExportPanelProps) {
               className="button button-secondary"
               disabled={!ready}
               onClick={() => {
-                exportCsv(setId);
+                report(exportCsv(setId));
               }}
             >
               {t("data.export.csv")}

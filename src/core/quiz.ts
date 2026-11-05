@@ -17,7 +17,7 @@ export interface QuizQuestion {
 }
 
 /**
- * Picks wrong answers from other pairs of the pool (FR-QZ-1, NH-17).
+ * Picks wrong answers from other pairs of the pool (FR-QZ-1, NH-17a).
  *
  * They are unique (after normalisation) and never equal the correct answer or its alternatives.
  *

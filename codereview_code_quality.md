@@ -1,46 +1,86 @@
 # Code Quality Review
 
-Scope: `src/` (excluding tests). Focus: functions doing more than one thing, unclear naming, missing error handling for external calls, code that is hard to read without comments.
+NH-19 final quality gate. Scope: `src/` (excluding tests), plus build and CI.
 
-## The five most serious problems
+## Gate results
 
-### 1. `speak()` lacks error handling (external call) - FIXED
+| Check                                             | Result                                                                                                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run lint` (strictTypeChecked + stylistic)    | 0 errors, 0 warnings                                                                                                                                                   |
+| `npm run format:check`                            | clean                                                                                                                                                                  |
+| `tsc -b` and `npm run build`                      | clean; JS 137 kB gzipped (budget 200 kB), CSS 6.4 kB gzipped                                                                                                           |
+| `any`, `!`, `@ts-ignore`, `eslint-disable`        | none; the only `eslint-disable-next-line` lines are 4 in test mocks (`addListener`/`removeListener`, required by the `MediaQueryList` type), each with rule and reason |
+| Type assertions (`as`, not `as const`)            | none left in non-test code (4 removed: `shuffle.ts`, `gameUnlock.ts`, `HomeScreen.tsx`, `bestScoresRepo.ts`)                                                           |
+| TSDoc on exports in `core/`, `storage/`, `hooks/` | complete (27 symbols documented in this pass; a scan finds none missing)                                                                                               |
+| `console.log`, TODO, FIXME                        | none                                                                                                                                                                   |
+| BOM, CRLF                                         | none in tracked text files                                                                                                                                             |
+| Swedish text outside `i18n/sv.ts` and `data/`     | none in code or comments; Swedish words with å/ä/ö appear only as test data, as the spec allows                                                                        |
+| Tests                                             | 102 files, all pass; coverage 97.7% lines, 93% branches (thresholds in `vite.config.ts` met)                                                                           |
 
-- File: `src/storage/speech.ts:57-69`
-- `speechSynthesis.cancel()/speak()` were called without `try`/`catch`. The function is called from `useEffect` (autoplay) and click handlers, so a throw could crash rendering. Inconsistent with `feedback.ts`, which guards its audio calls.
-- Fix applied: the calls are now wrapped in `try`/`catch` with an explanatory comment.
+## Fixed in this pass
 
-### 2. `downloadTextFile` lacks error handling and cleanup
+- `downloadTextFile` (`src/storage/fileIo.ts`): `try/finally`, delayed `revokeObjectURL`, error documented. Callers
+  report a failed download with a translated message (`data.export.failed`).
+- `shareLink.ts`: `pipe` renamed `transformBytes`, magic numbers replaced by `NO_SIZE_LIMIT`,
+  `SHARE_MAX_INFLATED_BYTES` and `BASE64URL_TEXT`, contracts and the stream-writer catches documented.
+- `session.ts`: doc comment that was glued to a closing brace, and the meaning of box 0 explained.
+- CSV import and export, JSON import and share links: named limits in `core/importLimits.ts`.
+- `speak()` error handling (earlier pass).
 
-- File: `src/storage/fileIo.ts:11-24` (callers in `src/hooks/useDataExchange.ts:82-136`)
-- No `try`/`finally`: if `Blob`/`click` throws, the object URL leaks and the error reaches the user without feedback. `revokeObjectURL` runs right after `click()`, which can cancel the download in some browsers.
-- Suggestion: use `try`/`finally`, delay the revoke (`setTimeout`), catch errors in callers and show a message.
+## Tracked (not changed in the gate)
 
-### 3. `readImportFile` does too many things
+### 1. `readImportFile` does too many things
 
-- File: `src/hooks/useDataExchange.ts:138-177`
-- Size check, file reading, format sniffing, JSON/CSV parsing, bundle building (ids, timestamps) and conflict detection in one callback. The size check is duplicated in `readFileText`.
-- Suggestion: extract a pure `parseImportText(...)` into `core/`; have `readFileText` throw a typed error.
+- `src/hooks/useDataExchange.ts`: size check, read, format sniffing, JSON or CSV parse, bundle building and conflict
+  detection in one callback. The size check is intentionally duplicated in `readFileText` as a safety net.
+- Action: extract a pure `parseImportText(text, fileName, now, newId)` into `core/` and let `readFileText` throw a typed error.
 
-### 4. `useLibraryStore` is a large hook with repeated logic
+### 2. `useLibraryStore` is a large hook with repeated logic
 
-- File: `src/hooks/useLibraryStore.ts:79-474`
-- Loading, persistence and all CRUD in one place. The read-compute-`commit`-`persist` pattern is repeated. `recordAnswer` (397-434) mixes spaced-repetition logic, activity days and upserts; the variable `exists` is unclear. `persist` is fire-and-forget with no rollback, and `reload` lacks `try`/`catch`. `buildPair`/`addParsedPairs` (47-68, 285-309) join terms with `";"` and re-parse them, which breaks if a term contains `;`.
-- Suggestion: extract pure reducers and an `upsertById` helper into `core/`; let `buildPair` accept already parsed terms.
+- `src/hooks/useLibraryStore.ts`: loading, persistence and all CRUD together; the read, compute, `commit`, `persist`
+  pattern repeats; `recordAnswer` mixes spaced repetition, activity days and upserts; `persist` is fire-and-forget.
+  `buildPair` joins terms with `";"` and re-parses them, which breaks for a term that contains `;`.
+- Action: extract pure reducers and an `upsertById` helper into `core/`; let `buildPair` take already parsed terms.
+  The `;` case needs a failing regression test first.
 
-### 5. Hard-to-read code and unclear names in sharing/validation
+### 3. Hard-to-read validation code
 
-- `src/storage/shareLink.ts:25-106`: `pipe` is a vague name, magic numbers (`Number.MAX_SAFE_INTEGER`, `SHARE_MAX_CHARS * 4`), undocumented `atob` padding/error contract.
-- `src/core/exportFormat.ts:237-411`: `readSet/readPair/readProgress/readActivity` mix reading, validation and construction; the `lastSeenAt` rule (339-345) and the `valid` flag are undocumented; `readNumber`/`readList` have inconsistent signatures.
-- `src/hooks/useTrainingSession.ts:149-210`: `answer` and `answerRound` duplicate the finish-or-continue logic; `begin`/`start` are vague names.
-- Suggestion: rename (`pipe` -> `transformBytes`), use named constants, add comments, extract an `advance(...)` helper.
+- `src/core/exportFormat.ts`: `readSet/readPair/readProgress/readActivity` mix reading, validation and construction;
+  the `lastSeenAt` rule and the `valid` flag are undocumented; `readNumber` and `readList` have inconsistent signatures.
+- `src/hooks/useTrainingSession.ts`: `answer` and `answerRound` duplicate the finish-or-continue logic; `begin` and
+  `start` are vague names.
+- Action: add a short comment per rule, rename, extract an `advance(...)` helper.
 
-## Other (lower priority)
+### 4. Duplicated and unnamed constants
 
-- `src/core/session.ts:168`: doc comment glued to a closing brace; `box === 0` meaning "new word" is unexplained.
-- `src/hooks/useDatabaseStore.ts:20-67`: one effect mixes opening, seeding and event handlers; `onBlocking` is uncommented.
+- `MAX_PROBLEMS = 50` is defined in both `core/csv.ts` and `core/exportFormat.ts`; move it to `core/importLimits.ts`.
+- The 30-minute session gap (NH-15) and the 60-second round (NH-16) are named constants in `core/`; the auto-advance
+  times in the cards use `AUTO_ADVANCE_MS`-style constants but are declared per component. Collect them in one
+  `core/timing.ts` if they need tuning.
+- `data.problem.tooLarge` repeats "10 MB" in the dictionaries (a comment links it to `MAX_IMPORT_FILE_BYTES`).
 
-## Status
+### 5. Other
 
-- Fixed: problem 1.
-- Remaining: problems 2-5.
+- `src/hooks/useDatabaseStore.ts`: one effect opens, seeds and wires the event handlers; `onBlocking` could use a comment.
+- Large files: see `codereview_architecture.md`, item 9.
+
+## Error-handling audit (external calls)
+
+| Call                         | Handling                                                                               |
+| ---------------------------- | -------------------------------------------------------------------------------------- |
+| IndexedDB open and writes    | caught in the hooks, shown through the storage banner (`storage.error.*`)              |
+| File read, size, parse       | typed problems with translated messages, nothing imported on error                     |
+| File download                | caught, translated toast (new)                                                         |
+| Clipboard                    | caught, translated toast (`share.copyFailed`)                                          |
+| Share link encode and decode | caught, translated `share.failed` and `share.import.invalid`                           |
+| Speech, audio, vibration     | wrapped, deliberately silent because they are optional niceties (comments explain why) |
+| Service worker registration  | returns `"failed"`; the app works online without it                                    |
+| localStorage mirror          | returns `null` or `false`; IndexedDB stays the source of truth                         |
+| Every training mode          | error boundary, covered by `tests/*Errors.test.tsx`                                    |
+
+## Unclear messages and edge cases checked
+
+- Import problems name the path (for example `pairs[3].a`) and a plain-language reason in both languages.
+- Empty set, 1 to 3 words, duplicates, whitespace, å/ä/ö and emoji have tests (FR-TEST-4); new limit tests cover
+  an empty file, a header-only CSV, over-limit lists and `__proto__`.
+- Not covered by an automated test: a 500+ word set under real UI load (see the manual list in `docs/DELIVERY.md`).

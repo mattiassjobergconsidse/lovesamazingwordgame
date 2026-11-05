@@ -9,6 +9,7 @@ import type {
   WordSet,
 } from "../types";
 
+/** Name of the IndexedDB database. */
 export const DB_NAME = "lovesamazingwordgame";
 /** Version 2 added the `trophies` store (NH-10); version 3 added `bestScores` (NH-16). */
 export const DB_VERSION = 3;
@@ -38,6 +39,7 @@ export interface WordGameDB extends DBSchema {
   bestScores: { key: string; value: BestScoreRecord };
 }
 
+/** An open connection to the app database. */
 export type WordGameDatabase = IDBPDatabase<WordGameDB>;
 
 /** Callbacks for database lifecycle events (FR-BP-4). */

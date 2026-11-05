@@ -154,6 +154,41 @@ describe("home screen (SPEC 7, #/)", () => {
     expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(4);
   });
 
+  it("NH-18: lists the modes from easiest to hardest", async () => {
+    const { set, pairs } = setWithPairs("Week 1", [
+      ["hus", "house"],
+      ["bil", "car"],
+    ]);
+    await seedDatabase({
+      sets: [set],
+      pairs,
+      settings: makeSettings({ activeSetId: set.id }),
+    });
+    render(<App />);
+
+    const list = await screen.findByRole("list", {
+      name: "Choose how to practise",
+    });
+
+    const expected = [
+      "Flashcards",
+      "True or False",
+      "Matching",
+      "Quiz",
+      "Word Scramble",
+      "Hangman",
+      "Listening",
+      "Speed Round",
+      "Writing",
+      "Boss Battle",
+    ];
+    const items = within(list).getAllByRole("listitem");
+    expect(items).toHaveLength(expected.length);
+    expected.forEach((title, index) => {
+      expect(items[index]).toHaveTextContent(title);
+    });
+  });
+
   it("NH-8: keeps mascot and emoji decoration out of the accessibility tree", async () => {
     const { set, pairs } = setWithPairs("Kids", [
       ["hus", "house"],

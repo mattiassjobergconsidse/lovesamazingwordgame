@@ -7,8 +7,9 @@ export type ListeningAvailability = "available" | "noSpeech" | "noVoice";
 /**
  * Whether Listening mode can speak every card of a set.
  *
- * The spoken term is the answer side, so each direction that can occur needs a
- * voice language on that side: `AtoB` needs B, `BtoA` needs A, `random` both.
+ * The spoken term is the prompt side and the user answers with its translation,
+ * so each direction that can occur needs a voice language on the prompt side:
+ * `AtoB` needs A, `BtoA` needs B, `random` both.
  *
  * @param set The set's voice language tags.
  * @param directionMode The direction setting (FR-TRN-3).
@@ -26,9 +27,9 @@ export function listeningAvailability(
   const hasB = set.langBCode !== undefined;
   const ready =
     directionMode === "AtoB"
-      ? hasB
+      ? hasA
       : directionMode === "BtoA"
-        ? hasA
+        ? hasB
         : hasA && hasB;
   return ready ? "available" : "noVoice";
 }

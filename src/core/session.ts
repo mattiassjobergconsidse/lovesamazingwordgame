@@ -34,6 +34,7 @@ export function buildSessionQueue(
 
   for (const pair of shuffle(pairs, options.rng)) {
     const record = progress.get(pair.id);
+    // Box 0 means "new": a pair without a record has never been answered either (section 7).
     if (record === undefined || record.box === 0) {
       fresh.push(pair);
     } else if (record.dueAt <= options.now) {
@@ -184,7 +185,9 @@ export function mistakePairs(state: SessionState): WordPair[] {
         !card.isRepeat && state.firstResults.get(card.pair.id) === "wrong",
     )
     .map((card) => card.pair);
-} /** A card answered as part of a batch, with its result. */
+}
+
+/** A card answered as part of a batch, with its result. */
 export interface AnsweredCard {
   readonly card: SessionCard;
   readonly result: AnswerResult;

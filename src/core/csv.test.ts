@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { csvToBundle, nameFromFileName, parseCsv, toCsv } from "./csv";
+import { MAX_IMPORT_PAIRS } from "./importLimits";
 
 describe("toCsv", () => {
   it("FR-IO-3: writes a BOM, a header with the language labels and one row per pair", () => {
@@ -34,6 +35,45 @@ describe("toCsv", () => {
       rows: [
         { a: 'blå, "grön"', b: "blue 🎉", altA: ["blått"], altB: [] },
         { a: "öl", b: "beer", altA: [], altB: [] },
+      ],
+    });
+  });
+
+  it.each(["=SUM(A1)", "+1", "-2+3", "@cmd", "\tx", "\rx"])(
+    "FR-IO-3: neutralises the formula trigger in %j on export",
+    (value) => {
+      const text = toCsv({ langA: "A", langB: "B" }, [{ a: value, b: "ok" }]);
+
+      expect(text).toContain(`'${value}`);
+      expect(text.startsWith("\uFEFFA,B\r\n")).toBe(true);
+    },
+  );
+
+  it("FR-IO-3: neutralises a formula in a language label", () => {
+    const text = toCsv({ langA: "=1+1", langB: "B" }, [{ a: "a", b: "b" }]);
+
+    expect(text.startsWith("\uFEFF'=1+1,B")).toBe(true);
+  });
+
+  it("FR-IO-3: leaves ordinary text and inner trigger characters alone", () => {
+    const text = toCsv({ langA: "A", langB: "B" }, [
+      { a: "well-known", b: "a=b" },
+    ]);
+
+    expect(text).toBe("\uFEFFA,B\r\nwell-known,a=b\r\n");
+  });
+
+  it("FR-IO-3: round-trips words that start with a trigger character", () => {
+    const text = toCsv({ langA: "A", langB: "B" }, [
+      { a: "-ing", b: "=suffix" },
+      { a: "@home", b: "+plus" },
+    ]);
+
+    expect(parseCsv(text)).toMatchObject({
+      ok: true,
+      rows: [
+        { a: "-ing", b: "=suffix" },
+        { a: "@home", b: "+plus" },
       ],
     });
   });
@@ -107,6 +147,21 @@ describe("parseCsv", () => {
         { path: "line 1 A", reason: "empty" },
         { path: "line 1 B", reason: "tooLong" },
       ],
+    });
+  });
+
+  it("FR-IO-3: keeps an apostrophe that does not guard a formula", () => {
+    const result = parseCsv("A,B\n'hello,'=x'");
+
+    expect(result.ok && result.rows[0]).toMatchObject({ a: "'hello" });
+  });
+
+  it("FR-IO-3: rejects a file with more rows than the limit", () => {
+    const rows = Array.from({ length: MAX_IMPORT_PAIRS + 1 }, () => "a,b");
+
+    expect(parseCsv(["A,B", ...rows].join("\n"))).toEqual({
+      ok: false,
+      problems: [{ path: "", reason: "tooLarge" }],
     });
   });
 });

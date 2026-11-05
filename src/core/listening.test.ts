@@ -23,17 +23,17 @@ describe("listeningAvailability", () => {
     expect(listeningAvailability({}, "random", true)).toBe("noVoice");
   });
 
-  it("NH-14: a forced direction only needs the answer side's voice", () => {
-    expect(listeningAvailability({ langBCode: "en-GB" }, "AtoB", true)).toBe(
+  it("NH-14: a forced direction only needs the spoken (prompt) side's voice", () => {
+    expect(listeningAvailability({ langACode: "sv-SE" }, "AtoB", true)).toBe(
       "available",
     );
-    expect(listeningAvailability({ langACode: "sv-SE" }, "AtoB", true)).toBe(
+    expect(listeningAvailability({ langBCode: "en-GB" }, "AtoB", true)).toBe(
       "noVoice",
     );
-    expect(listeningAvailability({ langACode: "sv-SE" }, "BtoA", true)).toBe(
+    expect(listeningAvailability({ langBCode: "en-GB" }, "BtoA", true)).toBe(
       "available",
     );
-    expect(listeningAvailability({ langBCode: "en-GB" }, "BtoA", true)).toBe(
+    expect(listeningAvailability({ langACode: "sv-SE" }, "BtoA", true)).toBe(
       "noVoice",
     );
   });

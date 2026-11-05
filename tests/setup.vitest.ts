@@ -68,7 +68,9 @@ Object.defineProperty(window, "matchMedia", {
     onchange: null,
     addEventListener: () => undefined,
     removeEventListener: () => undefined,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the MediaQueryList type still requires both
     addListener: () => undefined,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- the MediaQueryList type still requires both
     removeListener: () => undefined,
     dispatchEvent: () => false,
   }),

@@ -43,9 +43,12 @@ self.addEventListener("fetch", (event) => {
     request.mode === "navigate"
       ? new Request(new URL("./", self.location.href))
       : request;
+  // ignoreVary: precached responses were stored without an Origin header, but the page
+  // loads its script and stylesheet with `crossorigin`. A host that sends `Vary: Origin`
+  // would otherwise make those lookups miss offline and leave a blank page.
   event.respondWith(
     caches
-      .match(lookup, { ignoreSearch: true })
+      .match(lookup, { ignoreSearch: true, ignoreVary: true })
       .then((cached) => cached ?? fetch(request)),
   );
 });
