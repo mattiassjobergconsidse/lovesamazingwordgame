@@ -420,15 +420,15 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       - Time is measured as `now - startedAt` with both passed in; the HUD polls the clock four times a second and calls `finish()` on the session when nothing is left.
       - Only timed rounds count towards the best score. The "no timer" variant (a checkbox on the start panel, checked by default under `prefers-reduced-motion`) has no countdown and no best score. The countdown is text only, with no animated bar.
       - Completing a round unlocks the "Speed demon" trophy.
-17a. **True or False mode** (`NH-17a`): a prompt and a proposed translation are shown; the user judges whether it is right.
+        17a. **True or False mode** (`NH-17a`): a prompt and a proposed translation are shown; the user judges whether it is right.
     - About half of the proposals are the real translation, the rest are distractors from `core/quiz.ts` (never equal to the correct answer or its alternatives).
     - Answer by buttons, swipe right/left, or keys `Right`/`Left` (or `T`/`F`).
     - Right judgement = `correct`, wrong judgement = `wrong`. Follows FR-TRN and FR-ACT-1 (minimum 2 words). Needs no schema change.
     - Proposal building is pure in `core/` with injected rng and unit tests.
-17b. **Order modes** (`NH-17b`, done): the modes are ranked from easiest to hardest for a 10-year-old. The mode picker and home screen show them in this order (`TRAIN_MODES` in `router.ts`).
+      17b. **Order modes** (`NH-17b`, done): the modes are ranked from easiest to hardest for a 10-year-old. The mode picker and home screen show them in this order (`TRAIN_MODES` in `router.ts`).
     - Order: Flashcards, True or False (once NH-17a exists), Matching, Quiz, Word Scramble, Hangman, Listening, Speed Round, Writing, Boss Battle.
     - Groups if space is tight: easy (Flashcards, True or False, Matching, Quiz), medium (Scramble, Hangman, Listening, Speed Round), hard (Writing, Boss Battle).
-18. **Final quality gate** (`NH-18`): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
+17. **Final quality gate** (`NH-18`): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
     Results are written to the existing `codereview_*.md` files (or one new file per area) with findings ranked by severity.
     Each finding is fixed (with a failing regression test first, FR-TEST-3) or tracked as an issue; nothing is silently ignored. Fixes follow one focused PR each and need no new dependencies unless approved.
     - **Security analysis** (`codereview_security.md`):
