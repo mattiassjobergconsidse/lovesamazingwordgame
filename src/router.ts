@@ -10,11 +10,13 @@ export type TrainMode =
   | "scramble"
   | "listening"
   | "boss"
-  | "speed";
+  | "speed"
+  | "truefalse";
 
-/** Easiest to hardest for a 10-year-old (NH-17b). */
+/** Easiest to hardest for a 10-year-old (NH-18). */
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
+  "truefalse",
   "matching",
   "quiz",
   "scramble",

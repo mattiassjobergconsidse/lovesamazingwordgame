@@ -12,6 +12,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Five training modes: flashcards, quiz, matching, writing and hangman
 - Spaced repetition (Leitner) with a random direction per card (can be forced in settings)
 - Statistics per set, including the hardest words
+- True or False: judge whether a proposed translation is right, by button, swipe or key
 - Speed Round: a 60-second quiz sprint with a combo multiplier and a best score per set (or a no-timer practice variant)
 - Import and export as JSON or CSV
 - UI in Swedish and English; light, dark or system theme

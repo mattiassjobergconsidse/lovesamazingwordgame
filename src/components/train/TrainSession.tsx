@@ -44,6 +44,7 @@ import { SessionResult } from "./SessionResult";
 import { SpeedCard } from "./SpeedCard";
 import { SpeedHud } from "./SpeedHud";
 import { SpeedSummary } from "./SpeedSummary";
+import { TrueFalseCard } from "./TrueFalseCard";
 import { WritingCard } from "./WritingCard";
 import "./train.css";
 
@@ -94,6 +95,10 @@ function renderSpeedCard(props: ModeCardProps): ReactNode {
   return <SpeedCard {...props} />;
 }
 
+function renderTrueFalseCard(props: ModeCardProps): ReactNode {
+  return <TrueFalseCard {...props} />;
+}
+
 /** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
   switch (mode) {
@@ -113,6 +118,8 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderBossCard;
     case "speed":
       return renderSpeedCard;
+    case "truefalse":
+      return renderTrueFalseCard;
     case "matching":
       return defaultRenderCard;
   }
