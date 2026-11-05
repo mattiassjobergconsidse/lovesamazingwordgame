@@ -65,6 +65,15 @@ function lastSpoken(speak: ReturnType<typeof vi.fn>): string {
   return utterance.text;
 }
 
+/** The translation the player has to give for a spoken word of WORDS. */
+function translationOf(spoken: string): string {
+  const pair = WORDS.find(([a]) => a === spoken);
+  if (pair === undefined) {
+    throw new Error(`Unexpected spoken word: ${spoken}`);
+  }
+  return pair[1];
+}
+
 async function startSession(user: ReturnType<typeof userEvent.setup>) {
   await user.click(await screen.findByRole("button", { name: "Start" }));
 }
@@ -88,7 +97,7 @@ describe("listening mode", () => {
   it("NH-14: the mode card is disabled with a message when the set has no voice language", async () => {
     stubSpeech();
     window.location.hash = "#/train";
-    await seedWords(WORDS, { langACode: "sv-SE" });
+    await seedWords(WORDS, { langBCode: "en-GB" });
     render(<App />);
 
     const card = await screen.findByRole("button", { name: /Listening/ });
@@ -99,10 +108,10 @@ describe("listening mode", () => {
     ).toBeVisible();
   });
 
-  it("NH-14: a forced direction only needs the answer language's voice, so the card links on", async () => {
+  it("NH-14: a forced direction only needs the spoken language's voice, so the card links on", async () => {
     stubSpeech();
     window.location.hash = "#/train";
-    await seedWords(WORDS, { langBCode: "en-GB" }, "AtoB");
+    await seedWords(WORDS, { langACode: "sv-SE" }, "AtoB");
     render(<App />);
 
     expect(
@@ -125,7 +134,7 @@ describe("listening mode", () => {
     expect(screen.queryByRole("button", { name: "Start" })).toBeNull();
   });
 
-  it("NH-14: speaks the answer-side word without showing it, then a correct choice is correct", async () => {
+  it("NH-14: speaks the prompt word without showing it, then the correct translation is correct", async () => {
     const speak = stubSpeech();
     await seedWords(WORDS);
     const user = userEvent.setup();
@@ -135,25 +144,29 @@ describe("listening mode", () => {
     await waitFor(() => {
       expect(speak).toHaveBeenCalledTimes(1);
     });
-    const word = lastSpoken(speak);
-    expect(["dog", "cat"]).toContain(word);
+    const spoken = lastSpoken(speak);
+    const word = translationOf(spoken);
     expect(speak).toHaveBeenCalledWith(
-      expect.objectContaining({ lang: "en-GB" }),
+      expect.objectContaining({ lang: "sv-SE" }),
     );
-    expect(screen.queryByText(`The word is: ${word}`)).toBeNull();
+    expect(screen.queryByText(`The word is: ${spoken}`)).toBeNull();
     expect(screen.getAllByRole("button", { name: /^(dog|cat)$/ })).toHaveLength(
       2,
     );
 
     await user.click(screen.getByRole("button", { name: word }));
 
-    expect(screen.getByText(`Correct! The word is ${word}`)).toBeVisible();
+    expect(
+      screen.getByText(`Correct! The translation is ${word}`),
+    ).toBeVisible();
     expect(screen.getByRole("button", { name: "Next" })).toHaveFocus();
     await user.keyboard("{Enter}");
     await waitFor(() => {
       expect(speak).toHaveBeenCalledTimes(2);
     });
-    await user.click(screen.getByRole("button", { name: lastSpoken(speak) }));
+    await user.click(
+      screen.getByRole("button", { name: translationOf(lastSpoken(speak)) }),
+    );
     await user.keyboard("{Enter}");
 
     expect(
@@ -173,7 +186,8 @@ describe("listening mode", () => {
     await waitFor(() => {
       expect(speak).toHaveBeenCalled();
     });
-    const word = lastSpoken(speak);
+    const spoken = lastSpoken(speak);
+    const word = translationOf(spoken);
     const options = screen.getAllByRole("button", { name: /^(dog|cat)$/ });
     const wrongIndex = options.findIndex(
       (option) => !option.textContent.includes(word),
@@ -181,12 +195,10 @@ describe("listening mode", () => {
 
     await user.keyboard(String(wrongIndex + 1));
 
-    expect(screen.getByText(`Not quite. The word was: ${word}`)).toBeVisible();
     expect(
-      screen.getByText(
-        "Meaning (Svenska): " + (word === "dog" ? "hund" : "katt"),
-      ),
+      screen.getByText(`Not quite. The translation was: ${word}`),
     ).toBeVisible();
+    expect(screen.getByText(`You heard (Svenska): ${spoken}`)).toBeVisible();
   });
 
   it("NH-14: R hears the word again and a correct answer then only counts as assisted", async () => {
@@ -198,14 +210,14 @@ describe("listening mode", () => {
     await waitFor(() => {
       expect(speak).toHaveBeenCalledTimes(1);
     });
-    const word = lastSpoken(speak);
+    const word = translationOf(lastSpoken(speak));
 
     await user.keyboard("r");
     expect(speak).toHaveBeenCalledTimes(2);
     await user.click(screen.getByRole("button", { name: word }));
 
     expect(
-      screen.getByText(`Correct, with help. The word is ${word}`),
+      screen.getByText(`Correct, with help. The translation is ${word}`),
     ).toBeVisible();
     // An assisted answer is not auto-advanced; the player continues on purpose.
     await user.keyboard("{Enter}");
@@ -242,14 +254,15 @@ describe("listening mode", () => {
     await waitFor(() => {
       expect(speak).toHaveBeenCalled();
     });
-    const word = lastSpoken(speak);
+    const spoken = lastSpoken(speak);
+    const word = translationOf(spoken);
 
     await user.click(screen.getByRole("button", { name: "Show the word" }));
-    expect(screen.getByText(`The word is: ${word}`)).toBeVisible();
+    expect(screen.getByText(`The word is: ${spoken}`)).toBeVisible();
     await user.click(screen.getByRole("button", { name: word }));
 
     expect(
-      screen.getByText(`Correct, with help. The word is ${word}`),
+      screen.getByText(`Correct, with help. The translation is ${word}`),
     ).toBeVisible();
   });
 
@@ -265,13 +278,13 @@ describe("listening mode", () => {
       screen.queryByRole("button", { name: "Type it instead" }),
     ).toBeNull();
     expect(
-      screen.getByLabelText("Type the word you heard (English)"),
+      screen.getByLabelText("Type the translation (English)"),
     ).toHaveFocus();
     await user.keyboard("dog{Enter}");
 
-    expect(screen.getByText("Correct! The word is dog")).toBeVisible();
+    expect(screen.getByText("Correct! The translation is dog")).toBeVisible();
     expect(speak).toHaveBeenCalledWith(
-      expect.objectContaining({ text: "dog", lang: "en-GB" }),
+      expect.objectContaining({ text: "hund", lang: "sv-SE" }),
     );
     expect(
       await screen.findByRole(
@@ -292,15 +305,17 @@ describe("listening mode", () => {
     await startSession(user);
 
     await user.type(
-      screen.getByLabelText("Type the word you heard (English)"),
+      screen.getByLabelText("Type the translation (English)"),
       "cog{Enter}",
     );
 
-    expect(screen.getByText("Not quite. The word was: dog")).toBeVisible();
+    expect(
+      screen.getByText("Not quite. The translation was: dog"),
+    ).toBeVisible();
     await user.keyboard("{Enter}");
     // FR-TRN-7: a missed word comes back once.
     expect(
-      await screen.findByLabelText("Type the word you heard (English)"),
+      await screen.findByLabelText("Type the translation (English)"),
     ).toBeVisible();
     const { progress } = await readLibrary();
     expect(progress[0]).toMatchObject({ wrong: 1 });
@@ -318,9 +333,9 @@ describe("listening mode", () => {
 
     await user.keyboard("car");
 
-    expect(
-      screen.getByLabelText("Type the word you heard (English)"),
-    ).toHaveValue("car");
+    expect(screen.getByLabelText("Type the translation (English)")).toHaveValue(
+      "car",
+    );
     expect(speak).toHaveBeenCalledTimes(1);
   });
 
@@ -333,15 +348,15 @@ describe("listening mode", () => {
 
     await user.click(screen.getByRole("button", { name: "Type it instead" }));
     expect(
-      screen.getByLabelText("Type the word you heard (English)"),
+      screen.getByLabelText("Type the translation (English)"),
     ).toHaveFocus();
-    expect(screen.queryByRole("list", { name: /Choose the word/ })).toBeNull();
+    expect(screen.queryByRole("list", { name: /Choose the/ })).toBeNull();
 
     await user.click(
       screen.getByRole("button", { name: "Choose from options instead" }),
     );
     expect(
-      screen.getByRole("list", { name: "Choose the word you heard (English)" }),
+      screen.getByRole("list", { name: "Choose the translation (English)" }),
     ).toBeVisible();
   });
 
@@ -351,7 +366,7 @@ describe("listening mode", () => {
     const user = userEvent.setup();
     render(<App />);
     await startSession(user);
-    await screen.findByRole("list", { name: /Choose the word/ });
+    await screen.findByRole("list", { name: /Choose the translation/ });
 
     expect(await axe(document.body)).toHaveNoViolations();
   });

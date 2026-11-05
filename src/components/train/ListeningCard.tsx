@@ -50,9 +50,9 @@ function optionState(
 }
 
 /**
- * Listening mode (NH-14): the app speaks the answer-side word and the user picks or
- * types what was said. Remounted for every card, so all state resets.
- * Replaying the audio or showing the word makes a correct answer `assisted`.
+ * Listening mode (NH-14): the app speaks the prompt-side word and the user picks or
+ * types its translation in the other language. Remounted for every card, so all
+ * state resets. Replaying the audio or showing the word makes a correct answer `assisted`.
  */
 export function ListeningCard({
   set,
@@ -85,7 +85,7 @@ export function ListeningCard({
   const codes = speechCodesFor(set, direction);
   const promptLanguage = direction === "AtoB" ? set.langA : set.langB;
   const answerLanguage = direction === "AtoB" ? set.langB : set.langA;
-  const playAudio = useListeningAudio(terms.answer, codes.answer);
+  const playAudio = useListeningAudio(terms.prompt, codes.prompt);
 
   const replay = useCallback(() => {
     setHelped(true);
@@ -193,7 +193,7 @@ export function ListeningCard({
   return (
     <div className="session-card listening-card">
       <p className="session-card-label">
-        {t("train.listening.prompt", { lang: answerLanguage })}
+        {t("train.listening.prompt", { lang: promptLanguage })}
       </p>
       <div className="session-card-actions">
         <button
@@ -223,7 +223,7 @@ export function ListeningCard({
       </div>
       {revealed && !done && (
         <p className="session-card-term" role="status">
-          {t("train.listening.revealed", { answer: terms.answer })}
+          {t("train.listening.revealed", { prompt: terms.prompt })}
         </p>
       )}
 
@@ -319,7 +319,7 @@ export function ListeningCard({
               prompt: terms.prompt,
             })}
           </p>
-          <SpeakButton text={terms.answer} lang={codes.answer} />
+          <SpeakButton text={terms.prompt} lang={codes.prompt} />
           <button
             ref={nextRef}
             type="button"

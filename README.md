@@ -19,7 +19,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - A playful, kid-friendly look with emojis, rounded shapes and small animations (respects reduced motion)
 - Word Scramble: the answer's letters are shuffled into tiles that you tap or type in order (including å/ä/ö), with a hint and a "give up" option
 - Hangman: guess the hidden word letter by letter with an on-screen or physical keyboard, with a limited number of wrong guesses drawn as a figure
-- Listening: the app speaks the word and you pick or type what you heard (needs browser speech support and a voice language on the set)
+- Listening: the app speaks a word in one language and you pick or type its translation in the other (needs browser speech support and a voice language on the set)
 - True or False: judge whether a proposed translation is right, by button, swipe or key
 - Speed Round: a 60-second quiz sprint with a combo multiplier and a best score per set (or a no-timer practice variant)
 - Import and export as JSON or CSV; trophies are included in the export, while best scores stay local to the browser
