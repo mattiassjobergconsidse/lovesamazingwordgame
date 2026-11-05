@@ -63,6 +63,7 @@ describe("evaluateTrophies", () => {
       ["scramble", "modeScramble"],
       ["listening", "modeListening"],
       ["boss", "modeBoss"],
+      ["speed", "modeSpeed"],
     ] as const;
 
     for (const [mode, trophy] of modes) {

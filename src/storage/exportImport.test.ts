@@ -119,6 +119,18 @@ describe("applyImportPlan", () => {
     expect(library.activity).toHaveLength(1);
   });
 
+  it("NH-16: replacing a set also deletes its best score", async () => {
+    const old = await storeOldSet();
+    await db.put("bestScores", { setId: old.id, score: 80, achievedAt: 1 });
+
+    await applyImportPlan(
+      db,
+      emptyPlan({ removeSetIds: [old.id], sets: [makeSet({ name: "Old" })] }),
+    );
+
+    expect(await db.count("bestScores")).toBe(0);
+  });
+
   it("NH-10: merges imported trophies with stored ones and keeps the earliest unlock", async () => {
     await db.put("trophies", { id: "streak3", unlockedAt: 500 });
     await db.put("trophies", { id: "firstSession", unlockedAt: 100 });
@@ -155,6 +167,14 @@ describe("applyImportPlan", () => {
 });
 
 describe("clearLibrary", () => {
+  it("NH-16: deletes the best scores as well", async () => {
+    await db.put("bestScores", { setId: "set-1", score: 80, achievedAt: 1 });
+
+    await clearLibrary(db);
+
+    expect(await db.count("bestScores")).toBe(0);
+  });
+
   it("NH-10: deletes the trophies as well", async () => {
     await db.put("trophies", { id: "streak3", unlockedAt: 500 });
 

@@ -16,6 +16,7 @@ import { useBossPool } from "../../hooks/useBossPool";
 import { useGameUnlockOffer } from "../../hooks/useGameUnlockOffer";
 import { useMascotReactions } from "../../hooks/useMascotReactions";
 import { useMascotSpeech } from "../../hooks/useMascotSpeech";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { useSettings } from "../../hooks/useSettings";
 import { useTrophyCelebration } from "../../hooks/useTrophyCelebration";
 import {
@@ -40,6 +41,9 @@ import { MODE_ICONS } from "./modeIcons";
 import { QuizCard } from "./QuizCard";
 import { ScrambleCard } from "./ScrambleCard";
 import { SessionResult } from "./SessionResult";
+import { SpeedCard } from "./SpeedCard";
+import { SpeedHud } from "./SpeedHud";
+import { SpeedSummary } from "./SpeedSummary";
 import { WritingCard } from "./WritingCard";
 import "./train.css";
 
@@ -86,6 +90,10 @@ function renderBossCard(props: ModeCardProps): ReactNode {
   return <BossCard {...props} />;
 }
 
+function renderSpeedCard(props: ModeCardProps): ReactNode {
+  return <SpeedCard {...props} />;
+}
+
 /** Matching has its own board; the generic card is only a fallback. */
 function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
   switch (mode) {
@@ -103,6 +111,8 @@ function cardRendererFor(mode: TrainMode): (props: ModeCardProps) => ReactNode {
       return renderListeningCard;
     case "boss":
       return renderBossCard;
+    case "speed":
+      return renderSpeedCard;
     case "matching":
       return defaultRenderCard;
   }
@@ -120,6 +130,11 @@ function ActiveSession({
   const { t, tp } = useI18n();
   const { settings } = useSettings();
   const isBoss = mode === "boss";
+  const isSpeed = mode === "speed";
+  // Speed Round only: users who ask for less motion start in the no-timer variant, but can switch.
+  const reducedMotion = useReducedMotion();
+  const [practiceChoice, setPracticeChoice] = useState<boolean | null>(null);
+  const practice = practiceChoice ?? reducedMotion;
   // Decided once, so a running fight keeps its pool while answers change the progress.
   const bossPool = useBossPool(set.id, focus === "all" ? undefined : focus);
   const {
@@ -133,6 +148,7 @@ function ActiveSession({
     practiseMistakes,
     answer,
     answerRound,
+    finish,
   } = useTrainingSession(
     set.id,
     undefined,
@@ -200,6 +216,15 @@ function ActiveSession({
           onPractiseMistakes={practiseMistakes}
           onPractiseAgain={start}
           speech={speech}
+          scoreSummary={
+            isSpeed ? (
+              <SpeedSummary
+                setId={set.id}
+                answers={view.session.answers}
+                timed={!practice}
+              />
+            ) : undefined
+          }
         >
           {earnedGame && <GameOffer />}
           {isBoss && <BossVictory mascot={bossMascot} />}
@@ -222,6 +247,21 @@ function ActiveSession({
         {extraPractice && <p>{t("train.session.extra")}</p>}
         {isBoss && bossPool !== null && (
           <BossIntro setId={set.id} pool={bossPool} />
+        )}
+        {isSpeed && (
+          <>
+            <p>{t("train.speed.intro")}</p>
+            <label className="speed-practice">
+              <input
+                type="checkbox"
+                checked={practice}
+                onChange={(event) => {
+                  setPracticeChoice(event.target.checked);
+                }}
+              />
+              {t("train.speed.practice")}
+            </label>
+          </>
         )}
         {plannedCount === 0 ? (
           <p>
@@ -277,6 +317,14 @@ function ActiveSession({
           mascot={bossMascot}
           lastResult={view.session.answers.at(-1) ?? null}
           answerCount={view.session.answers.length}
+        />
+      )}
+      {isSpeed && (
+        <SpeedHud
+          startedAt={view.startedAt}
+          timed={!practice}
+          answers={view.session.answers}
+          onTimeUp={finish}
         />
       )}
       <AppErrorBoundary>

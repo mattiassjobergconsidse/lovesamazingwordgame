@@ -40,12 +40,31 @@ describe("openAppDb", () => {
 
     expect([...db.objectStoreNames].sort()).toEqual([
       "activity",
+      "bestScores",
       "pairs",
       "progress",
       "sets",
       "settings",
       "trophies",
     ]);
+  });
+
+  it("NH-16: upgrades a version 2 database by adding bestScores and keeping its data", async () => {
+    const old = await openDB(DB_NAME, 2, {
+      upgrade(database) {
+        database.createObjectStore("sets", { keyPath: "id" });
+        database.createObjectStore("trophies", { keyPath: "id" });
+      },
+    });
+    await old.put("trophies", { id: "firstSession", unlockedAt: 5 });
+    old.close();
+
+    const db = await open();
+
+    expect([...db.objectStoreNames]).toContain("bestScores");
+    expect(await db.get("trophies", "firstSession")).toMatchObject({
+      unlockedAt: 5,
+    });
   });
 
   it("NH-10: upgrades a version 1 database by adding trophies and keeping its data", async () => {

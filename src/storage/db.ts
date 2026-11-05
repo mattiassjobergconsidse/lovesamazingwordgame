@@ -1,4 +1,5 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import type { BestScoreRecord } from "../core/speedRound";
 import type { TrophyRecord } from "../core/trophyDefinitions";
 import type {
   DailyActivity,
@@ -9,12 +10,12 @@ import type {
 } from "../types";
 
 export const DB_NAME = "lovesamazingwordgame";
-/** Version 2 added the `trophies` store (NH-10). */
-export const DB_VERSION = 2;
+/** Version 2 added the `trophies` store (NH-10); version 3 added `bestScores` (NH-16). */
+export const DB_VERSION = 3;
 /** Key of the single settings record. */
 export const SETTINGS_KEY = "settings";
 
-/** Typed schema of the IndexedDB database (version 2). */
+/** Typed schema of the IndexedDB database (version 3). */
 export interface WordGameDB extends DBSchema {
   sets: { key: string; value: WordSet };
   pairs: {
@@ -34,6 +35,7 @@ export interface WordGameDB extends DBSchema {
   };
   settings: { key: string; value: Settings };
   trophies: { key: string; value: TrophyRecord };
+  bestScores: { key: string; value: BestScoreRecord };
 }
 
 export type WordGameDatabase = IDBPDatabase<WordGameDB>;
@@ -84,6 +86,10 @@ export async function openAppDb(
       if (oldVersion < 2) {
         // Only adds a store; version 1 data stays untouched.
         db.createObjectStore("trophies", { keyPath: "id" });
+      }
+      if (oldVersion < 3) {
+        // One record per set, so the set id is the key.
+        db.createObjectStore("bestScores", { keyPath: "setId" });
       }
     },
     blocked: handlers.onBlocked,

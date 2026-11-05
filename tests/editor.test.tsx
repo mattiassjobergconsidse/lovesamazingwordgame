@@ -376,7 +376,8 @@ describe("training gate", () => {
     expect(screen.getByRole("link", { name: "Writing" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Quiz" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Matching" })).toBeDisabled();
-    expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Speed Round" })).toBeDisabled();
+    expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(3);
     expect(
       screen.getByRole("link", { name: "Add words in the set editor" }),
     ).toHaveAttribute("href", `#/sets/${set.id}`);

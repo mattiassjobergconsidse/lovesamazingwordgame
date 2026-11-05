@@ -30,6 +30,7 @@ describe("parseRoute", () => {
     ["#/train/scramble", { name: "trainMode", mode: "scramble" }],
     ["#/train/listening", { name: "trainMode", mode: "listening" }],
     ["#/train/boss", { name: "trainMode", mode: "boss" }],
+    ["#/train/speed", { name: "trainMode", mode: "speed" }],
     [
       "#/train/boss/mistakes",
       { name: "trainMode", mode: "boss", focus: "mistakes" },
@@ -82,6 +83,7 @@ describe("routeToHash", () => {
       { name: "trainMode", mode: "writing" },
       { name: "trainMode", mode: "flashcards", focus: "hardest" },
       { name: "trainMode", mode: "boss" },
+      { name: "trainMode", mode: "speed" },
       { name: "trainMode", mode: "boss", focus: "mistakes" },
       { name: "stats" },
       { name: "games" },

@@ -360,6 +360,36 @@
     animation: none;
   }
 }
+/* Speed Round (NH-16): countdown, score and combo above the question. */
+.speed-hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+.speed-hud p {
+  margin: 0;
+}
+.speed-time {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.speed-score,
+.speed-combo {
+  font-weight: 600;
+}
+.speed-practice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+}
 /* Boss Battle (NH-15): the boss and its health bar sit above the question. */
 .boss-hud {
   display: flex;

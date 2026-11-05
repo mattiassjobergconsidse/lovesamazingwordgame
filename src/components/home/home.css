@@ -95,6 +95,7 @@ button.home-mode:disabled {
 .home-mode[data-mode="scramble"] .home-mode-icon,
 .home-mode[data-mode="listening"] .home-mode-icon,
 .home-mode[data-mode="boss"] .home-mode-icon,
+.home-mode[data-mode="speed"] .home-mode-icon,
 .home-mode[data-mode="matching"] .home-mode-icon {
   background: color-mix(in srgb, var(--color-accent) 30%, var(--color-surface));
 }

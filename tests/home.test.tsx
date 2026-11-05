@@ -149,7 +149,8 @@ describe("home screen (SPEC 7, #/)", () => {
     expect(screen.getByRole("link", { name: /Writing/ })).toBeVisible();
     expect(screen.queryByRole("link", { name: /Quiz/ })).toBeNull();
     expect(screen.queryByRole("link", { name: /Matching/ })).toBeNull();
-    expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(2);
+    expect(screen.queryByRole("link", { name: /Speed Round/ })).toBeNull();
+    expect(screen.getAllByText("Needs at least 2 words.")).toHaveLength(3);
   });
 
   it("NH-8: keeps mascot and emoji decoration out of the accessibility tree", async () => {

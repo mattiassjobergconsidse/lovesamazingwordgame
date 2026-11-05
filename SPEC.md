@@ -407,16 +407,27 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       - Health: 10 per word. A correct or assisted answer deals `floor(hp / remaining words)` damage, so the bar reaches 0 exactly when the last word is solved; a wrong answer heals 3 (capped at full health).
       - The boss is a random mascot other than the user's own. It reacts with a flinch (hit) or a grin (heal) and a polite status line; the user's own mascot keeps reacting through the NH-12 pools.
       - Completing a boss fight unlocks the "Boss slayer" trophy.
-16. **Speed Round mode** (`NH-16`): a 60-second sprint of quiz-style cards with a combo multiplier.
+16. **Speed Round mode** (`NH-16`, done): a 60-second sprint of quiz-style cards with a combo multiplier.
     - Words still come from the SR queue (FR-TRN-2); the first answer per word updates progress (FR-TRN-4). The timer is injected in `core/`, never read from the clock directly.
     - Correct answers raise the combo (score multiplier); a wrong answer resets it. The round ends when time runs out.
     - A best score per set is shown on the end screen. **Storing best scores needs a new IndexedDB store or field: this requires a migration and user approval before implementation.**
     - Honours `prefers-reduced-motion` and offers a "no timer" practice variant for accessibility.
-17. **True or False mode** (`NH-17`): a prompt and a proposed translation are shown; the user judges whether it is right.
+    - Decisions (2026-11-05):
+      - Approved schema change: IndexedDB version 3 adds the `bestScores` store (key `setId`, value `{ setId, score, achievedAt }`, one record per set). Because the app has no users yet, no backward-compatibility work was required; the upgrade only adds a store, so existing data stays untouched anyway. Best scores are local only: they are not part of export/import (`FORMAT_VERSION` stays 1) and are deleted with the set, on a replacing import and on "Reset all data".
+      - `#/train/speed`; eligibility minimum 2 words (as Quiz). Questions are Quiz questions answered by tap or keys `1`-`9`, with a 350 ms feedback flash instead of Quiz's 1 s.
+      - Words come from the SR queue of up to `sessionSize` words. The round ends when the 60 s are up or when every word in the queue has been answered, whichever comes first. A wrong answer is re-queued once at the end (FR-TRN-7); a repeat never changes progress.
+      - Scoring (`core/speedRound.ts`): 10 points per correct answer times the multiplier of the run before it (x1, then +1 for every 3 correct in a row, max x5). Any answer that is not correct resets the combo. Score and combo are derived from the session's answer list.
+      - Time is measured as `now - startedAt` with both passed in; the HUD polls the clock four times a second and calls `finish()` on the session when nothing is left.
+      - Only timed rounds count towards the best score. The "no timer" variant (a checkbox on the start panel, checked by default under `prefers-reduced-motion`) has no countdown and no best score. The countdown is text only, with no animated bar.
+      - Completing a round unlocks the "Speed demon" trophy.
+17a. **True or False mode** (`NH-17a`): a prompt and a proposed translation are shown; the user judges whether it is right.
     - About half of the proposals are the real translation, the rest are distractors from `core/quiz.ts` (never equal to the correct answer or its alternatives).
     - Answer by buttons, swipe right/left, or keys `Right`/`Left` (or `T`/`F`).
     - Right judgement = `correct`, wrong judgement = `wrong`. Follows FR-TRN and FR-ACT-1 (minimum 2 words). Needs no schema change.
     - Proposal building is pure in `core/` with injected rng and unit tests.
+17b. **Order modes** (`NH-17b`, done): the modes are ranked from easiest to hardest for a 10-year-old. The mode picker and home screen show them in this order (`TRAIN_MODES` in `router.ts`).
+    - Order: Flashcards, True or False (once NH-17a exists), Matching, Quiz, Word Scramble, Hangman, Listening, Speed Round, Writing, Boss Battle.
+    - Groups if space is tight: easy (Flashcards, True or False, Matching, Quiz), medium (Scramble, Hangman, Listening, Speed Round), hard (Writing, Boss Battle).
 18. **Final quality gate** (`NH-18`): done last, after all other items are merged. No new features; the goal is to verify and harden the whole app before it is considered finished.
     Results are written to the existing `codereview_*.md` files (or one new file per area) with findings ranked by severity.
     Each finding is fixed (with a failing regression test first, FR-TEST-3) or tracked as an issue; nothing is silently ignored. Fixes follow one focused PR each and need no new dependencies unless approved.
