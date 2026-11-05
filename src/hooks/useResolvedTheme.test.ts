@@ -21,7 +21,9 @@ function mockSystemTheme(initialDark: boolean): (dark: boolean) => void {
       removeEventListener: (_type: string, listener: unknown) => {
         listeners.delete(listener as Listener);
       },
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- the MediaQueryList type still requires both
       addListener: () => undefined,
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- the MediaQueryList type still requires both
       removeListener: () => undefined,
       dispatchEvent: () => false,
     }),

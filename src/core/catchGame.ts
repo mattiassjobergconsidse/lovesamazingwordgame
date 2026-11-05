@@ -2,17 +2,21 @@ import type { Rng } from "./shuffle";
 
 /** The play field is 100 units wide and 100 units tall. */
 export const FIELD_SIZE = 100;
+/** Width of the basket in field units. */
 export const BASKET_WIDTH = 24;
 /** Items that reach this height are either caught or missed. */
 export const BASKET_Y = 88;
+/** Lives a round starts with; catching a bad item costs one. */
 export const START_LIVES = 3;
 /** Share of items that cost a life when caught. */
 const BAD_ITEM_CHANCE = 0.25;
 /** Horizontal step of one arrow key press. */
 export const KEY_STEP = 8;
 
+/** A good item scores a point; a bad item costs a life when caught. */
 export type ItemKind = "good" | "bad";
 
+/** An item currently falling towards the basket. */
 export interface FallingItem {
   readonly id: number;
   /** Horizontal centre in field units. */
@@ -30,12 +34,14 @@ export interface CatchConfig {
   readonly durationMs: number;
 }
 
+/** Standard round settings. */
 export const NORMAL_CATCH: CatchConfig = {
   speed: 38,
   spawnEveryMs: 900,
   durationMs: 45_000,
 };
 
+/** Slower round for `prefers-reduced-motion`: items fall more slowly and arrive less often. */
 export const GENTLE_CATCH: CatchConfig = {
   speed: 20,
   spawnEveryMs: 1500,

@@ -46,6 +46,24 @@ describe("buildSessionQueue", () => {
     expect(ids(queue)).toEqual(ids([dueOld, dueNew, fresh, lowBox, highBox]));
   });
 
+  it("FR-TRN-2: a word due exactly now counts as due", () => {
+    const dueNow = makePair();
+    const fresh = makePair();
+    const notYet = makePair();
+    const progress = progressMap(
+      makeProgress({ pairId: dueNow.id, box: 3, dueAt: NOW }),
+      makeProgress({ pairId: notYet.id, box: 1, dueAt: NOW + 1 }),
+    );
+
+    const queue = buildSessionQueue([notYet, fresh, dueNow], progress, {
+      size: "all",
+      now: NOW,
+      rng: makeRng(1),
+    });
+
+    expect(ids(queue)).toEqual(ids([dueNow, fresh, notYet]));
+  });
+
   it("treats a box 0 record like a new word", () => {
     const fresh = makePair();
     const due = makePair();

@@ -14,4 +14,5 @@ export interface DatabaseStore {
   readonly reportStorageError: (kind: StorageErrorKind) => void;
 }
 
+/** Context holding the open database; read it with `useDatabase`. */
 export const DatabaseContext = createContext<DatabaseStore | null>(null);

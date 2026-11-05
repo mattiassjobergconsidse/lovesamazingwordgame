@@ -3,9 +3,9 @@ import {
   SHARE_LONG_LINK_CHARS,
   buildSharePayload,
 } from "../../core/shareFormat";
+import { useShareLink } from "../../hooks/useShareLink";
 import { useToast } from "../../hooks/useToast";
 import { useI18n } from "../../i18n";
-import { buildShareLink, encodeSharePayload } from "../../storage/shareLink";
 import type { WordPair, WordSet } from "../../types";
 import "../common/common.css";
 import "../data/data.css";
@@ -19,14 +19,14 @@ interface SharePanelProps {
 export function SharePanel({ set, pairs }: SharePanelProps) {
   const { t } = useI18n();
   const { showToast } = useToast();
+  const { createLink, copy: copyToClipboard } = useShareLink();
   const [link, setLink] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
 
   async function create() {
     setFailed(false);
     try {
-      const encoded = await encodeSharePayload(buildSharePayload(set, pairs));
-      setLink(buildShareLink(encoded));
+      setLink(await createLink(buildSharePayload(set, pairs)));
     } catch (error) {
       console.error("Failed to create the share link", error);
       setLink(null);
@@ -36,7 +36,7 @@ export function SharePanel({ set, pairs }: SharePanelProps) {
 
   async function copy(text: string) {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyToClipboard(text);
       showToast({ message: t("share.copied") });
     } catch {
       showToast({ message: t("share.copyFailed") });

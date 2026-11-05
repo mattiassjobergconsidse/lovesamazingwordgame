@@ -1,13 +1,12 @@
+import { useFeedbackSupport } from "../../hooks/useFeedbackSupport";
 import { useSettings } from "../../hooks/useSettings";
 import { useI18n } from "../../i18n";
-import { isHapticsSupported, isSoundSupported } from "../../storage/feedback";
 
 /** Settings switches for answer sounds and vibration (NH-4). Each is hidden when unsupported. */
 export function FeedbackSettings() {
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
-  const sound = isSoundSupported();
-  const haptics = isHapticsSupported();
+  const { sound, haptics } = useFeedbackSupport();
 
   if (!sound && !haptics) {
     return null;

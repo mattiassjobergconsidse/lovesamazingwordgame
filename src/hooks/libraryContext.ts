@@ -92,4 +92,5 @@ export interface Library {
   ) => readonly TrophyId[];
 }
 
+/** Context holding the in-memory library; read it with `useLibrary`. */
 export const LibraryContext = createContext<Library | null>(null);

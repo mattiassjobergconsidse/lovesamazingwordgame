@@ -7,6 +7,7 @@ import {
   parseExport,
   type ExportSource,
 } from "./exportFormat";
+import { MAX_IMPORT_PAIRS, MAX_IMPORT_SETS } from "./importLimits";
 
 function sourceWithTwoSets() {
   const week1 = makeSet({ id: "s1", name: "Week 1" });
@@ -596,4 +597,42 @@ describe("last result in the export file (NH-15)", () => {
       problems: [{ path: "progress[0].lastResult", reason: "wrongType" }],
     });
   });
+});
+
+it.each([
+  ["sets", MAX_IMPORT_SETS],
+  ["pairs", MAX_IMPORT_PAIRS],
+  ["progress", MAX_IMPORT_PAIRS],
+  ["activity", MAX_IMPORT_PAIRS],
+])("FR-IO-2: rejects more than the limit of %s", (key, limit) => {
+  const result = parseExport(
+    JSON.stringify({
+      formatVersion: 1,
+      sets: [],
+      pairs: [],
+      [key]: new Array<number>(limit + 1).fill(0),
+    }),
+  );
+
+  expect(!result.ok && result.problems).toContainEqual({
+    path: key,
+    reason: "tooLarge",
+  });
+});
+
+it("FR-IO-2: ignores a __proto__ key and does not pollute prototypes", () => {
+  const set = makeSet({ id: "s1", name: "Safe" });
+  const text = JSON.stringify(
+    buildExport(
+      { sets: [set], pairs: [], progress: [], activity: [] },
+      ["s1"],
+      false,
+      0,
+    ),
+  ).replace('"formatVersion"', '"__proto__":{"polluted":true},"formatVersion"');
+
+  const result = parseExport(text);
+
+  expect(result.ok).toBe(true);
+  expect(Reflect.get({}, "polluted")).toBeUndefined();
 });

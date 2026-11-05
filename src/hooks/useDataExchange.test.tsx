@@ -95,6 +95,25 @@ describe("useDataExchange", () => {
     expect(fileIo.downloadTextFile).toHaveBeenCalledTimes(3);
   });
 
+  it("NH-19: reports a refused download instead of throwing", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { set, pairs } = setWithPairs("Week 1", [["hus", "house"]]);
+    await seedDatabase({ sets: [set], pairs });
+    const { result } = await renderReady();
+    vi.mocked(fileIo.downloadTextFile).mockImplementation(() => {
+      throw new Error("blocked");
+    });
+
+    const outcomes = [
+      result.current.exchange.exportSet(set.id, false),
+      result.current.exchange.exportAll(false),
+      result.current.exchange.exportCsv(set.id),
+    ];
+
+    expect(outcomes).toEqual([false, false, false]);
+    vi.mocked(fileIo.downloadTextFile).mockReset();
+  });
+
   it("FR-IO-2: reports an unreadable file", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     await seedDatabase({});

@@ -41,12 +41,12 @@ export type ImportDraft =
 export interface DataExchange {
   /** False until the library is loaded; exporting or importing earlier would miss data. */
   readonly ready: boolean;
-  /** Downloads one set as a JSON file; progress and activity only when `includeProgress`. */
-  readonly exportSet: (setId: string, includeProgress: boolean) => void;
-  /** Downloads all data as one JSON file named after today's date; trophies come with the progress. */
-  readonly exportAll: (includeProgress: boolean) => void;
-  /** Downloads one set as CSV for Excel. Does nothing for an unknown id. */
-  readonly exportCsv: (setId: string) => void;
+  /** Downloads one set as a JSON file; progress and activity only when `includeProgress`. Returns `false` when the browser refused the download. */
+  readonly exportSet: (setId: string, includeProgress: boolean) => boolean;
+  /** Downloads all data as one JSON file named after today's date; trophies come with the progress. Returns `false` when the browser refused the download. */
+  readonly exportAll: (includeProgress: boolean) => boolean;
+  /** Downloads one set as CSV for Excel. Does nothing for an unknown id. Returns `false` when the browser refused the download. */
+  readonly exportCsv: (setId: string) => boolean;
   /** Reads and validates a JSON or CSV file; never throws, problems are returned. */
   readonly readImportFile: (file: File) => Promise<ImportDraft>;
   /**
@@ -71,6 +71,21 @@ function looksLikeJson(text: string): boolean {
     .startsWith("{");
 }
 
+/** Starts a download; a refusal by the browser is logged and reported as `false`, never thrown. */
+function downloadFile(
+  fileName: string,
+  content: string,
+  mimeType: string,
+): boolean {
+  try {
+    downloadTextFile(fileName, content, mimeType);
+    return true;
+  } catch (error) {
+    console.error("Failed to download the file", error);
+    return false;
+  }
+}
+
 /**
  * Connects the export and import logic to the library, storage and file I/O.
  *
@@ -89,7 +104,7 @@ export function useDataExchange(): DataExchange {
       includeProgress: boolean,
       fileName: string,
       includeTrophies: boolean,
-    ) => {
+    ): boolean => {
       const file = buildExport(
         {
           sets,
@@ -102,7 +117,7 @@ export function useDataExchange(): DataExchange {
         includeProgress,
         Date.now(),
       );
-      downloadTextFile(
+      return downloadFile(
         fileName,
         JSON.stringify(file, null, 2),
         "application/json",
@@ -112,39 +127,39 @@ export function useDataExchange(): DataExchange {
   );
 
   const exportSet = useCallback(
-    (setId: string, includeProgress: boolean) => {
+    (setId: string, includeProgress: boolean): boolean => {
       const set = sets.find((candidate) => candidate.id === setId);
-      if (set !== undefined) {
-        downloadJson(
-          [setId],
-          includeProgress,
-          `${fileSlug(set.name)}.json`,
-          false,
-        );
+      if (set === undefined) {
+        return true;
       }
+      return downloadJson(
+        [setId],
+        includeProgress,
+        `${fileSlug(set.name)}.json`,
+        false,
+      );
     },
     [sets, downloadJson],
   );
 
   const exportAll = useCallback(
-    (includeProgress: boolean) => {
+    (includeProgress: boolean): boolean =>
       downloadJson(
         sets.map((set) => set.id),
         includeProgress,
         `lovesamazingwordgame-backup-${localDateKey(Date.now())}.json`,
         true,
-      );
-    },
+      ),
     [downloadJson, sets],
   );
 
   const exportCsv = useCallback(
-    (setId: string) => {
+    (setId: string): boolean => {
       const set = sets.find((candidate) => candidate.id === setId);
       if (set === undefined) {
-        return;
+        return true;
       }
-      downloadTextFile(
+      return downloadFile(
         `${fileSlug(set.name)}.csv`,
         toCsv(
           set,

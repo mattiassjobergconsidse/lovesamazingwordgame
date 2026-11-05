@@ -54,9 +54,10 @@ function SetHome({ set }: { readonly set: WordSet }) {
 
   const readyToPractise = stats.due + stats.newWords > 0;
   const goalReached = summary.answeredToday >= dailyGoal;
-  const ringStyle = {
+  // CSS custom properties are not part of CSSProperties, so the type adds this one explicitly.
+  const ringStyle: CSSProperties & Record<"--progress", string> = {
     "--progress": `${String(Math.round(summary.goalProgress * 360))}deg`,
-  } as CSSProperties;
+  };
 
   return (
     <>

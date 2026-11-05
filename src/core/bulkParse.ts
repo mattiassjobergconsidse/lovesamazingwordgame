@@ -3,6 +3,7 @@ import { parseTerms } from "./pairText";
 /** Why a pasted line could not be turned into a pair. */
 export type BulkLineProblem = "missingSeparator" | "ambiguous" | "emptyTerm";
 
+/** A pasted line that was turned into a word pair, with its alternatives. */
 export interface BulkParsedPair {
   readonly a: string;
   readonly b: string;
@@ -10,6 +11,7 @@ export interface BulkParsedPair {
   readonly altB: readonly string[];
 }
 
+/** A pasted line that could not be used, kept so the user can see and fix it. */
 export interface BulkInvalidLine {
   /** 1-based line number in the pasted text. */
   readonly lineNumber: number;
@@ -17,6 +19,7 @@ export interface BulkInvalidLine {
   readonly problem: BulkLineProblem;
 }
 
+/** Outcome of reading pasted text: usable pairs and rejected lines, both in input order. */
 export interface BulkParseResult {
   readonly pairs: readonly BulkParsedPair[];
   readonly invalid: readonly BulkInvalidLine[];

@@ -1,13 +1,14 @@
 import { useSettings } from "../../hooks/useSettings";
+import { useSpeech } from "../../hooks/useSpeech";
 import { useI18n } from "../../i18n";
-import { isSpeechSupported } from "../../storage/speech";
 
 /** Settings switch for reading each word aloud automatically (NH-2). Hidden when speech is unsupported. */
 export function SpeechSettings() {
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
+  const { supported } = useSpeech();
 
-  if (!isSpeechSupported()) {
+  if (!supported) {
     return null;
   }
 

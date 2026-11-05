@@ -362,6 +362,8 @@ export const en = {
   "data.export.csv": "Export as CSV",
   "data.export.all": "Export all data",
   "data.export.includeProgress": "Include progress and statistics",
+  "data.export.failed":
+    "The file could not be downloaded. Check that your browser allows downloads and try again.",
   "data.import.heading": "Import",
   "data.import.file": "Import a JSON or CSV file",
   "data.import.problems": "The file cannot be imported:",

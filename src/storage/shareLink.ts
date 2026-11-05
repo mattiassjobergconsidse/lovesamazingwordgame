@@ -1,8 +1,12 @@
-import { SHARE_MAX_CHARS } from "../core/shareFormat";
+import { SHARE_MAX_CHARS, SHARE_MAX_INFLATED_BYTES } from "../core/shareFormat";
 
 /** Marks the payload as deflate-compressed; `r` marks plain UTF-8 (browsers without CompressionStream). */
 const COMPRESSED = "z";
 const RAW = "r";
+/** The only characters base64url produces; anything else is rejected before decoding. */
+const BASE64URL_TEXT = /^[A-Za-z0-9_-]+$/;
+/** Compression output has no useful limit: the input is the user's own set. */
+const NO_SIZE_LIMIT = Number.POSITIVE_INFINITY;
 
 function hasCompression(): boolean {
   return (
@@ -22,6 +26,7 @@ function toBase64Url(bytes: Uint8Array): string {
     .replace(/=+$/, "");
 }
 
+/** @throws If the text is not valid base64url (`atob` rejects it). */
 function fromBase64Url(text: string): Uint8Array<ArrayBuffer> {
   const binary = atob(text.replaceAll("-", "+").replaceAll("_", "/"));
   const bytes = new Uint8Array(binary.length);
@@ -31,14 +36,22 @@ function fromBase64Url(text: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
-async function pipe(
+/**
+ * Runs bytes through a compression or decompression stream.
+ *
+ * @param maxBytes Output limit; the stream is cancelled and an error thrown when it is exceeded.
+ */
+async function transformBytes(
   bytes: Uint8Array<ArrayBuffer>,
   transform: CompressionStream | DecompressionStream,
   maxBytes: number,
 ): Promise<Uint8Array<ArrayBuffer>> {
   const writer = transform.writable.getWriter();
+  // Write and close failures also surface through `reader.read()` below, which is awaited,
+  // so these promises only need to be kept from becoming unhandled rejections.
   writer.write(bytes).catch(() => undefined);
   writer.close().catch(() => undefined);
+
   const reader = transform.readable.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
@@ -72,10 +85,10 @@ export async function encodeSharePayload(json: string): Promise<string> {
   if (!hasCompression()) {
     return RAW + toBase64Url(bytes);
   }
-  const packed = await pipe(
+  const packed = await transformBytes(
     bytes,
     new CompressionStream("deflate-raw"),
-    Number.MAX_SAFE_INTEGER,
+    NO_SIZE_LIMIT,
   );
   return COMPRESSED + toBase64Url(packed);
 }
@@ -86,7 +99,11 @@ export async function encodeSharePayload(json: string): Promise<string> {
  * @throws If the text is not a valid, reasonably sized payload.
  */
 export async function decodeSharePayload(text: string): Promise<string> {
-  if (text.length < 2 || text.length > SHARE_MAX_CHARS) {
+  if (
+    text.length < 2 ||
+    text.length > SHARE_MAX_CHARS ||
+    !BASE64URL_TEXT.test(text)
+  ) {
     throw new Error("Invalid share payload");
   }
   const kind = text[0];
@@ -97,10 +114,10 @@ export async function decodeSharePayload(text: string): Promise<string> {
   if (kind !== COMPRESSED || !hasCompression()) {
     throw new Error("Unsupported share payload");
   }
-  const unpacked = await pipe(
+  const unpacked = await transformBytes(
     bytes,
     new DecompressionStream("deflate-raw"),
-    SHARE_MAX_CHARS * 4,
+    SHARE_MAX_INFLATED_BYTES,
   );
   return new TextDecoder("utf-8", { fatal: true }).decode(unpacked);
 }

@@ -4,11 +4,16 @@ import { runTransaction } from "./transaction";
 
 /** Checks a stored record, since IndexedDB content is not trusted (FR-BP-1). */
 function isBestScoreRecord(value: unknown): value is BestScoreRecord {
-  if (typeof value !== "object" || value === null) {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("setId" in value) ||
+    !("score" in value) ||
+    !("achievedAt" in value)
+  ) {
     return false;
   }
-  // The cast only widens `object` so the fields can be read; each one is type-checked below.
-  const { setId, score, achievedAt } = value as Record<string, unknown>;
+  const { setId, score, achievedAt } = value;
   return (
     typeof setId === "string" &&
     typeof score === "number" &&

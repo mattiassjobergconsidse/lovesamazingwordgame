@@ -365,6 +365,8 @@ export const sv: Record<MessageKey, string> = {
   "data.export.csv": "Exportera som CSV",
   "data.export.all": "Exportera alla data",
   "data.export.includeProgress": "Ta med framsteg och statistik",
+  "data.export.failed":
+    "Filen kunde inte laddas ner. Kontrollera att webbläsaren tillåter nedladdningar och försök igen.",
   "data.import.heading": "Importera",
   "data.import.file": "Importera en JSON- eller CSV-fil",
   "data.import.problems": "Filen kan inte importeras:",
@@ -781,7 +783,7 @@ export const sv: Record<MessageKey, string> = {
   "mascot.drake.correct.2": "Superrätt svar!",
   "mascot.drake.correct.3": "Den där var en legendarisk gissning!",
   "mascot.drake.wrong.1": "Fel vind! Skaka av dig det.",
-  "mascot.drake.wrong.2": "Även drakar missar målet ibland.",
+  "mascot.drake.wrong.2": "Även drakar missar mål ibland.",
   "mascot.drake.wrong.3": "Inte den här gången, nästa gång får du medvind!",
   "mascot.drake.streak.1": "Du är på gång! Du flyger högt!",
   "mascot.drake.streak.2": "Wow, en legendarisk vinstsvit!",

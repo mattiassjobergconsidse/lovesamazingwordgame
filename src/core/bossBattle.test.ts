@@ -60,6 +60,15 @@ describe("boss health", () => {
     expect(next.hp).toBeLessThan(30);
   });
 
+  it("NH-15: damage rounds down so the boss keeps at least 1 hp per unsolved word", () => {
+    const next = applyBossAnswer(
+      { hp: 23, maxHp: 30, remaining: 3 },
+      "correct",
+    );
+
+    expect(next).toEqual({ hp: 16, maxHp: 30, remaining: 2 });
+  });
+
   it("NH-15: a wrong answer heals a little but never above full health", () => {
     const hurt = applyBossAnswer(startBoss(3), "correct");
 

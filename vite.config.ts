@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
+import { buildContentSecurityPolicy } from "./src/core/contentSecurityPolicy.ts";
 
 function listFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -44,10 +45,39 @@ function precacheServiceWorker(): Plugin {
   };
 }
 
+/**
+ * Adds a Content-Security-Policy meta tag to the built `index.html` (NH-19).
+ * Build only: the dev server injects inline scripts for hot reloading that the policy would block.
+ */
+function contentSecurityPolicy(): Plugin {
+  const inlineScript = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g;
+  const charsetTag = '<meta charset="UTF-8" />';
+  return {
+    name: "content-security-policy",
+    apply: "build",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        const hashes = [...html.matchAll(inlineScript)].map((match) =>
+          createHash("sha256").update(match[1]).digest("base64"),
+        );
+        if (!html.includes(charsetTag)) {
+          throw new Error("index.html must keep its UTF-8 meta charset tag");
+        }
+        const policy = buildContentSecurityPolicy(hashes);
+        return html.replace(
+          charsetTag,
+          `${charsetTag}\n    <meta http-equiv="Content-Security-Policy" content="${policy}" />\n    <meta name="referrer" content="no-referrer" />`,
+        );
+      },
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   base: "/lovesamazingwordgame/",
-  plugins: [react(), precacheServiceWorker()],
+  plugins: [react(), contentSecurityPolicy(), precacheServiceWorker()],
   test: {
     environment: "jsdom",
     globals: true,

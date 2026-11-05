@@ -1,5 +1,6 @@
 import { formatTerms, parseTerms } from "./pairText";
 import type { ImportProblem, SetBundle } from "./exportFormat";
+import { MAX_IMPORT_PAIRS } from "./importLimits";
 import { LANGUAGE_LABEL_MAX, SET_NAME_MAX } from "./setValidation";
 import type { WordPair, WordSet } from "../types";
 
@@ -15,6 +16,7 @@ export interface CsvRow {
   readonly altB: readonly string[];
 }
 
+/** Outcome of reading a CSV file: labels and rows, or every problem found. */
 export type CsvOutcome =
   | {
       readonly ok: true;
@@ -24,8 +26,23 @@ export type CsvOutcome =
     }
   | { readonly ok: false; readonly problems: readonly ImportProblem[] };
 
+/** Cells starting like this are read as formulas by spreadsheet programs (CSV injection). */
+const FORMULA_START = /^'*[=+\-@\t\r]/;
+/** The apostrophe added by {@link guardCell}; only removed when it really guards a formula start. */
+const FORMULA_GUARD = /^'(?='*[=+\-@\t\r])/;
+
+/** Prefixes an apostrophe so Excel and similar tools show the cell as text, never run it. */
+function guardCell(value: string): string {
+  return FORMULA_START.test(value) ? `'${value}` : value;
+}
+
+function unguardCell(value: string): string {
+  return value.replace(FORMULA_GUARD, "");
+}
+
 function quoteCell(value: string): string {
-  return /[",\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  const safe = guardCell(value);
+  return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 }
 
 /**
@@ -143,8 +160,11 @@ export function parseCsv(text: string): CsvOutcome {
   if (header === undefined) {
     return { ok: false, problems: [{ path: "", reason: "empty" }] };
   }
-  const langA = header.cells[0]?.trim() ?? "";
-  const langB = header.cells[1]?.trim() ?? "";
+  if (body.length > MAX_IMPORT_PAIRS) {
+    return { ok: false, problems: [{ path: "", reason: "tooLarge" }] };
+  }
+  const langA = unguardCell(header.cells[0]?.trim() ?? "");
+  const langB = unguardCell(header.cells[1]?.trim() ?? "");
   for (const [label, column] of [
     [langA, "A"],
     [langB, "B"],
@@ -159,8 +179,8 @@ export function parseCsv(text: string): CsvOutcome {
 
   const rows: CsvRow[] = [];
   for (const record of body) {
-    const termsA = parseTerms(record.cells[0] ?? "");
-    const termsB = parseTerms(record.cells[1] ?? "");
+    const termsA = parseTerms(unguardCell(record.cells[0] ?? ""));
+    const termsB = parseTerms(unguardCell(record.cells[1] ?? ""));
     const path = `line ${String(record.line)}`;
     if (record.cells.length < 2) {
       report(path, "missing");

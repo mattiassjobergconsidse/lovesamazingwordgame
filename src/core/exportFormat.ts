@@ -7,6 +7,7 @@ import type {
   WordSet,
 } from "../types";
 import { LANGUAGE_LABEL_MAX, SET_NAME_MAX } from "./setValidation";
+import { MAX_IMPORT_PAIRS, MAX_IMPORT_SETS } from "./importLimits";
 import { mergeTrophies } from "./trophies";
 import { isTrophyId, type TrophyRecord } from "./trophyDefinitions";
 
@@ -47,6 +48,7 @@ export interface ExportFile {
   readonly trophies?: readonly TrophyRecord[];
 }
 
+/** Why a file or a field in it was rejected; the UI maps each to a translated message. */
 export type ProblemReason =
   | "invalidJson"
   | "notAnObject"
@@ -246,6 +248,12 @@ function readList(
     return undefined;
   }
   const items: unknown[] = value;
+  const limit = key === "sets" ? MAX_IMPORT_SETS : MAX_IMPORT_PAIRS;
+  if (items.length > limit) {
+    // Checked before any item is read, so a crafted file cannot make validation expensive.
+    report(key, "tooLarge");
+    return undefined;
+  }
   return items;
 }
 

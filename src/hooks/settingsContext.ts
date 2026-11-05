@@ -10,4 +10,5 @@ export interface SettingsStore {
   readonly updateSettings: (patch: Partial<Settings>) => void;
 }
 
+/** Context holding the settings; read it with `useSettings`. */
 export const SettingsContext = createContext<SettingsStore | null>(null);

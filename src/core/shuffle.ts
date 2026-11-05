@@ -2,6 +2,18 @@
 export type Rng = () => number;
 
 /**
+ * Swaps two elements without index reads that `noUncheckedIndexedAccess` would widen to `T | undefined`:
+ * `splice` always returns `T[]`, so no type assertion is needed.
+ */
+function swap(list: unknown[], first: number, second: number): void {
+  list.splice(
+    first,
+    1,
+    ...list.splice(second, 1, ...list.slice(first, first + 1)),
+  );
+}
+
+/**
  * Returns a shuffled copy using the Fisher-Yates algorithm.
  *
  * @param items Items to shuffle; the input is never mutated.
@@ -11,11 +23,7 @@ export type Rng = () => number;
 export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(rng() * (i + 1));
-    // Indices are in range, but noUncheckedIndexedAccess widens T to T | undefined.
-    const atI = result[i] as T;
-    result[i] = result[j] as T;
-    result[j] = atI;
+    swap(result, i, Math.floor(rng() * (i + 1)));
   }
   return result;
 }
