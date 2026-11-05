@@ -223,6 +223,25 @@
   background: var(--color-wrong);
   border-color: var(--color-wrong);
 }
+.truefalse-card {
+  touch-action: pan-y;
+}
+.truefalse-proposal {
+  padding: var(--space-2);
+  background: var(--color-bg);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.truefalse-button[data-state="correct"] {
+  color: var(--color-on-primary);
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+}
+.truefalse-button[data-state="wrong"] {
+  color: var(--color-on-primary);
+  background: var(--color-wrong);
+  border-color: var(--color-wrong);
+}
 .match-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;

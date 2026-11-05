@@ -11,4 +11,5 @@ export const MODE_ICONS: Readonly<Record<TrainMode, string>> = {
   boss: "🐉",
   listening: "🎧",
   speed: "⚡",
+  truefalse: "⚖️",
 };

@@ -31,6 +31,7 @@ describe("parseRoute", () => {
     ["#/train/listening", { name: "trainMode", mode: "listening" }],
     ["#/train/boss", { name: "trainMode", mode: "boss" }],
     ["#/train/speed", { name: "trainMode", mode: "speed" }],
+    ["#/train/truefalse", { name: "trainMode", mode: "truefalse" }],
     [
       "#/train/boss/mistakes",
       { name: "trainMode", mode: "boss", focus: "mistakes" },

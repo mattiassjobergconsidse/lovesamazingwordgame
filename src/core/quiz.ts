@@ -17,6 +17,46 @@ export interface QuizQuestion {
 }
 
 /**
+ * Picks wrong answers from other pairs of the pool (FR-QZ-1, NH-17).
+ *
+ * They are unique (after normalisation) and never equal the correct answer or its alternatives.
+ *
+ * @param pair The pair being asked.
+ * @param pool All pairs of the active set (may include `pair`).
+ * @param direction Direction of this card.
+ * @param count Maximum number of distractors wanted.
+ * @param rng Injected random source.
+ * @returns Up to `count` answer texts; fewer when the pool has too few distinct ones.
+ */
+export function pickDistractors(
+  pair: WordPair,
+  pool: readonly WordPair[],
+  direction: Direction,
+  count: number,
+  rng: Rng,
+): string[] {
+  const taken = new Set(
+    acceptedAnswers(termsFor(pair, direction)).map(normalizeAnswer),
+  );
+  const distractors: string[] = [];
+  for (const other of shuffle(pool, rng)) {
+    if (distractors.length >= count) {
+      break;
+    }
+    if (other.id === pair.id) {
+      continue;
+    }
+    const { answer } = termsFor(other, direction);
+    const key = normalizeAnswer(answer);
+    if (!taken.has(key)) {
+      taken.add(key);
+      distractors.push(answer);
+    }
+  }
+  return distractors;
+}
+
+/**
  * Builds a question with distractors taken from other pairs (FR-QZ-1, FR-QZ-3).
  *
  * Distractors are unique (after normalisation) and never equal the correct answer or its
@@ -34,23 +74,13 @@ export function buildQuizQuestion(
   rng: Rng,
 ): QuizQuestion {
   const terms = termsFor(pair, direction);
-  const taken = new Set(acceptedAnswers(terms).map(normalizeAnswer));
-
-  const distractors: string[] = [];
-  for (const other of shuffle(pool, rng)) {
-    if (distractors.length >= QUIZ_OPTION_COUNT - 1) {
-      break;
-    }
-    if (other.id === pair.id) {
-      continue;
-    }
-    const { answer } = termsFor(other, direction);
-    const key = normalizeAnswer(answer);
-    if (!taken.has(key)) {
-      taken.add(key);
-      distractors.push(answer);
-    }
-  }
+  const distractors = pickDistractors(
+    pair,
+    pool,
+    direction,
+    QUIZ_OPTION_COUNT - 1,
+    rng,
+  );
 
   const options = shuffle([terms.answer, ...distractors], rng);
   return {

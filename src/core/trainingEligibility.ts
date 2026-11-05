@@ -8,7 +8,8 @@ export type EligibilityMode =
   | "scramble"
   | "listening"
   | "boss"
-  | "speed";
+  | "speed"
+  | "truefalse";
 
 /** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13, NH-14, NH-15, NH-16). */
 export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
@@ -24,6 +25,8 @@ export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
   boss: 3,
   // Speed Round is quiz-style, so it needs the same two words as Quiz.
   speed: 2,
+  // True or False needs a second word to build a false proposal from.
+  truefalse: 2,
 };
 
 /**
