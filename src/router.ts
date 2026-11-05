@@ -9,16 +9,19 @@ export type TrainMode =
   | "hangman"
   | "scramble"
   | "listening"
-  | "boss";
+  | "boss"
+  | "speed";
 
+/** Easiest to hardest for a 10-year-old (NH-17b). */
 export const TRAIN_MODES: readonly TrainMode[] = [
   "flashcards",
-  "quiz",
   "matching",
-  "writing",
-  "hangman",
+  "quiz",
   "scramble",
+  "hangman",
   "listening",
+  "speed",
+  "writing",
   "boss",
 ];
 /** Which words a session is limited to: the hardest ones (FR-ST-2) or the last session's mistakes (NH-15). */

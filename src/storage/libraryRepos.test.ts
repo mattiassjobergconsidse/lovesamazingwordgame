@@ -108,6 +108,19 @@ describe("setsRepo", () => {
     expect(await db.count("activity")).toBe(0);
   });
 
+  it("NH-16: deleting a set also deletes its best score and keeps the others", async () => {
+    const doomed = makeSet({ name: "Doomed" });
+    const kept = makeSet({ name: "Kept" });
+    await putSet(db, doomed);
+    await putSet(db, kept);
+    await db.put("bestScores", { setId: doomed.id, score: 80, achievedAt: 1 });
+    await db.put("bestScores", { setId: kept.id, score: 60, achievedAt: 1 });
+
+    await deleteSetCascade(db, doomed.id);
+
+    expect(await db.getAllKeys("bestScores")).toEqual([kept.id]);
+  });
+
   it("FR-SET-3: deleting an unknown set changes nothing", async () => {
     const set = makeSet();
     await putSet(db, set);

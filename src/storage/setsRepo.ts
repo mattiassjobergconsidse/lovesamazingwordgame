@@ -62,7 +62,7 @@ export async function putSetWithPairs(
   );
 }
 /**
- * Deletes a set with its pairs, progress and activity in one transaction (FR-SET-3).
+ * Deletes a set with its pairs, progress, activity and best score in one transaction (FR-SET-3).
  *
  * @throws If any delete fails; nothing is deleted then.
  */
@@ -71,7 +71,7 @@ export async function deleteSetCascade(
   setId: string,
 ): Promise<void> {
   const tx = db.transaction(
-    ["sets", "pairs", "progress", "activity"],
+    ["sets", "pairs", "progress", "activity", "bestScores"],
     "readwrite",
   );
   await runTransaction(tx, async (track) => {
@@ -82,6 +82,7 @@ export async function deleteSetCascade(
     ]);
     await Promise.all([
       track(tx.objectStore("sets").delete(setId)),
+      track(tx.objectStore("bestScores").delete(setId)),
       ...pairIds.map((id) => track(tx.objectStore("pairs").delete(id))),
       ...progressIds.map((id) => track(tx.objectStore("progress").delete(id))),
       ...activityIds.map((id) => track(tx.objectStore("activity").delete(id))),

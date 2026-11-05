@@ -94,6 +94,11 @@ export interface TrainingSession {
    * updates progress like {@link TrainingSession.answer}, but nothing is re-queued.
    */
   readonly answerRound: (results: ReadonlyMap<string, AnswerResult>) => void;
+  /**
+   * Ends the running session now, keeping what was answered so far. Used when
+   * a timer runs out (Speed Round, NH-16); progress is already saved per answer.
+   */
+  readonly finish: () => void;
 }
 
 /**
@@ -237,6 +242,18 @@ export function useTrainingSession(
     },
     [view, now, rng, recordAnswer, directionMode],
   );
+  const finish = useCallback(() => {
+    if (view.status !== "running") {
+      return;
+    }
+    setView({
+      status: "finished",
+      session: view.session,
+      durationMs: now() - view.startedAt,
+      overrides: view.overrides,
+    });
+  }, [view, now]);
+
   return {
     view,
     plannedCount:
@@ -252,5 +269,6 @@ export function useTrainingSession(
     practiseMistakes,
     answer,
     answerRound,
+    finish,
   };
 }

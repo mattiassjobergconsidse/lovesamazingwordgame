@@ -157,6 +157,48 @@ describe("useTrainingSession", () => {
     expect(result.current.session.view.status).toBe("finished");
   });
 
+  it("NH-16: finishing early keeps the answers given so far and ends the session", async () => {
+    const { set, pairs } = setWithPairs("Week 1", [
+      ["hus", "house"],
+      ["bil", "car"],
+    ]);
+    await seedDatabase({
+      sets: [set],
+      pairs,
+      settings: makeSettings({ sessionSize: "all" }),
+    });
+    const { result } = await renderSession(set.id, environment);
+    act(() => {
+      result.current.session.start();
+    });
+    act(() => {
+      result.current.session.answer("correct");
+    });
+
+    act(() => {
+      result.current.session.finish();
+    });
+
+    const { view } = result.current.session;
+    expect(view.status).toBe("finished");
+    expect(view.status === "finished" && view.session.answers).toEqual([
+      "correct",
+    ]);
+    expect(result.current.session.card).toBeNull();
+  });
+
+  it("NH-16: finishing while no session is running does nothing", async () => {
+    const { set, pairs } = setWithPairs("Week 1", [["hus", "house"]]);
+    await seedDatabase({ sets: [set], pairs });
+    const { result } = await renderSession(set.id, environment);
+
+    act(() => {
+      result.current.session.finish();
+    });
+
+    expect(result.current.session.view).toEqual({ status: "idle" });
+  });
+
   it("FR-ST-2: plans a session from the hardest words only", async () => {
     const { set, pairs } = setWithPairs("Week 1", [["hus", "house"]]);
     await seedDatabase({ sets: [set], pairs });

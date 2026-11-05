@@ -18,6 +18,8 @@ interface SessionResultProps {
   readonly onPractiseAgain: () => void;
   /** What the mascot says about the session (NH-12). */
   readonly speech?: MascotSpeech;
+  /** Replaces the "x of y correct" line when a mode scores differently (Speed Round, NH-16). */
+  readonly scoreSummary?: ReactNode;
   /** Extra content shown above the actions, e.g. the mini-game offer (NH-11). */
   readonly children?: ReactNode;
 }
@@ -29,6 +31,7 @@ export function SessionResult({
   onPractiseMistakes,
   onPractiseAgain,
   speech,
+  scoreSummary,
   children,
 }: SessionResultProps) {
   const { t } = useI18n();
@@ -45,12 +48,14 @@ export function SessionResult({
         </span>
       </div>
       <h1 tabIndex={-1}>{t("train.result.title")}</h1>
-      <p className="session-result-score">
-        {t("train.result.score", {
-          correct: score.correct,
-          total: session.total,
-        })}
-      </p>
+      {scoreSummary ?? (
+        <p className="session-result-score">
+          {t("train.result.score", {
+            correct: score.correct,
+            total: session.total,
+          })}
+        </p>
+      )}
       <p>{t("train.result.time", { time: formatDuration(durationMs) })}</p>
       {mistakes.length === 0 ? (
         <p>{t("train.result.perfect")}</p>

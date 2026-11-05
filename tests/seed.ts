@@ -1,7 +1,9 @@
 import { openAppDb } from "../src/storage/db";
+import { loadBestScore } from "../src/storage/bestScoresRepo";
 import { loadTrophies } from "../src/storage/trophiesRepo";
 import { saveSettings } from "../src/storage/settingsRepo";
 import { loadLibrary } from "../src/storage/setsRepo";
+import type { BestScoreRecord } from "../src/core/speedRound";
 import type { TrophyRecord } from "../src/core/trophyDefinitions";
 import type {
   DailyActivity,
@@ -19,6 +21,7 @@ export interface StoredData {
   readonly progress?: readonly WordProgress[];
   readonly activity?: readonly DailyActivity[];
   readonly trophies?: readonly TrophyRecord[];
+  readonly bestScores?: readonly BestScoreRecord[];
   readonly settings?: Settings;
 }
 
@@ -44,7 +47,20 @@ export async function seedDatabase(data: StoredData): Promise<void> {
   for (const record of data.trophies ?? []) {
     await db.put("trophies", record);
   }
+  for (const record of data.bestScores ?? []) {
+    await db.put("bestScores", record);
+  }
   db.close();
+}
+
+/** Reads the best Speed Round score of a set straight from IndexedDB. */
+export async function readBestScore(setId: string) {
+  const db = await openAppDb();
+  try {
+    return await loadBestScore(db, setId);
+  } finally {
+    db.close();
+  }
 }
 
 /** Reads all unlocked trophies straight from IndexedDB. */

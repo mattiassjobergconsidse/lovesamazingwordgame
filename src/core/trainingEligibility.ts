@@ -7,9 +7,10 @@ export type EligibilityMode =
   | "hangman"
   | "scramble"
   | "listening"
-  | "boss";
+  | "boss"
+  | "speed";
 
-/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13, NH-14, NH-15). */
+/** Minimum number of word pairs per mode (FR-ACT-1, FR-QZ-3, FR-MT-4, NH-9, NH-13, NH-14, NH-15, NH-16). */
 export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
   flashcards: 1,
   writing: 1,
@@ -21,6 +22,8 @@ export const MIN_WORDS: Readonly<Record<EligibilityMode, number>> = {
   matching: 2,
   // The pool also needs enough hard words or mistakes, see `resolveBossPool`.
   boss: 3,
+  // Speed Round is quiz-style, so it needs the same two words as Quiz.
+  speed: 2,
 };
 
 /**

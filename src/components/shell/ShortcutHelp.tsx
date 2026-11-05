@@ -73,6 +73,10 @@ const GROUPS: readonly ShortcutGroup[] = [
       { keys: ["Enter"], label: "shortcuts.bossWrite" },
     ],
   },
+  {
+    heading: "shortcuts.speed",
+    items: [{ keys: ["1–9"], label: "shortcuts.choose" }],
+  },
 ];
 
 /** Header button plus the `?` key: opens an overlay that lists the keyboard shortcuts. */
