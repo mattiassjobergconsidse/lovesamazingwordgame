@@ -156,9 +156,7 @@ describe("listening mode", () => {
 
     await user.click(screen.getByRole("button", { name: word }));
 
-    expect(
-      screen.getByText(`Correct! The word is ${word}`),
-    ).toBeVisible();
+    expect(screen.getByText(`Correct! The word is ${word}`)).toBeVisible();
     expect(screen.getByRole("button", { name: "Next" })).toHaveFocus();
     // The correct answer is read aloud after answering.
     expect(speak).toHaveBeenCalledTimes(2);
@@ -226,9 +224,7 @@ describe("listening mode", () => {
 
     await user.keyboard(String(wrongIndex + 1));
 
-    expect(
-      screen.getByText(`Not quite. The word was: ${word}`),
-    ).toBeVisible();
+    expect(screen.getByText(`Not quite. The word was: ${word}`)).toBeVisible();
     expect(screen.getByText(`Meaning (Svenska): ${spoken}`)).toBeVisible();
   });
 
@@ -340,9 +336,7 @@ describe("listening mode", () => {
       "cog{Enter}",
     );
 
-    expect(
-      screen.getByText("Not quite. The word was: dog"),
-    ).toBeVisible();
+    expect(screen.getByText("Not quite. The word was: dog")).toBeVisible();
     await user.keyboard("{Enter}");
     // FR-TRN-7: a missed word comes back once.
     expect(
@@ -364,9 +358,9 @@ describe("listening mode", () => {
 
     await user.keyboard("car");
 
-    expect(screen.getByLabelText("Type the word you heard (English)")).toHaveValue(
-      "car",
-    );
+    expect(
+      screen.getByLabelText("Type the word you heard (English)"),
+    ).toHaveValue("car");
     expect(speak).toHaveBeenCalledTimes(1);
   });
 
