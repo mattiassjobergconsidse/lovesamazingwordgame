@@ -133,15 +133,15 @@ describe("true or false mode", () => {
     ).toBeVisible();
   });
 
-  it("NH-17: answers with the keys Right, Left, T and F", async () => {
+  it("NH-17: answers with the keys Left, Right, 1 and 2", async () => {
     await seedTrueFalse();
     const user = userEvent.setup();
     render(<App />);
     await startSession(user);
 
     for (const [index, [rightKey, wrongKey]] of [
-      ["{ArrowRight}", "{ArrowLeft}"],
-      ["t", "f"],
+      ["{ArrowLeft}", "{ArrowRight}"],
+      ["1", "2"],
     ].entries()) {
       const { isTrue } = currentStatement();
       await user.keyboard((isTrue ? rightKey : wrongKey) ?? "");
@@ -151,7 +151,7 @@ describe("true or false mode", () => {
     }
   });
 
-  it("NH-17: answers with a swipe right for true and left for false", async () => {
+  it("NH-17: answers with a swipe left for true and right for false", async () => {
     await seedTrueFalse();
     const user = userEvent.setup();
     render(<App />);
@@ -163,7 +163,7 @@ describe("true or false mode", () => {
     if (card === null) throw new Error("no card");
 
     fireEvent.pointerDown(card, { clientX: 100, clientY: 100 });
-    fireEvent.pointerUp(card, { clientX: isTrue ? 220 : -20, clientY: 100 });
+    fireEvent.pointerUp(card, { clientX: isTrue ? -20 : 220, clientY: 100 });
 
     expect(await screen.findByText(FEEDBACK)).toHaveTextContent(/^Correct!/);
   });
@@ -206,6 +206,11 @@ describe("true or false mode", () => {
     await startSession(user);
 
     await judge(user, "wrong");
+
+    // A wrong answer does not advance by itself; the player presses Next.
+    await new Promise((resolve) => setTimeout(resolve, 1300));
+    expect((await readLibrary()).progress).toHaveLength(0);
+    await next(user);
 
     await waitFor(async () => {
       const { progress } = await readLibrary();

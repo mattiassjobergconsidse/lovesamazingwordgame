@@ -68,13 +68,16 @@ export function QuizCard({
       return;
     }
     nextRef.current?.focus();
+    if (chosen !== question.correctIndex) {
+      return;
+    }
     const timer = window.setTimeout(() => {
       advance(chosen);
     }, AUTO_ADVANCE_MS);
     return () => {
       window.clearTimeout(timer);
     };
-  }, [chosen, advance]);
+  }, [chosen, advance, question.correctIndex]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

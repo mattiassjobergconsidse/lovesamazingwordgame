@@ -141,6 +141,54 @@
   font-size: 1.25rem;
   border-radius: var(--radius-lg);
 }
+/* The word being built: one box per letter, like the tiles but outlined. */
+.scramble-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.scramble-slot,
+.scramble-fixed {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--tap-size);
+  min-block-size: var(--tap-size);
+  padding: 0;
+  font: inherit;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.scramble-slot[data-filled="true"] {
+  border-color: var(--mode-color, var(--color-border));
+}
+.scramble-slot[data-wrong="true"] {
+  border-color: var(--color-wrong);
+}
+.scramble-slot[data-missed="true"] {
+  border-style: dashed;
+}
+/* Punctuation and spaces are fixed, so they get no box. */
+.scramble-fixed {
+  background: none;
+  border: none;
+  min-inline-size: 0.75rem;
+}
+/* The shuffled letter tiles sit in one wrapping row, not a bulleted list. */
+.scramble-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* A little air between the replay speaker and the Next button below it. */
+.scramble-card .icon-button + .button {
+  margin-block-start: var(--space-2);
+}
 @media (prefers-reduced-motion: reduce) {
   .flashcard {
     transition: none;
@@ -154,6 +202,13 @@
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+}
+/* Label, input and Check button stacked with room between them. */
+.listening-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
 }
 .writing-feedback {
   display: flex;

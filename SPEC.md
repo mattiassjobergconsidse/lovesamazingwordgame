@@ -240,8 +240,8 @@ Global, always visible: a compact **active set bar** (set name, word count, "Cha
 
 - `FR-QZ-1` Show the prompt and 4 answer options (1 correct + 3 distractors from other words of the active set, same direction).
   Options are shuffled. Distractors must be unique and must not equal the correct answer or its alternatives.
-- `FR-QZ-2` Choose by click/tap or keys `1`-`4`. Immediate feedback (correct option green, chosen wrong option red), then auto-advance
-  after ~1 s or on any key/tap.
+- `FR-QZ-2` Choose by click/tap or keys `1`-`4`. Immediate feedback (correct option green, chosen wrong option red), then, after a correct choice, auto-advance
+  after ~1 s or on any key/tap. A wrong choice does not auto-advance; the user continues with Next (or any key/tap).
 - `FR-QZ-3` 4 options when the set has >= 4 pairs; with 2-3 pairs use as many options as there are pairs. Below 2 pairs the mode is disabled (FR-ACT-1).
 
 ### 6.7 Matching (`FR-MT`)
@@ -338,7 +338,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
    Ask before adding `vite-plugin-pwa`; a hand-written service worker is the default. AC: Lighthouse PWA installable; works in airplane mode after first load.
 2. **Pronunciation** (`NH-2`, done): speaker button on cards using the Web Speech API (`speechSynthesis`). Voice language is taken from a BCP-47 tag
    stored on the set (`langACode`, `langBCode`, already in the schema; picked from a dropdown of available voices).
-   Wrap in `storage/speech.ts`; hide the button if unsupported. Optional auto-play when a card shows.
+   Wrap in `storage/speech.ts`; hide the button if unsupported. Optional auto-play when a card shows, including the answer when a flashcard is flipped.
 3. **Theme polish** (`NH-3`, done): light/dark selection itself is a must-have (`FR-THEME-*`); this item is extra polish only (smooth colour transitions, additional accent colour choices, delivered as the extra Ocean and Sunset palettes so no settings-format change is needed).
 4. **Sounds and haptics** (`NH-4`, done): short correct/wrong sounds (generated with WebAudio, no files) and `navigator.vibrate` on mobile; off by default, setting to enable.
 5. **Share a set via link** (`NH-5`, done): encode a small set as compressed base64 in the URL hash so it can be sent to a friend; import dialog on open. No server.
@@ -351,6 +351,8 @@ Implement in this order. Each needs its own PR and must not break the "no backen
    hidden as blanks (prompt shown in the other language); the user guesses letters (on-screen keyboard and physical keys, including å/ä/ö), with a
    limited number of wrong guesses (e.g. 6) drawn as a progressive figure. Solved = `correct`, out of guesses = `wrong` (SR result as in section 7).
    Follows the shared session rules (FR-TRN) and eligibility rules (FR-ACT-1).
+   There is no auto-advance: the user always continues with Next. When the round ends the answer is read aloud if auto-play is on (and the answer side
+   has a voice language); a speaker button lets the user replay it.
 10. **Trophies** (`NH-10`, done): unlockable trophies shown on a trophy screen (locked ones shown greyed out with their requirement). Trophy state is
     stored locally (IndexedDB) and included in export/import. Rules are pure functions in `core/` computed from progress/activity. Suggested trophies:
     - First session completed.
@@ -387,9 +389,10 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - Tiles can be tapped or typed on the physical keyboard (including å/ä/ö); Backspace or tapping a placed tile removes it.
     - Hint places the next correct letter and gives result `assisted`. Solved without hint = `correct`; "Give up" reveals the answer = `wrong`.
     - Multi-word answers keep the word boundaries visible (spaces are not shuffled).
+    - There is no auto-advance: the user always continues with Next. After a correct answer the word is read aloud when auto-play is on and the answer side has a voice language; a speaker button lets the user replay it.
     - Shuffle is pure in `core/` with injected rng and never returns the original order when the answer has 2+ distinct letters.
     - Follows FR-TRN and FR-ACT-1 (minimum 1 word). Needs no schema change.
-14. **Listening mode** (`NH-14`, done): the app speaks the prompt-side term (via `storage/speech.ts`, NH-2) and the user picks its translation in the other language (Quiz-style options) or types it. Only the spoken (prompt) side needs a voice language.
+14. **Listening mode** (`NH-14`, done): the app speaks the prompt-side term (via `storage/speech.ts`, NH-2) and the user picks its translation in the other language (Quiz-style options) or types it. Only the spoken (prompt) side needs a voice language. After an answer the correct answer is read aloud automatically (when the answer side has a voice language); a correct answer moves on when the speech ends, so there is no separate speaker button.
     - The spoken term is the prompt side; it is spoken on every card regardless of the auto-play setting. Its text is shown only after answering (or via "Show the word", which counts as help).
     - Only available when speech is supported and the set has a voice language code for every direction that can occur (both with random direction, only the answer side when the direction is forced); otherwise the mode button is disabled with a clear message.
     - A replay button and a key (`R`) repeat the audio. Typed answers reuse `core/checkAnswer.ts`; choice answers reuse `core/quiz.ts`.
@@ -407,7 +410,7 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       - Health: 10 per word. A correct or assisted answer deals `floor(hp / remaining words)` damage, so the bar reaches 0 exactly when the last word is solved; a wrong answer heals 3 (capped at full health).
       - The boss is a random mascot other than the user's own. It reacts with a flinch (hit) or a grin (heal) and a polite status line; the user's own mascot keeps reacting through the NH-12 pools.
       - Completing a boss fight unlocks the "Boss slayer" trophy.
-16. **Speed Round mode** (`NH-16`, done): a 60-second sprint of quiz-style cards with a combo multiplier.
+16. **Speed Round mode** (`NH-16`, done): a 60-second sprint of quiz-style cards with a combo multiplier. The prompt is read aloud when a card shows if auto-play is on.
     - Words still come from the SR queue (FR-TRN-2); the first answer per word updates progress (FR-TRN-4). The timer is injected in `core/`, never read from the clock directly.
     - Correct answers raise the combo (score multiplier); a wrong answer resets it. The round ends when time runs out.
     - A best score per set is shown on the end screen. **Storing best scores needs a new IndexedDB store or field: this requires a migration and user approval before implementation.**
@@ -422,13 +425,13 @@ Implement in this order. Each needs its own PR and must not break the "no backen
       - Completing a round unlocks the "Speed demon" trophy.
 17. **True or False mode** (`NH-17`, done): a prompt and a proposed translation are shown; the user judges whether it is right.
     - About half of the proposals are the real translation, the rest are distractors from `core/quiz.ts` (never equal to the correct answer or its alternatives).
-    - Answer by buttons, swipe right/left, or keys `Right`/`Left` (or `T`/`F`).
+    - Answer by buttons, swipe left (true) or right (false), or keys `Left`/`1` (true) and `Right`/`2` (false). The True button comes before the False button.
     - Right judgement = `correct`, wrong judgement = `wrong`. Follows FR-TRN and FR-ACT-1 (minimum 2 words). Needs no schema change.
     - Proposal building is pure in `core/` with injected rng and unit tests.
     - Decisions (2026-11-05):
       - Route `#/train/truefalse` (mode id `truefalse`); it is the second mode in `TRAIN_MODES`. Eligibility minimum is 2 words, because a false proposal needs another word.
       - `core/trueFalse.ts` builds a proposal: the first rng draw decides true (below 0.5) or false; a false proposal uses `pickDistractors` from `core/quiz.ts`. If the pool has no distinct distractor, the proposal is true.
-      - Feedback follows Quiz: the choice is coloured and a status line names the right answer when it matters; it continues after 1 s, on Next, on a tap or on any key. A swipe or a key only judges while no judgement has been made.
+      - Feedback follows Quiz: the choice is coloured and a status line names the right answer when it matters; a right judgement continues after 1 s, on Next, on a tap or on any key; a wrong judgement waits for Next. A swipe or a key only judges while no judgement has been made.
       - Completing a session unlocks the "Fact checker" trophy.
 18. **Order modes** (`NH-18`, done): the modes are ranked from easiest to hardest for a 10-year-old. The mode picker and home screen show them in this order (`TRAIN_MODES` in `router.ts`).
     - Order: Flashcards, True or False, Matching, Quiz, Word Scramble, Hangman, Listening, Speed Round, Writing, Boss Battle.

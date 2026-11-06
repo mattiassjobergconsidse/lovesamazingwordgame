@@ -100,6 +100,25 @@ describe("pronunciation", () => {
     });
   });
 
+  it("NH-2: reads the answer when the flashcard is flipped if auto-play is on", async () => {
+    const speak = stubSpeech();
+    await seedWithVoices(true);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "Start" }));
+    await waitFor(() => {
+      expect(speak).toHaveBeenCalledTimes(1);
+    });
+
+    await user.click(await screen.findByRole("button", { name: "Show answer" }));
+
+    await waitFor(() => {
+      expect(speak).toHaveBeenLastCalledWith(
+        expect.objectContaining({ text: "dog", lang: "en-GB" }),
+      );
+    });
+  });
+
   it("NH-2: hides the speaker button when the browser has no speech support", async () => {
     await seedWithVoices();
     const user = userEvent.setup();

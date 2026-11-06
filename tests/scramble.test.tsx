@@ -65,6 +65,8 @@ describe("word scramble mode", () => {
     }
 
     expect(screen.getByText("Correct! The word is house")).toBeVisible();
+    // No auto-advance: the player continues with Next.
+    await user.click(screen.getByRole("button", { name: "Next" }));
     expect(
       await screen.findByRole(
         "heading",
@@ -171,6 +173,7 @@ describe("word scramble mode", () => {
       await screen.findByRole("button", { name: "Give up" }),
     ).toBeVisible();
     await user.keyboard("house");
+    await user.click(screen.getByRole("button", { name: "Next" }));
     expect(
       await screen.findByRole(
         "heading",

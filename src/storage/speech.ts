@@ -53,6 +53,9 @@ export function onVoicesChanged(
   };
 }
 
+// Chrome can garbage-collect an utterance that nothing references and drop its speech.
+let current: SpeechSynthesisUtterance | null = null;
+
 /** Reads `text` aloud in `lang`, replacing anything still being spoken. Does nothing when unsupported. */
 export function speak(
   text: string,
@@ -64,11 +67,48 @@ export function speak(
   }
   try {
     synthesis.cancel();
+    if (current !== null) {
+      current.onend = null;
+    }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
+    current = utterance;
     synthesis.speak(utterance);
   } catch {
     // Speech is optional: a failing speech engine must never break a card.
+  }
+}
+
+/**
+ * Like {@link speak}, but calls `onDone` once the text has been spoken, or when it
+ * could not be (unsupported, engine error, speech cancelled). Called at most once.
+ */
+export function speakThen(
+  text: string,
+  lang: string,
+  onDone: () => void,
+  synthesis: SpeechSynthesis | null = getSynthesis(),
+): void {
+  if (synthesis === null) {
+    onDone();
+    return;
+  }
+  let called = false;
+  const done = () => {
+    if (!called) {
+      called = true;
+      onDone();
+    }
+  };
+  try {
+    synthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.onend = done;
+    utterance.onerror = done;
+    synthesis.speak(utterance);
+  } catch {
+    done();
   }
 }
 

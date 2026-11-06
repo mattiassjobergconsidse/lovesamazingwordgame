@@ -69,18 +69,18 @@ export function judgeProposal(
 }
 
 /**
- * Maps a key to a judgement: Right or `T` = true, Left or `F` = false (NH-17).
+ * Maps a key to a judgement: Left or `1` = true, Right or `2` = false (NH-17).
  *
  * @param key A `KeyboardEvent.key` value.
  * @returns The judgement, or `null` for any other key.
  */
 export function judgementForKey(key: string): boolean | null {
   switch (key.toLowerCase()) {
-    case "arrowright":
-    case "t":
-      return true;
     case "arrowleft":
-    case "f":
+    case "1":
+      return true;
+    case "arrowright":
+    case "2":
       return false;
     default:
       return null;
@@ -88,7 +88,7 @@ export function judgementForKey(key: string): boolean | null {
 }
 
 /**
- * Maps a horizontal swipe to a judgement: right = true, left = false (NH-17).
+ * Maps a horizontal swipe to a judgement: left = true, right = false (NH-17).
  *
  * @param deltaX Horizontal movement in pixels; positive is to the right.
  * @param deltaY Vertical movement in pixels.
@@ -99,5 +99,5 @@ export function judgementFromSwipe(
   deltaY: number,
 ): boolean | null {
   const grade = gradeFromSwipe(deltaX, deltaY);
-  return grade === null ? null : grade === "correct";
+  return grade === null ? null : grade !== "correct";
 }

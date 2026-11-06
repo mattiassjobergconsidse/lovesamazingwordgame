@@ -15,9 +15,6 @@ import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 import { HangmanFigure } from "./HangmanFigure";
 
-/** How long a solved word stays visible before the next one (like Writing, FR-WR-3). */
-const AUTO_ADVANCE_MS = 800;
-
 /**
  * Hangman mode (NH-9): guess the hidden answer letter by letter, on the on-screen
  * keyboard or the physical one. Solved is `correct`, out of guesses is `wrong`.
@@ -32,7 +29,7 @@ export function HangmanCard({
   const { t } = useI18n();
   const [round, setRound] = useState(() => createHangman(terms.answer));
   const nextRef = useRef<HTMLButtonElement>(null);
-  // The timer and the Next button can both finish the card; only the first may answer.
+  // Guards against answering twice (a double click on Next).
   const finishedRef = useRef(false);
 
   const status = hangmanStatus(round);
@@ -59,14 +56,7 @@ export function HangmanCard({
       return;
     }
     nextRef.current?.focus();
-    if (status !== "won") {
-      return;
-    }
-    const timer = window.setTimeout(finish, AUTO_ADVANCE_MS);
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [status, finish]);
+  }, [status]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -157,7 +147,8 @@ export function HangmanCard({
               ? t("train.hangman.won", { answer: round.answer })
               : t("train.hangman.lost", { answer: round.answer })}
           </p>
-          <SpeakButton text={round.answer} lang={codes.answer} />
+          {/* Mounted only when the round ends, so auto-play reads the answer then. */}
+          <SpeakButton text={round.answer} lang={codes.answer} autoPlay />
           <button
             ref={nextRef}
             type="button"

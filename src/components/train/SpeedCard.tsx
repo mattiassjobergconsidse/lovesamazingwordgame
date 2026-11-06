@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import { buildQuizQuestion } from "../../core/quiz";
+import { speechCodesFor } from "../../core/direction";
 import { useI18n } from "../../i18n";
 import { isModalOpen } from "../common/modalOpen";
+import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
 /** Short on purpose: a sprint must not wait for the feedback (NH-16). */
@@ -78,6 +80,11 @@ export function SpeedCard({
         {t("train.card.promptLabel", { lang: promptLanguage })}
       </p>
       <p className="session-card-term">{question.prompt}</p>
+      <SpeakButton
+        text={question.prompt}
+        lang={speechCodesFor(set, direction).prompt}
+        autoPlay
+      />
       <ul
         className="quiz-options"
         aria-label={t("train.quiz.options", { lang: answerLanguage })}

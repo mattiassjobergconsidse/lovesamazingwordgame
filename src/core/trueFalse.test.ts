@@ -161,12 +161,12 @@ describe("judgeProposal", () => {
 
 describe("judgementForKey", () => {
   it.each([
-    ["ArrowRight", true],
-    ["t", true],
-    ["T", true],
-    ["ArrowLeft", false],
-    ["f", false],
-    ["F", false],
+    ["ArrowLeft", true],
+    ["1", true],
+    ["ArrowRight", false],
+    ["2", false],
+    ["t", null],
+    ["f", null],
     ["a", null],
     [" ", null],
     ["Enter", null],
@@ -176,9 +176,9 @@ describe("judgementForKey", () => {
 });
 
 describe("judgementFromSwipe", () => {
-  it("NH-17: right is true, left is false", () => {
-    expect(judgementFromSwipe(120, 5)).toBe(true);
-    expect(judgementFromSwipe(-120, -5)).toBe(false);
+  it("NH-17: left is true, right is false", () => {
+    expect(judgementFromSwipe(-120, 5)).toBe(true);
+    expect(judgementFromSwipe(120, -5)).toBe(false);
   });
 
   it("NH-17: ignores short and mostly vertical movements", () => {
