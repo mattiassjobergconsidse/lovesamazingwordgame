@@ -58,6 +58,8 @@ describe("hangman mode", () => {
     await user.keyboard("se");
 
     expect(screen.getByText("Correct! The word is house")).toBeVisible();
+    // No auto-advance: the player continues with Next.
+    await user.click(screen.getByRole("button", { name: "Next" }));
     expect(
       await screen.findByRole(
         "heading",
@@ -115,6 +117,7 @@ describe("hangman mode", () => {
     // FR-TRN-7: the missed word comes back once; the repeat does not change progress again.
     expect(await screen.findByText("Wrong guesses left: 6")).toBeVisible();
     await user.keyboard("house");
+    await user.click(screen.getByRole("button", { name: "Next" }));
     expect(
       await screen.findByRole(
         "heading",

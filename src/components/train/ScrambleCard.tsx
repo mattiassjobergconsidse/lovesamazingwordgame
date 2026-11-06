@@ -13,13 +13,12 @@ import {
   scrambleStatus,
 } from "../../core/scramble";
 import { speechCodesFor } from "../../core/direction";
+import { useSettings } from "../../hooks/useSettings";
+import { useSpeech } from "../../hooks/useSpeech";
 import { useI18n } from "../../i18n";
 import { isModalOpen } from "../common/modalOpen";
 import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
-
-/** How long a solved word stays visible before the next one (like Writing, FR-WR-3). */
-const AUTO_ADVANCE_MS = 800;
 
 /**
  * Word Scramble mode (NH-13): build the answer from shuffled letter tiles, by tapping
@@ -37,7 +36,7 @@ export function ScrambleCard({
   const [round, setRound] = useState(() => createScramble(terms.answer, rng));
   const nextRef = useRef<HTMLButtonElement>(null);
   const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  // The timer and the Next button can both finish the card; only the first may answer.
+  // Guards against answering twice (a double click on Next).
   const finishedRef = useRef(false);
 
   const status = scrambleStatus(round);
@@ -47,6 +46,11 @@ export function ScrambleCard({
   const answerLanguage = direction === "AtoB" ? set.langB : set.langA;
   const codes = speechCodesFor(set, direction);
   const playing = status === "playing";
+  const { settings } = useSettings();
+  const { supported, speak } = useSpeech();
+  const speechEnabled = settings.speechEnabled;
+  const answerText = terms.answer;
+  const answerCode = codes.answer;
 
   const finish = useCallback(() => {
     if (finishedRef.current || result === null) {
@@ -61,16 +65,24 @@ export function ScrambleCard({
       return;
     }
     nextRef.current?.focus();
-    if (result !== "correct") {
-      return;
+    // No auto-advance: the player continues with Next, so the word can be replayed first.
+    if (
+      result === "correct" &&
+      speechEnabled &&
+      supported &&
+      answerCode !== undefined
+    ) {
+      speak(answerText, answerCode);
     }
-    const timer = window.setTimeout(finish, AUTO_ADVANCE_MS);
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [status, result, finish]);
-
-  useEffect(() => {
+  }, [
+    status,
+    result,
+    speechEnabled,
+    supported,
+    answerCode,
+    answerText,
+    speak,
+  ]);  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey || isModalOpen()) {
         return;

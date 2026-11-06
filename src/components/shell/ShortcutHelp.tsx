@@ -39,8 +39,8 @@ const GROUPS: readonly ShortcutGroup[] = [
   {
     heading: "shortcuts.truefalse",
     items: [
-      { keys: ["→", "T"], label: "shortcuts.trueFalseTrue" },
-      { keys: ["←", "F"], label: "shortcuts.trueFalseFalse" },
+      { keys: ["→", "1"], label: "shortcuts.trueFalseTrue" },
+      { keys: ["←", "2"], label: "shortcuts.trueFalseFalse" },
       { keys: ["Enter"], label: "shortcuts.next" },
     ],
   },

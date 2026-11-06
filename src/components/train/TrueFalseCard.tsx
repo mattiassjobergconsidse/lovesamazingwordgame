@@ -37,7 +37,7 @@ interface SwipeStart {
 
 /**
  * True or False mode (NH-17a): a prompt and a proposed translation; the user judges it
- * with the buttons, a swipe or the keys Right/T and Left/F. Remounted for every card,
+ * with the buttons, a swipe or the keys Left/1 and Right/2. Remounted for every card,
  * so the proposal and the judgement reset.
  */
 export function TrueFalseCard({
@@ -85,13 +85,17 @@ export function TrueFalseCard({
       return;
     }
     nextRef.current?.focus();
+    // A wrong judgement stays on screen until the player presses Next.
+    if (judged !== proposal.isTrue) {
+      return;
+    }
     const timer = window.setTimeout(() => {
       advance(judged);
     }, AUTO_ADVANCE_MS);
     return () => {
       window.clearTimeout(timer);
     };
-  }, [judged, advance]);
+  }, [judged, advance, proposal.isTrue]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -182,36 +186,36 @@ export function TrueFalseCard({
       <div className="session-card-actions truefalse-actions">
         <button
           type="button"
-          className="button button-secondary truefalse-button"
-          data-state={stateFor(judged, false, proposal.isTrue)}
-          aria-disabled={judged !== null}
-          aria-keyshortcuts="ArrowLeft F"
-          onClick={(event) => {
-            event.stopPropagation();
-            judge(false);
-          }}
-        >
-          <span aria-hidden="true">← ✗ </span>
-          {t("train.trueFalse.false")}
-          <kbd className="key-hint" aria-hidden="true">
-            F
-          </kbd>
-        </button>
-        <button
-          type="button"
           className="button truefalse-button"
           data-state={stateFor(judged, true, proposal.isTrue)}
           aria-disabled={judged !== null}
-          aria-keyshortcuts="ArrowRight T"
+          aria-keyshortcuts="ArrowLeft 1"
           onClick={(event) => {
             event.stopPropagation();
             judge(true);
           }}
         >
           {t("train.trueFalse.true")}
-          <span aria-hidden="true"> ✓ →</span>
+          <span aria-hidden="true"> ✓ ←</span>
           <kbd className="key-hint" aria-hidden="true">
-            T
+            1
+          </kbd>
+        </button>
+        <button
+          type="button"
+          className="button button-secondary truefalse-button"
+          data-state={stateFor(judged, false, proposal.isTrue)}
+          aria-disabled={judged !== null}
+          aria-keyshortcuts="ArrowRight 2"
+          onClick={(event) => {
+            event.stopPropagation();
+            judge(false);
+          }}
+        >
+          {t("train.trueFalse.false")}
+          <span aria-hidden="true"> ✗ →</span>
+          <kbd className="key-hint" aria-hidden="true">
+            2
           </kbd>
         </button>
       </div>

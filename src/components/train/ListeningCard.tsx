@@ -14,14 +14,18 @@ import {
 import { buildQuizQuestion } from "../../core/quiz";
 import { useListeningAudio } from "../../hooks/useListeningAudio";
 import { useSettings } from "../../hooks/useSettings";
+import { useSpeech } from "../../hooks/useSpeech";
 import { useI18n } from "../../i18n";
 import type { AnswerResult } from "../../types";
 import { isModalOpen, isTypingTarget } from "../common/modalOpen";
-import { SpeakButton } from "../common/SpeakButton";
 import type { ModeCardProps } from "./BasicCard";
 
-/** How long a correct answer stays on screen before the next card (as in Quiz, FR-QZ-2). */
+/** How long a correct answer stays on screen when it cannot be read aloud (as in Quiz, FR-QZ-2). */
 const AUTO_ADVANCE_MS = 1000;
+/** Pause after the correct answer has been read, before the next card. */
+const AFTER_SPEECH_MS = 400;
+/** Longest wait for the speech to report its end before moving on anyway. */
+const SPEECH_FALLBACK_MS = 3000;
 
 type InputMode = "choice" | "typing";
 
@@ -86,6 +90,9 @@ export function ListeningCard({
   const promptLanguage = direction === "AtoB" ? set.langA : set.langB;
   const answerLanguage = direction === "AtoB" ? set.langB : set.langA;
   const playAudio = useListeningAudio(terms.prompt, codes.prompt);
+  const { speakThen } = useSpeech();
+  const answerText = terms.answer;
+  const answerCode = codes.answer;
 
   const replay = useCallback(() => {
     setHelped(true);
@@ -122,6 +129,11 @@ export function ListeningCard({
     finishedRef.current = true;
     onAnswer(outcome.result);
   }, [onAnswer, outcome]);
+  // The speech effect must not restart when `finish` changes identity.
+  const finishRef = useRef(finish);
+  useEffect(() => {
+    finishRef.current = finish;
+  }, [finish]);
 
   useEffect(() => {
     if (inputMode === "typing" && outcome === null) {
@@ -135,14 +147,34 @@ export function ListeningCard({
     }
     // Enter on the focused Next button continues without leaving the keyboard.
     nextRef.current?.focus();
-    if (outcome.result !== "correct") {
-      return;
+    // The correct answer is read aloud after every answer. A correct answer moves on
+    // once the speech is over (with a fallback in case the engine never reports the end).
+    const autoAdvance = outcome.result === "correct";
+    let cancelled = false;
+    let timer: number | undefined;
+    const advanceIn = (delay: number) => {
+      if (autoAdvance) {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          finishRef.current();
+        }, delay);
+      }
+    };
+    if (answerCode === undefined) {
+      advanceIn(AUTO_ADVANCE_MS);
+    } else {
+      advanceIn(SPEECH_FALLBACK_MS);
+      speakThen(answerText, answerCode, () => {
+        if (!cancelled) {
+          advanceIn(AFTER_SPEECH_MS);
+        }
+      });
     }
-    const timer = window.setTimeout(finish, AUTO_ADVANCE_MS);
     return () => {
+      cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [outcome, finish]);
+  }, [outcome, answerText, answerCode, speakThen]);
 
   useEffect(() => {
     if (outcome !== null) {
@@ -223,7 +255,7 @@ export function ListeningCard({
       </div>
       {revealed && !done && (
         <p className="session-card-term" role="status">
-          {t("train.listening.revealed", { prompt: terms.prompt })}
+          {t("train.listening.revealed", { answer: terms.prompt })}
         </p>
       )}
 
@@ -319,7 +351,6 @@ export function ListeningCard({
               prompt: terms.prompt,
             })}
           </p>
-          <SpeakButton text={terms.prompt} lang={codes.prompt} />
           <button
             ref={nextRef}
             type="button"

@@ -120,7 +120,11 @@ export function FlashCard({ set, direction, terms, onAnswer }: ModeCardProps) {
           <p className="session-card-term">
             {acceptedAnswers(terms).join(" / ")}
           </p>
-          <SpeakButton text={terms.answer} lang={codes.answer} />
+          <SpeakButton
+            text={terms.answer}
+            lang={codes.answer}
+            autoPlay={flipped}
+          />
         </div>
       </div>
       {flipped ? (
