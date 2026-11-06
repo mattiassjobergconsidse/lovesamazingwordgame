@@ -110,7 +110,9 @@ describe("pronunciation", () => {
       expect(speak).toHaveBeenCalledTimes(1);
     });
 
-    await user.click(await screen.findByRole("button", { name: "Show answer" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Show answer" }),
+    );
 
     await waitFor(() => {
       expect(speak).toHaveBeenLastCalledWith(

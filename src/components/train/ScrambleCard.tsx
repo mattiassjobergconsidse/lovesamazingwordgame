@@ -74,15 +74,8 @@ export function ScrambleCard({
     ) {
       speak(answerText, answerCode);
     }
-  }, [
-    status,
-    result,
-    speechEnabled,
-    supported,
-    answerCode,
-    answerText,
-    speak,
-  ]);  useEffect(() => {
+  }, [status, result, speechEnabled, supported, answerCode, answerText, speak]);
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey || isModalOpen()) {
         return;
