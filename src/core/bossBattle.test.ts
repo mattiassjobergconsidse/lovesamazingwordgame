@@ -61,10 +61,7 @@ describe("boss health", () => {
   });
 
   it("NH-15: damage rounds down so the boss keeps at least 1 hp per unsolved word", () => {
-    const next = applyBossAnswer(
-      { hp: 23, maxHp: 30, remaining: 3 },
-      "correct",
-    );
+    const next = applyBossAnswer({ hp: 23, maxHp: 30, remaining: 3 }, "correct");
 
     expect(next).toEqual({ hp: 16, maxHp: 30, remaining: 2 });
   });
