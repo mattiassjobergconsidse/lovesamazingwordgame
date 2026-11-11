@@ -450,7 +450,7 @@ export const en = {
   "games.list": "Mini-games",
   "games.ready": "You have one play ready! Pick a game.",
   "games.locked":
-    "Locked. Answer every word correctly in a Writing session, with no hints, no “almost” and no “I was right”, to win one play.",
+    "Locked. Answer every word correctly in a Writing, Multiple choice or Matching session, with no hints, no “almost” and no “I was right”, to win one play.",
   "games.status.locked": "Locked",
   "game.memory.name": "Emoji memory",
   "game.memory.desc": "Flip cards and find all the matching emoji pairs.",
@@ -465,9 +465,9 @@ export const en = {
   "game.back": "Back to games",
   "game.locked": "This game is locked right now.",
   "game.result.again":
-    "Answer every word correctly in a Writing session to play again.",
+    "Answer every word correctly in a Writing, Multiple choice or Matching session to play again.",
   "game.offer.title": "You won a mini-game!",
-  "game.offer.text": "A perfect Writing session! Pick a game to play.",
+  "game.offer.text": "A perfect session! Pick a game to play.",
   "game.offer.skip": "Not now? Your play is saved on the Games page.",
   "game.memory.board": "Memory board",
   "game.memory.moves": "Moves: {moves}",

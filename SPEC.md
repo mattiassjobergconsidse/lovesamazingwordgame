@@ -363,13 +363,13 @@ Implement in this order. Each needs its own PR and must not break the "no backen
     - 100 correct answers in total.
       Unlocking shows a short celebration toast/animation. Final list and thresholds can be tuned in one constants file.
 11. **Unlockable mini-games** (`NH-11`, done): three small, simple and fun games for a 10-year-old that are unlocked by getting **all answers correct**
-    in a Writing session of at least 5 words (no hints, no "almost", no overrides needed to count; `MIN_WORDS_FOR_UNLOCK`). The games are (decision 2026-10-29):
+    in a Writing, Multiple choice (quiz) or Matching session of at least 5 words (no hints, no "almost", no overrides needed to count; `MIN_WORDS_FOR_UNLOCK`). The games are (decision 2026-10-29):
     1. **Emoji memory**: flip cards and find matching emoji pairs (calm, thinking; arrow keys + Enter on keyboard).
     2. **Catch the falling items**: move a basket left/right (arrow keys or touch-drag) to catch falling items (movement, reflexes).
     3. **Simon pattern memory**: four colour pads light up in a sequence and the user repeats it (4 keys or 4 big touch targets; ends on the first mistake).
        Bubble pop (a friendlier whack-a-mole) is a possible future addition, not part of NH-11.
     - Each game is a pure `core/` state machine with injected rng and timer plus a thin UI, and offers a slower or no-timer variant under `prefers-reduced-motion`.
-    - Each unlock gives **one play** of a game; after playing, the games lock again until the next perfect Writing session.
+    - Each unlock gives **one play** of a game; after playing, the games lock again until the next perfect Writing, Multiple choice or Matching session.
     - Playing is **optional**: after a perfect session the user is offered a choice of the unlocked games and can pick one or skip
       (a skipped unlock is kept until used or until the next perfect session, whichever comes first; unlocks do not accumulate).
     - Games are short (about 1-2 minutes), need no backend, work with touch and keyboard, and are not tied to the word data.

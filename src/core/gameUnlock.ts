@@ -25,6 +25,9 @@ export interface GameUnlock {
 /** Shortest session that can earn a play, so tiny sessions cannot be farmed. */
 export const MIN_WORDS_FOR_UNLOCK = 5;
 
+/** Modes whose perfect sessions earn a play. */
+export const UNLOCK_MODES: readonly string[] = ["writing", "matching", "quiz"];
+
 /** What the unlock rule needs to know about a finished session. */
 export interface UnlockInput {
   readonly mode: string;
@@ -48,7 +51,7 @@ export function earnsGameUnlock({
   total,
 }: UnlockInput): boolean {
   return (
-    mode === "writing" &&
+    UNLOCK_MODES.includes(mode) &&
     perfect &&
     overrides === 0 &&
     total >= MIN_WORDS_FOR_UNLOCK
