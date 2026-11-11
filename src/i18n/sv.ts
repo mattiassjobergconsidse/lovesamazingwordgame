@@ -452,8 +452,9 @@ export const sv: Record<MessageKey, string> = {
   "games.list": "Minispel",
   "games.ready": "Du har ett spel redo! Välj ett spel.",
   "games.locked":
-    "Låst. Svara rätt på alla ord i ett skrivpass, utan tips, utan ”nästan” och utan ”Jag hade rätt”, för att vinna ett spel.",
+    "Låst. Svara rätt på alla ord i ett skriv-, flerval- eller matchningspass, utan tips, utan ”nästan” och utan ”Jag hade rätt”, för att vinna ett spel.",
   "games.status.locked": "Låst",
+  "games.earnBadge": "Ger ett spel",
   "game.memory.name": "Emoji-memory",
   "game.memory.desc": "Vänd kort och hitta alla par med samma emoji.",
   "game.catch.name": "Fånga!",
@@ -466,9 +467,9 @@ export const sv: Record<MessageKey, string> = {
   "game.back": "Tillbaka till spelen",
   "game.locked": "Det här spelet är låst just nu.",
   "game.result.again":
-    "Svara rätt på alla ord i ett skrivpass för att spela igen.",
+    "Svara rätt på alla ord i ett skriv-, flerval- eller matchningspass för att spela igen.",
   "game.offer.title": "Du vann ett minispel!",
-  "game.offer.text": "Ett perfekt skrivpass! Välj ett spel att spela.",
+  "game.offer.text": "Ett perfekt pass! Välj ett spel att spela.",
   "game.offer.skip": "Inte nu? Ditt spel sparas på sidan Spel.",
   "game.memory.board": "Memoryplan",
   "game.memory.moves": "Drag: {moves}",

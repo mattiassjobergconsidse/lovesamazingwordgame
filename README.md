@@ -12,7 +12,7 @@ Live: https://mattiassjobergconsidse.github.io/lovesamazingwordgame/
 - Ten training modes, easiest to hardest: flashcards, true or false, matching, quiz, word scramble, hangman, listening, speed round, writing and boss battle
 - Spaced repetition (Leitner) with a random direction per card (can be forced in settings); an option to ignore accents when checking typed answers
 - Statistics per set, including the hardest words, and one-tap practice of your hardest words or the last session's mistakes
-- Unlockable mini-games: a perfect Writing session (all answers correct, at least 5 words) unlocks one play of Emoji memory, Catch the falling items or Simon pattern memory
+- Unlockable mini-games: a perfect Writing, Multiple choice or Matching session (all answers correct, at least 5 words) unlocks one play of Emoji memory, Catch the falling items or Simon pattern memory
 - Trophies for milestones (streaks, mastered words, perfect sessions, completing each mode), with a celebration when one unlocks
 - Twelve selectable mascots that react to your answers, streaks and trophies (can be turned off); the Boss Battle uses a mascot as the boss
 - Boss Battle: the words you got wrong become a boss with a health bar that you defeat by answering them correctly

@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { resolveBossPool } from "../../core/bossBattle";
+import { UNLOCK_MODES } from "../../core/gameUnlock";
 import { isModeAvailable, MIN_WORDS } from "../../core/trainingEligibility";
 import { useBossPoolCounts } from "../../hooks/useBossPool";
 import { useListeningAvailability } from "../../hooks/useListeningAvailability";
@@ -31,13 +32,26 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
       {TRAIN_MODES.map((mode) => {
         const titleId = `${prefix}-${mode}`;
         const noteId = `${prefix}-${mode}-note`;
+        const badgeId = `${prefix}-${mode}-badge`;
+        const earnsGame = UNLOCK_MODES.includes(mode);
+        const cardLabel = earnsGame ? `${titleId} ${badgeId}` : titleId;
         const tooSmall = !isModeAvailable(mode, wordCount);
         const listeningBlocked =
           mode === "listening" && listening !== "available";
         const needsPool = mode === "boss" && bossBlocked;
         const content = (
           <>
-            <span className="home-mode-icon" aria-hidden="true">
+            {earnsGame && (
+              <span
+                id={badgeId}
+                className="home-mode-badge"
+                role="img"
+                aria-label={t("games.earnBadge")}
+                title={t("games.earnBadge")}
+              >
+                🎮
+              </span>
+            )}            <span className="home-mode-icon" aria-hidden="true">
               {MODE_ICONS[mode]}
             </span>
             <span id={titleId} className="home-mode-title">
@@ -52,7 +66,7 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
               <a
                 className="home-mode card"
                 data-mode={mode}
-                aria-labelledby={titleId}
+                aria-labelledby={cardLabel}
                 href={routeToHash({ name: "trainMode", mode })}
               >
                 {content}
@@ -64,7 +78,7 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
                   className="home-mode home-mode-disabled card"
                   data-mode={mode}
                   disabled
-                  aria-labelledby={titleId}
+                  aria-labelledby={cardLabel}
                   aria-describedby={noteId}
                 >
                   {content}
