@@ -45,13 +45,15 @@ export function ModeCards({ set, wordCount, labelledBy }: ModeCardsProps) {
               <span
                 id={badgeId}
                 className="home-mode-badge"
-                role="img"
-                aria-label={t("games.earnBadge")}
                 title={t("games.earnBadge")}
               >
-                🎮
+                <span aria-hidden="true">🎮</span>
+                <span className="home-mode-badge-text">
+                  {t("games.earnBadge")}
+                </span>
               </span>
-            )}            <span className="home-mode-icon" aria-hidden="true">
+            )}{" "}
+            <span className="home-mode-icon" aria-hidden="true">
               {MODE_ICONS[mode]}
             </span>
             <span id={titleId} className="home-mode-title">
