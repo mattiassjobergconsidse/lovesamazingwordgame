@@ -454,6 +454,7 @@ export const sv: Record<MessageKey, string> = {
   "games.locked":
     "Låst. Svara rätt på alla ord i ett skriv-, flerval- eller matchningspass, utan tips, utan ”nästan” och utan ”Jag hade rätt”, för att vinna ett spel.",
   "games.status.locked": "Låst",
+  "games.earnBadge": "Ger ett spel",
   "game.memory.name": "Emoji-memory",
   "game.memory.desc": "Vänd kort och hitta alla par med samma emoji.",
   "game.catch.name": "Fånga!",

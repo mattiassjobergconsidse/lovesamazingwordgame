@@ -452,6 +452,7 @@ export const en = {
   "games.locked":
     "Locked. Answer every word correctly in a Writing, Multiple choice or Matching session, with no hints, no “almost” and no “I was right”, to win one play.",
   "games.status.locked": "Locked",
+  "games.earnBadge": "Earns a game",
   "game.memory.name": "Emoji memory",
   "game.memory.desc": "Flip cards and find all the matching emoji pairs.",
   "game.catch.name": "Catch it!",

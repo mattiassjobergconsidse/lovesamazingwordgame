@@ -48,6 +48,7 @@
   font-size: 0.875rem;
 }
 .home-mode {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -76,6 +77,13 @@ button.home-mode {
 }
 button.home-mode:disabled {
   cursor: not-allowed;
+}
+.home-mode-badge {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  font-size: 1.25rem;
+  line-height: 1;
 }
 .home-mode-icon {
   display: grid;

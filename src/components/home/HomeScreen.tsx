@@ -133,12 +133,7 @@ function SetHome({ set }: { readonly set: WordSet }) {
       </section>
 
       <section aria-labelledby="home-modes" className="home-section">
-        <h2 id="home-modes">
-          <span className="home-emoji" aria-hidden="true">
-            🎮
-          </span>
-          {t("home.modes.heading")}
-        </h2>
+        <h2 id="home-modes">{t("home.modes.heading")}</h2>
         <ModeCards set={set} wordCount={wordCount} labelledBy="home-modes" />
       </section>
 
