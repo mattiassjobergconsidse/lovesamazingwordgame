@@ -373,9 +373,9 @@ describe("training gate", () => {
     expect(
       await screen.findByRole("link", { name: "Flashcards" }),
     ).toBeVisible();
-    expect(screen.getByRole("link", { name: "Writing" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Quiz" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Matching" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /^Writing/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /^Quiz/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /^Matching/ })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Speed Round" })).toBeDisabled();
     expect(
       screen.getByRole("button", { name: "True or False" }),
@@ -400,8 +400,8 @@ describe("training gate", () => {
     window.location.hash = "#/train";
     render(<App />);
 
-    expect(await screen.findByRole("link", { name: "Quiz" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Matching" })).toBeVisible();
+    expect(await screen.findByRole("link", { name: /^Quiz/ })).toBeVisible();
+    expect(screen.getByRole("link", { name: /^Matching/ })).toBeVisible();
     expect(
       screen.queryByRole("link", { name: "Add words in the set editor" }),
     ).not.toBeInTheDocument();
@@ -478,7 +478,7 @@ describe("accessibility", () => {
     });
     window.location.hash = "#/train";
     const { container } = render(<App />);
-    await screen.findByRole("button", { name: "Flerval" });
+    await screen.findByRole("button", { name: /^Flerval/ });
 
     expect(await axe(container)).toHaveNoViolations();
   });
