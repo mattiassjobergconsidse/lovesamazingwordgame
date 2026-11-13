@@ -287,7 +287,10 @@ function ActiveSession({
   }
 
   const { answered, total } = sessionProgress(view.session);
-  const terms = termsFor(card.pair, view.direction);
+  // Hangman and Word puzzle always use language B as the word to guess.
+  const direction =
+    mode === "hangman" || mode === "scramble" ? "AtoB" : view.direction;
+  const terms = termsFor(card.pair, direction);
   return (
     <div ref={containerRef} className="session">
       <div className="session-header">
@@ -355,7 +358,7 @@ function ActiveSession({
             renderCard({
               card,
               set,
-              direction: view.direction,
+              direction,
               terms,
               pool,
               rng,

@@ -28,10 +28,13 @@ describe("earnsGameUnlock", () => {
     expect(earnsGameUnlock({ ...perfectSession, overrides: 1 })).toBe(false);
   });
 
-  it("NH-11: only Writing sessions count", () => {
+  it("NH-11: Writing, Quiz, Matching and Hangman sessions count", () => {
     expect(earnsGameUnlock({ ...perfectSession, mode: "quiz" })).toBe(true);
     expect(earnsGameUnlock({ ...perfectSession, mode: "matching" })).toBe(true);
-    expect(earnsGameUnlock({ ...perfectSession, mode: "hangman" })).toBe(false);
+    expect(earnsGameUnlock({ ...perfectSession, mode: "hangman" })).toBe(true);
+    expect(earnsGameUnlock({ ...perfectSession, mode: "scramble" })).toBe(
+      false,
+    );
   });
 
   it("NH-11: a session shorter than the minimum cannot be farmed", () => {
